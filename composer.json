@@ -1,0 +1,12 @@
+{
+  "name": "southprojects/bladeone",
+  "description": "Blade Template System in a single php file",
+  "minimum-stability": "beta",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jorge Patricio Castro Castillo",
+      "email": "jcastro@eftec.cl"
+    }
+  ]
+}
