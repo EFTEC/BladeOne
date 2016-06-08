@@ -11,7 +11,7 @@
 
 /**
  * Class BladeOne
- * @version 0.1 Beta 2016-06-08
+ * @version 0.2 Beta 2016-06-08
  * @see https://github.com/jorgecc/BladeOne
  */
 class BladeOne
