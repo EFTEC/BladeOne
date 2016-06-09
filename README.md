@@ -1,3 +1,5 @@
+![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)
+
 # BladeOne
 BladeOne is a standalone version of Blade Template Engine that uses a single php file and can be ported and used in different projects.
 
