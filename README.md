@@ -1,5 +1,5 @@
 # BladeOne
-BladeOne is a version of Blade Template Engine that uses a single php file.
+BladeOne is a standalone version of Blade Template Engine that uses a single php file and can be ported and used in different projects.
 
 ## Introduction (From Laravel webpage)
 
@@ -7,16 +7,18 @@ Blade is the simple, yet powerful templating engine provided with Laravel. Unlik
 
 ## About this version
 
-By standard, Blade is part of Laravel (Illuminate componentes) and for to use it, you requires to install Laravel and Illuminate-view components.
+By standard, Blade is part of Laravel (Illuminate components) and for to use it, you requires to install Laravel and Illuminate-view components.
 Blade as a template engine is pretty nice and clear. Also it generates a (some that) clean code. And its starting to be considered a de-facto template system for php (Smarty has been riding off the sunset since years ago). So, if we are able to use it without Laravel then its a big plus for many projects. In fact, in theory its is even possible to use with Laravel.
 Exists different version of Blade Template that runs without Laravel but most requires 50 or more files and those templates add a new level of complexity:
 
 - More files to manages.
-- Changes to the project.
+- Changes to the current project (if you want to integrate the template into an existent one)
 - Incompatibilities amongst other projects.
 - Slowness (if your server is not using op-cache)
+- Most of the code in the original Blade is used for future use, including the chance to use a different template engine.
+- Some Laravel legacy code.
 
-This project uses a single file called BladeOne.php. If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]: 
+This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]: 
 
 ## Usage
 
@@ -45,3 +47,7 @@ views/hello.blade.php:
 ##Todo
 
 Some features are missing or wrong but the basic ones are working.
+
+##Version
+
+2016-06-08 0.2. Beta First publish launch.
