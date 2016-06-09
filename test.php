@@ -4,7 +4,6 @@
  */
 include "BladeOne.php";
 
-// include "helpers.php";
 $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
 $blade=new BladeOne($views,$cache);
