@@ -46,6 +46,28 @@ views/hello.blade.php:
 {{$variable1}}
 ```
 
+## Template tags
+
+### variables
+
+
+|Tag|Note|status|
+|---|---|---|
+|{{$variable1}}|show the value of the variable using htmlentities (avoid xss attacks)|0.2b ok|
+|@{{$variable1}}|show the value of the content directly (not evaluated, useful for js)|0.2b ok|
+|{!!$variable1!!}|show the value of the variable without htmlentities (no escaped)|0.2b ok|
+|{{ $name or 'Default' }}|value or default|0.2b ok|
+
+### logic
+
+|Tag|Note|status|
+|---|---|---|
+|@if (boolean)|if logic-conditional|0.2b ok|
+|@elseif (boolean)|else if logic-conditional|0.2b ok|
+|@else|else logic|0.2b ok|
+|@endif|end if logic|0.2b ok|
+|...more|...|...|
+
 ##Todo
 
 Some features are missing or wrong but the basic ones are working.
@@ -53,3 +75,17 @@ Some features are missing or wrong but the basic ones are working.
 ##Version
 
 2016-06-08 0.2. Beta First publish launch.
+<<<<<<< Updated upstream
+=======
+
+##Collaboration
+
+You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
+
+##Future
+I checked the code of blade and i know that there are a lot of room for improvement.
+
+##License
+MIT License.
+This code is based in the work of the team of Laravel (is also MIT but i don't find the license file)
+>>>>>>> Stashed changes
