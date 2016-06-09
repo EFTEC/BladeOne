@@ -20,7 +20,7 @@ Exists different version of Blade Template that runs without Laravel but most re
 - Most of the code in the original Blade is used for future use, including the chance to use a different template engine.
 - Some Laravel legacy code.
 
-This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]: 
+This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces). 
 
 ## Why do you need a framework for php?
 
