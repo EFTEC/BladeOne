@@ -48,6 +48,24 @@ views/hello.blade.php:
 
 ## Template tags
 
+### Template Inheritance
+
+#### In the master page (layout)
+|Tag|Note|status|
+|---|---|---|
+|@section('sidebar')|Start a new section|0.2b ok|
+|@show|Indicates where the content of section will be displayed|0.2 ok|
+|@yield('title')|Show here the content of a section|0.2b ok|
+
+#### Using the master page (using the layout)
+|Tag|Note|status|
+|---|---|---|
+|@extends('layouts.master')|Indicates the layout to use|0.2b ok|
+|@section('title', 'Page Title')|Sends a single text to a section|0.2b ok|
+|@section('sidebar')|Start a block of code to send to a section|0.2b ok|
+|@endsection|End a block of code|0.2b ok|
+|@parent|Show the original code of the section|0.2b ok|
+
 ### variables
 
 
@@ -66,11 +84,62 @@ views/hello.blade.php:
 |@elseif (boolean)|else if logic-conditional|0.2b ok|
 |@else|else logic|0.2b ok|
 |@endif|end if logic|0.2b ok|
-|...more|...|...|
+|@unless(boolean)|execute block of code is boolean is false|0.2b ok|
+
+### loop
+
+|Tag|Note|status|
+|---|---|---|
+|@for($i = 0; $i < 10; $i++)|for loop|0.2b ok|
+|@endfor|end of for loop|0.2b ok|
+|@foreach($array as $obj)|foreach loop|0.2b ok|
+|@endforeach|end of foreach loop|0.2b ok|
+|@forelse($array as $obj)|inverse foreach loop|not tested|
+|@empty|if forelse loop is empty the executes the next block|not tested|
+|@endforelse|end of forelse block|not tested|
+|@while(boolean)|while loop|not tested|
+|@endwhile|end while loop|not tested|
+
+##Sub Views
+
+|Tag|Note|status|
+|---|---|---|
+|@include('folder.template')|Include a template|0.2b ok|
+|@include('folder.template',['some' => 'data'])|Include a template with new variables|0.2b ok|
+|@each('view.name', $array, 'variable')|Includes a template for each element of the array|0.2b ok|
+Note: Templates called folder.template is equals to folder/template
+
+##Comments
+
+|Tag|Note|status|
+|---|---|---|
+|{{-- text --}}|Include a comment|0.2b ok|
+
+##Stacks
+|Tag|Note|status|
+|---|---|---|
+|@push('elem')|Add the next block to the push stack|0.2b ok|
+|@endpush|End the push block|0.2b ok|
+|@stack('elem')|Show the stack|0.2b ok|
+
+##Service Inject
+|Tag|Note|status|
+|---|---|---|
+|@inject('metrics', 'App\Services\MetricsService')|Used for insert a Laravel Service|NOT SUPPORTED|
+
+##Extending Blade
+
+Not compatible with the extension of Laravel's Blade.
+
+## Examples
+
+https://laravel.com/docs/master/blade
+
 
 ##Todo
 
-Some features are missing or wrong but the basic ones are working.
+Some features are missing , with bugs or not tested  but the basic ones are working.
+@each could be optimized.
 
 ##Version
 
@@ -83,9 +152,10 @@ Some features are missing or wrong but the basic ones are working.
 You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
 
 ##Future
-I checked the code of blade and i know that there are a lot of room for improvement.
+I checked the code of BladeOne and i know that there are a lot of room for improvement.
 
 
 ##License
 MIT License.
-This code is based in the work of the team of Laravel (is also MIT but i don't find the license file)
+BladeOne (c) 2016 Jorge Patricio Castro Castillo
+Blade (c) 2012 Laravel Team (This code is based and use  the work of the team of Laravel.)
