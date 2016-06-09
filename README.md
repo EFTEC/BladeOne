@@ -75,7 +75,7 @@ Some features are missing or wrong but the basic ones are working.
 ##Version
 
 2016-06-08 0.2. Beta First publish launch.
-<<<<<<< Updated upstream
+
 =======
 
 ##Collaboration
@@ -89,4 +89,3 @@ I checked the code of blade and i know that there are a lot of room for improvem
 ##License
 MIT License.
 This code is based in the work of the team of Laravel (is also MIT but i don't find the license file)
->>>>>>> Stashed changes
