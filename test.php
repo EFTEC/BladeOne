@@ -8,6 +8,7 @@ $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
 $blade=new BladeOne($views,$cache);
 
+//<editor-fold desc="Example data">
 $name="New User";
 $records=array(1,2,3);
 $users=array();
@@ -23,7 +24,10 @@ $usr=new stdClass();
     $usr->type=2;
     $usr->number=5;
 $users[]=$usr;
-echo $blade->run("hello"
+//</editor-fold>
+
+
+echo $blade->run("hello2"
     ,["name"=>"hola mundo"
     ,'records'=>$records
     ,'users'=>$users]

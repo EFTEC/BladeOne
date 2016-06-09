@@ -5,7 +5,11 @@
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
  * Part of this code is based in the work of Laravel PHP Components.
  *
+ * What's new?
+ * 0.2b Use sha1 instead of md5 for generates the file
+ *
  * @package  BladeOne
+ * @version 0.2b 2016-06-09
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
 
@@ -196,6 +200,8 @@ class BladeOne
      */
     protected $forelseCounter = 0;
 
+    public $phpTag='<?php ';
+
 
     //</editor-fold>
 
@@ -322,6 +328,7 @@ class BladeOne
     protected function compileExtensions($value)
     {
         foreach ($this->extensions as $compiler) {
+            echo "<hr><hr>extensions $compiler<hr><hr>";
             $value = call_user_func($compiler, $value, $this);
         }
 
@@ -338,7 +345,7 @@ class BladeOne
     {
         $pattern = sprintf('/%s--(.*?)--%s/s', $this->contentTags[0], $this->contentTags[1]);
 
-        return preg_replace($pattern, '<?php /*$1*/ ?>', $value);
+        return preg_replace($pattern, $this->phpTag.'/*$1*/ ?>', $value);
     }
 
     /**
@@ -371,6 +378,9 @@ class BladeOne
                 $match[0] = call_user_func($this->customDirectives[$match[1]], static::get($match, 3));
             } elseif (method_exists($this, $method = 'compile'.ucfirst($match[1]))) {
                 $match[0] = $this->$method(static::get($match, 3));
+            } else {
+                echo "<br>Error BladeOne: operation not defined:".$match[1]."<br>";
+                die(1);
             }
 
             return isset($match[3]) ? $match[0] : $match[0].$match[2];
@@ -392,7 +402,7 @@ class BladeOne
         $callback = function ($matches) {
             $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
 
-            return $matches[1] ? substr($matches[0], 1) : '<?php echo '.$this->compileEchoDefaults($matches[2]).'; ?>'.$whitespace;
+            return $matches[1] ? substr($matches[0], 1) : $this->phpTag.'echo '.$this->compileEchoDefaults($matches[2]).'; ?>'.$whitespace;
         };
 
         return preg_replace_callback($pattern, $callback, $value);
@@ -413,7 +423,7 @@ class BladeOne
 
             $wrapped = sprintf($this->echoFormat, $this->compileEchoDefaults($matches[2]));
 
-            return $matches[1] ? substr($matches[0], 1) : '<?php echo '.$wrapped.'; ?>'.$whitespace;
+            return $matches[1] ? substr($matches[0], 1) : $this->phpTag.'echo '.$wrapped.'; ?>'.$whitespace;
         };
 
         return preg_replace_callback($pattern, $callback, $value);
@@ -432,7 +442,7 @@ class BladeOne
         $callback = function ($matches) {
             $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
 
-            return $matches[1] ? $matches[0] : '<?php echo static::e('.$this->compileEchoDefaults($matches[2]).'); ?>'.$whitespace;
+            return $matches[1] ? $matches[0] : $this->phpTag.'echo static::e('.$this->compileEchoDefaults($matches[2]).'); ?>'.$whitespace;
         };
 
         return preg_replace_callback($pattern, $callback, $value);
@@ -457,7 +467,7 @@ class BladeOne
      */
     protected function compileEach($expression)
     {
-        return "<?php echo \$this->renderEach{$expression}; ?>";
+        return $this->phpTag."echo \$this->renderEach{$expression}; ?>";
     }
 
     /**
@@ -470,7 +480,7 @@ class BladeOne
     {
         $segments = explode(',', preg_replace("/[\(\)\\\"\']/", '', $expression));
 
-        return '<?php $'.trim($segments[0])." = app('".trim($segments[1])."'); ?>";
+        return $this->phpTag.'$'.trim($segments[0])." = app('".trim($segments[1])."'); ?>";
     }
 
     /**
@@ -481,9 +491,28 @@ class BladeOne
      */
     protected function compileYield($expression)
     {
-        return "<?php echo \$this->yieldContent{$expression}; ?>";
+        return $this->phpTag."echo \$this->yieldContent{$expression}; ?>";
     }
 
+
+    function generateCallTrace()
+    {
+        $e = new Exception();
+        $trace = explode("\n", $e->getTraceAsString());
+        // reverse array to make steps line up chronologically
+        $trace = array_reverse($trace);
+        array_shift($trace); // remove {main}
+        array_pop($trace); // remove call to this method
+        $length = count($trace);
+        $result = array();
+
+        for ($i = 0; $i < $length; $i++)
+        {
+            $result[] = ($i + 1)  . ')' . substr($trace[$i], strpos($trace[$i], ' ')); // replace '#someNum' with '$i)', set the right ordering
+        }
+
+        return "\t" . implode("\n\t", $result);
+    }
     /**
      * Compile the show statements into valid PHP.
      *
@@ -492,7 +521,7 @@ class BladeOne
      */
     protected function compileShow($expression)
     {
-        return '<?php echo $this->yieldSection(); ?>';
+        return $this->phpTag.'echo $this->yieldSection(); ?>';
     }
 
     /**
@@ -503,7 +532,7 @@ class BladeOne
      */
     protected function compileSection($expression)
     {
-        return "<?php \$this->startSection{$expression}; ?>";
+        return $this->phpTag."\$this->startSection{$expression}; ?>";
     }
 
 
@@ -515,7 +544,7 @@ class BladeOne
      */
     protected function compileAppend($expression)
     {
-        return '<?php $this->appendSection(); ?>';
+        return $this->phpTag.'$this->appendSection(); ?>';
     }
 
     /**
@@ -526,7 +555,7 @@ class BladeOne
      */
     protected function compileEndsection($expression)
     {
-        return '<?php $this->stopSection(); ?>';
+        return $this->phpTag.'$this->stopSection(); ?>';
     }
 
     /**
@@ -537,7 +566,7 @@ class BladeOne
      */
     protected function compileStop($expression)
     {
-        return '<?php $this->stopSection(); ?>';
+        return $this->phpTag.'$this->stopSection(); ?>';
     }
 
 
@@ -549,7 +578,7 @@ class BladeOne
      */
     protected function compileOverwrite($expression)
     {
-        return '<?php $this->stopSection(true); ?>';
+        return $this->phpTag.'$this->stopSection(true); ?>';
     }
 
     /**
@@ -560,7 +589,7 @@ class BladeOne
      */
     protected function compileUnless($expression)
     {
-        return "<?php if ( ! $expression): ?>";
+        return $this->phpTag."if ( ! $expression): ?>";
     }
 
     /**
@@ -571,7 +600,7 @@ class BladeOne
      */
     protected function compileEndunless($expression)
     {
-        return '<?php endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -582,7 +611,7 @@ class BladeOne
      */
     protected function compileLang($expression)
     {
-        return "<?php echo app('translator')->get$expression; ?>";
+        return $this->phpTag."echo app('translator')->get$expression; ?>";
     }
 
     /**
@@ -593,7 +622,7 @@ class BladeOne
      */
     protected function compileChoice($expression)
     {
-        return "<?php echo app('translator')->choice$expression; ?>";
+        return $this->phpTag."echo app('translator')->choice$expression; ?>";
     }
 
     /**
@@ -604,7 +633,7 @@ class BladeOne
      */
     protected function compileElse($expression)
     {
-        return '<?php else: ?>';
+        return $this->phpTag.'else: ?>';
     }
 
     /**
@@ -615,7 +644,7 @@ class BladeOne
      */
     protected function compileFor($expression)
     {
-        return "<?php for{$expression}: ?>";
+        return $this->phpTag."for{$expression}: ?>";
     }
 
     /**
@@ -636,7 +665,7 @@ class BladeOne
 
         $iterateLoop = '$this->incrementLoopIndices(); $loop = $this->getFirstLoop();';
 
-        return "<?php {$initLoop} foreach(\$__currentLoopData as {$iteration}): {$iterateLoop} ?>";
+        return $this->phpTag."{$initLoop} foreach(\$__currentLoopData as {$iteration}): {$iterateLoop} ?>";
     }
 
     /**
@@ -647,7 +676,7 @@ class BladeOne
      */
     protected function compileBreak($expression)
     {
-        return $expression ? "<?php if{$expression} break; ?>" : '<?php break; ?>';
+        return $expression ? $this->phpTag."if{$expression} break; ?>" : $this->phpTag.'break; ?>';
     }
 
     /**
@@ -658,7 +687,7 @@ class BladeOne
      */
     protected function compileContinue($expression)
     {
-        return $expression ? "<?php if{$expression} continue; ?>" : '<?php continue; ?>';
+        return $expression ? $this->phpTag."if{$expression} continue; ?>" : $this->phpTag.'continue; ?>';
     }
 
     /**
@@ -671,7 +700,7 @@ class BladeOne
     {
         $empty = '$__empty_'.++$this->forelseCounter;
 
-        return "<?php {$empty} = true; foreach{$expression}: {$empty} = false; ?>";
+        return $this->phpTag."{$empty} = true; foreach{$expression}: {$empty} = false; ?>";
     }
 
     /**
@@ -682,7 +711,7 @@ class BladeOne
      */
     protected function compileCan($expression)
     {
-        return "<?php if (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->check{$expression}): ?>";
+        return $this->phpTag."if (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->check{$expression}): ?>";
     }
 
     /**
@@ -693,7 +722,7 @@ class BladeOne
      */
     protected function compileElsecan($expression)
     {
-        return "<?php elseif (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->check{$expression}): ?>";
+        return $this->phpTag."elseif (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->check{$expression}): ?>";
     }
 
     /**
@@ -704,7 +733,7 @@ class BladeOne
      */
     protected function compileCannot($expression)
     {
-        return "<?php if (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->denies{$expression}): ?>";
+        return $this->phpTag."if (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->denies{$expression}): ?>";
     }
 
     /**
@@ -715,7 +744,7 @@ class BladeOne
      */
     protected function compileElsecannot($expression)
     {
-        return "<?php elseif (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->denies{$expression}): ?>";
+        return $this->phpTag."elseif (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->denies{$expression}): ?>";
     }
 
     /**
@@ -726,7 +755,7 @@ class BladeOne
      */
     protected function compileIf($expression)
     {
-        return "<?php if{$expression}: ?>";
+        return $this->phpTag."if{$expression}: ?>";
     }
 
     /**
@@ -737,7 +766,7 @@ class BladeOne
      */
     protected function compileElseif($expression)
     {
-        return "<?php elseif{$expression}: ?>";
+        return $this->phpTag."elseif{$expression}: ?>";
     }
 
     /**
@@ -750,7 +779,7 @@ class BladeOne
     {
         $empty = '$__empty_'.$this->forelseCounter--;
 
-        return "<?php endforeach; if ({$empty}): ?>";
+        return $this->phpTag."endforeach; if ({$empty}): ?>";
     }
 
     /**
@@ -761,7 +790,7 @@ class BladeOne
      */
     protected function compileHasSection($expression)
     {
-        return "<?php if (! empty(trim(\$this->yieldContent{$expression}))): ?>";
+        return $this->phpTag."if (! empty(trim(\$this->yieldContent{$expression}))): ?>";
     }
 
 
@@ -773,7 +802,7 @@ class BladeOne
      */
     protected function compileEndwhile($expression)
     {
-        return '<?php endwhile; ?>';
+        return $this->phpTag.'endwhile; ?>';
     }
 
     /**
@@ -784,7 +813,7 @@ class BladeOne
      */
     protected function compileEndfor($expression)
     {
-        return '<?php endfor; ?>';
+        return $this->phpTag.'endfor; ?>';
     }
 
     /**
@@ -795,7 +824,7 @@ class BladeOne
      */
     protected function compileEndforeach($expression)
     {
-        return '<?php endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>';
+        return $this->phpTag.'endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>';
     }
 
     /**
@@ -806,7 +835,7 @@ class BladeOne
      */
     protected function compileEndcan($expression)
     {
-        return '<?php endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -817,7 +846,7 @@ class BladeOne
      */
     protected function compileEndcannot($expression)
     {
-        return '<?php endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -828,7 +857,7 @@ class BladeOne
      */
     protected function compileEndif($expression)
     {
-        return '<?php endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -839,7 +868,7 @@ class BladeOne
      */
     protected function compileEndforelse($expression)
     {
-        return '<?php endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -850,7 +879,7 @@ class BladeOne
      */
     protected function compilePhp($expression)
     {
-        return $expression ? "<?php {$expression}; ?>" : '<?php ';
+        return $expression ? $this->phpTag."{$expression}; ?>" : $this->phpTag.'';
     }
 
     /**
@@ -872,7 +901,7 @@ class BladeOne
      */
     protected function compileUnset($expression)
     {
-        return "<?php unset{$expression}; ?>";
+        return $this->phpTag."unset{$expression}; ?>";
     }
 
     /**
@@ -885,9 +914,9 @@ class BladeOne
     {
         $expression = $this->stripParentheses($expression);
         /*
-        $data = "<?php echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
+        $data = $this->phpTag."echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
         */
-        $data= '<?php echo $this->runChild('.$expression.'); ?>';
+        $data= $this->phpTag.'echo $this->runChild('.$expression.'); ?>';
         $this->footer[] = $data;
 
         return '';
@@ -903,8 +932,8 @@ class BladeOne
     {
         $expression = $this->stripParentheses($expression);
 
-        return $replace = '<?php echo $this->runChild('.$expression.'); ?>';
-        /* return "<?php echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
+        return $replace = $this->phpTag.'echo $this->runChild('.$expression.'); ?>';
+        /* return $this->phpTag."echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
         */
     }
 
@@ -918,9 +947,9 @@ class BladeOne
     {
         $expression = $this->stripParentheses($expression);
 
-        return $replace = '<?php if (\$this->exists($expression)) echo $this->runChild('.$expression.'); ?>';
+        return $replace = $this->phpTag.'if (\$this->exists($expression)) echo $this->runChild('.$expression.'); ?>';
 
-        /*return "<?php if (\$__env->exists($expression)) echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
+        /*return $this->phpTag."if (\$__env->exists($expression)) echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
         */
     }
 
@@ -932,7 +961,7 @@ class BladeOne
      */
     protected function compileStack($expression)
     {
-        return "<?php echo \$this->yieldPushContent{$expression}; ?>";
+        return $this->phpTag."echo \$this->yieldPushContent{$expression}; ?>";
     }
 
     /**
@@ -943,7 +972,7 @@ class BladeOne
      */
     protected function compilePush($expression)
     {
-        return "<?php \$this->startPush{$expression}; ?>";
+        return $this->phpTag."\$this->startPush{$expression}; ?>";
     }
 
     /**
@@ -954,7 +983,7 @@ class BladeOne
      */
     protected function compileEndpush($expression)
     {
-        return '<?php $this->stopPush(); ?>';
+        return $this->phpTag.'$this->stopPush(); ?>';
     }
 
     //</editor-fold>
@@ -1223,7 +1252,7 @@ class BladeOne
      */
     protected function compileWhile($expression)
     {
-        return "<?php while{$expression}: ?>";
+        return $this->phpTag."while{$expression}: ?>";
     }
 
     /**
@@ -1385,7 +1414,7 @@ class BladeOne
      * @return string
      */
     public function getCompiledFile() {
-        return $this->compiledPath.'/'.md5($this->fileName);
+        return $this->compiledPath.'/'.sha1($this->fileName);
     }
     /**
      * Get the full path of the compiled file.

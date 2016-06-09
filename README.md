@@ -64,7 +64,10 @@ views/hello.blade.php:
 |@section('title', 'Page Title')|Sends a single text to a section|0.2b ok|
 |@section('sidebar')|Start a block of code to send to a section|0.2b ok|
 |@endsection|End a block of code|0.2b ok|
-|@parent|Show the original code of the section|0.2b ok|
+|@parent|Show the original code of the section|REMOVED(*)|
+
+Note :(*) This feature is in the original documentation but its not implemented neither its required. May be its an obsolete feature.
+
 
 ### variables
 
@@ -143,9 +146,21 @@ Some features are missing , with bugs or not tested  but the basic ones are work
 There are several tags of undocumented features of the original Blade code.
 Extending BladeOne opens a world of opportunities. **May be a bladeone-bootstrap3 class in the future.**
 
+##Differences between Blade and BladeOne
+
+- Laravel's extension removed.
+- Dependencies to other class removed.
+- All operations use a unique class. Not more Arr and Str classes
+- The engine is self contained.
+- Setter and Getters removed. Instead, we are using the PHP style (public members).
+- 
+
 ##Version
 
 2016-06-08 0.2. Beta First publish launch.
+2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
+
+
 
 =======
 
