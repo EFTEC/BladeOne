@@ -140,6 +140,8 @@ https://laravel.com/docs/master/blade
 
 Some features are missing , with bugs or not tested  but the basic ones are working.
 @each could be optimized.
+There are several tags of undocumented features of the original Blade code.
+Extending BladeOne opens a world of opportunities. **May be a bladeone-bootstrap3 class in the future.**
 
 ##Version
 

@@ -41,7 +41,7 @@ Default: {{ $name or 'Default' }}<br>
 @foreach ($users as $user)
     <p>This is user {{ $user->id }}</p>
 @endforeach
-
+<hr>Forelse:<br>
 @forelse ($users as $user)
     <li>{{ $user->name }}</li>
 @empty
