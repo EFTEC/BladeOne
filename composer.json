@@ -1,6 +1,9 @@
 {
-  "name": "southprojects/bladeone",
-  "description": "Blade Template System in a single php file",
+  "name": "eftec/bladeone",
+  "description": "The standalone version Blade Template Engine from Laravel in a single php file",
+  "type": "library",
+  "keywords": ["blade","template","view"],
+  "homepage": "https://github.com/EFTEC/BladeOne",
   "minimum-stability": "beta",
   "license": "MIT",
   "authors": [
