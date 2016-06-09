@@ -161,7 +161,19 @@ For using this tag, the code requires to use the class BladeOneHtml
 @input('iduser',$currentUser,'text'[,$extra])
 ```
 
-@input creates a **input** tag. The first value is the id/name, the second is the default value, the third is the type (by default is text for textbox)*[]: 
+@input creates a **input** tag. The first value is the id/name, the second is the default value, the third is the type (by default is text for textbox).
+
+![input](http://i.imgur.com/pyiwEg7.jpg)
+
+### Button
+
+```html
+@commandbutton('iduser','value','label'[,$extra])
+```
+
+@commandbutton creates a **input** tag. The first value is the id/name, the second is the value, the third is the label of the button. 
+
+![commandbutton](http://i.imgur.com/fvRzou1.jpg)
 
 ### Extra Parameter
  

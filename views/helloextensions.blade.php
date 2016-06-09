@@ -8,6 +8,8 @@
 <hr>Input:<br>
 
 @input('id','default value','text')
+<br>
+<hr>Button:<br>
 
 @commandbutton('boton','v1','Press for Submit')
 
