@@ -22,7 +22,81 @@ Exists different version of Blade Template that runs without Laravel but most re
 
 This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]: 
 
+## Why do you need a framework for php?
+
+Simple, let's consider the next code:
+
+_php code:_
+```php
+<h1>Example</h1>
+<form>
+    <label>Field</label><input type='text' value='<?php echo htmlentities($name); ?>' name='name' /><br>
+    <?php if($name=='') {?>
+    Name missing<br>
+    <?php } ?>
+    <?php for($i=0;$i<10;$i++) {?>
+    <?php echo htmlentities($i);?><br>
+    <?php } ?>
+</form>
+```
+
+Using BladeOne you get:
+```php
+<h1>Example</h1>
+<form>
+    <label>Field</label><input type='text' value='{{$name}}' name='name' /><br>
+    @if($name=='')
+    Name missing<br>
+    @endif
+    @for($i;$i<10;$i++)
+    {{$i}}<br>
+    @endfor
+</form>
+```
+
+That its short and easy to understand.
+Also, it separates the business layer with the visual layer so instead of:
+
+_php code_ (
+```php
+<?php
+// here my php code
+$value=@$_GET['id'];
+$obj=new Class();
+...
+?><html>
+<h1>Subtitle</h1>
+<div>Hello World</div>
+</html>
+?>
+here more php code.
+<?
+```
+
+_we should do_
+```php
+<?php
+// here my php code
+$value=@$_GET['id'];
+$obj=new Class();
+$bladeone->run('view',array());
+here more php code.
+<?
+```
+
+_and view.blade.php:_
+```html
+<html>
+<h1>Subtitle</h1>
+<div>Hello World</div>
+</html>
+```
+
+
 ## Usage
+
+> You only need this file: **BladeOne.php** (and don't forget the license file)
+
 
 example.php:
 ```php
@@ -39,6 +113,12 @@ Where $views is the folder where the views (templates not compiled) will be stor
 $cache is the folder where the compiled files will be stored.
 
 In this example, the BladeOne opens the template **hello**. So in the views folders it should exists a file called **hello.blade.php**
+
+You also can force the compilation of the code by adding a true as the third parameter.
+
+```php
+echo $blade->run("hello",array("variable1"=>"value1"),true);
+```
 
 views/hello.blade.php:
 ```html
@@ -236,8 +316,9 @@ https://laravel.com/docs/master/blade
 - Dependencies to other class removed.
 - All operations use a unique class. Not more Arr and Str classes
 - The engine is self contained.
-- Setter and Getters removed. Instead, we are using the PHP style (public members).
-- 
+- Setter and Getters removed. Instead, we are using the PHP style (public members). 
+- Some of the logic of the code was changed.
+
 
 ##Version
 
@@ -250,6 +331,7 @@ https://laravel.com/docs/master/blade
 ##Collaboration
 
 You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
+
 
 ##Future
 I checked the code of Laravel's Blade and i know that there are a lot of room for improvement.
