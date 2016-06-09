@@ -5,6 +5,14 @@
 
 <h2>This example show the use of extensions</h2>
 
+<hr>Input:<br>
+
+@input('id','default value','text')
+
+@commandbutton('boton','v1','Press for Submit')
+
+<hr>Select:<br>
+
 Code:<br>
 <pre>
 @@selectonemenu('id1',"class='object'")<br>

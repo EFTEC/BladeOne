@@ -6,10 +6,16 @@
  * Extends the tags of the class BladeOne.  Its optional
  * It adds the next tags
  * <code>
- * @ selectonemenu('idCountry')
- * @ selectitem('0','--select a country')
- * @ selectitems($countries,'id','name',$currentCountry)
+ * select:
+ * @ selectonemenu('idCountry'[,$extra])
+ * @ selectitem('0','--select a country'[,$extra])
+ * @ selectitems($countries,'id','name',$currentCountry[,$extra])
  * @ endselectonemenu()
+ * input:
+ * @ input('iduser',$currentUser,'text'[,$extra])
+ * button:
+ * @ commandbutton('idbutton','value','text'[,$extra])
+ *
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
@@ -31,6 +37,12 @@ class BladeOneHtml extends BladeOne
     }
     public function compileSelectItems($expression) {
         return $this->phpTag."echo \$this->selectItems{$expression}; ?>";
+    }
+    public function compileInput($expression) {
+        return $this->phpTag."echo \$this->input{$expression}; ?>";
+    }
+    public function compileCommandButton($expression) {
+        return $this->phpTag."echo \$this->commandButton{$expression}; ?>";
     }
     //</editor-fold>
 
@@ -72,6 +84,15 @@ class BladeOneHtml extends BladeOne
             }
         }
         return $result;
+    }
+
+    public function input($id,$value='',$type='text',$extra='')
+    {
+        return "<input id='{$id}' name='{$id}' type='{$type}' {$extra} value='{$value}' />\n";
+    }
+    public function commandButton($id,$value='',$text='Button',$extra='')
+    {
+        return "<button type='submit' id='{$id}' name='{$id}' value='{value}' {$extra}>{$text}</button>\n";
     }
     //</editor-fold>
 }

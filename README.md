@@ -103,7 +103,7 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |@while(boolean)|while loop|not tested|
 |@endwhile|end while loop|not tested|
 
-##Sub Views
+### Sub Views
 
 |Tag|Note|status|
 |---|---|---|
@@ -112,39 +112,87 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |@each('view.name', $array, 'variable')|Includes a template for each element of the array|0.2b ok|
 Note: Templates called folder.template is equals to folder/template
 
-##Comments
+### Comments
 
 |Tag|Note|status|
 |---|---|---|
 |{{-- text --}}|Include a comment|0.2b ok|
 
-##Stacks
+### Stacks
 |Tag|Note|status|
 |---|---|---|
 |@push('elem')|Add the next block to the push stack|0.2b ok|
 |@endpush|End the push block|0.2b ok|
 |@stack('elem')|Show the stack|0.2b ok|
 
-##Service Inject
+### Service Inject
 |Tag|Note|status|
 |---|---|---|
 |@inject('metrics', 'App\Services\MetricsService')|Used for insert a Laravel Service|NOT SUPPORTED|
 
-##Extending Blade
+### Extending Blade
 
 Not compatible with the extension of Laravel's Blade.
 
-## Examples
+## New Tags HTML (Only for BladeOne)
+
+For using this tag, the code requires to use the class BladeOneHtml
+
+
+
+### Select
+
+```html
+@selectonemenu('id1')
+    @selectitem('0','--Select a country--')
+    @selectitems($countries,'id','name',$countrySelected)
+@endselectonemenu()
+```
+
+@selectonemenu creates the **select** tag. The first value is the id and name of the tag.
+@selectitem allows to add one element **option** tag. The first value is the id and the second is the visible text
+@selectitems allows to add one list of elements **option** tag. The first value is the list of values, the second and third is the id and name. And the fourth one is the selected value (optional)
+    
+![select](http://i.imgur.com/yaMavQB.jpg?1)
+
+### Input
+
+```html
+@input('iduser',$currentUser,'text'[,$extra])
+```
+
+@input creates a **input** tag. The first value is the id/name, the second is the default value, the third is the type (by default is text for textbox)*[]: 
+
+### Extra Parameter
+ 
+Additionally, you can add an (optional) last parameter with additional value (see the example of @selectonemenu)
+
+```html
+ <!-- code using bootstrap -->
+ <div class="form-group">
+  <label for="sel1">Select list:</label>
+        @selectonemenu('id1')
+            @selectitem('0','--Select a country--',"class='form-control'")
+            @selectitems($countries,'id','name',$countrySelected)
+        @endselectonemenu()
+  </select>
+</div>
+```
+
+
+
+## Defintion of Blade Template
 
 https://laravel.com/docs/master/blade
 
 
 ##Todo
 
-Some features are missing , with bugs or not tested  but the basic ones are working.
-@each could be optimized.
-There are several tags of undocumented features of the original Blade code.
-Extending BladeOne opens a world of opportunities. **May be a bladeone-bootstrap3 class in the future.**
+- Some features are missing , with bugs or not tested  but the basic ones are working.
+- @each could be optimized.
+- There are several tags of undocumented features of the original Blade code.
+- Extending BladeOne opens a world of opportunities. **May be a bladeone-bootstrap3 class in the future.**
+- Speed up the loading of compiled templates.
 
 ##Differences between Blade and BladeOne
 
@@ -157,8 +205,8 @@ Extending BladeOne opens a world of opportunities. **May be a bladeone-bootstrap
 
 ##Version
 
-2016-06-08 0.2. Beta First publish launch.
-2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
+- 2016-06-08 0.2. Beta First publish launch.
+- 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
 
 
 
