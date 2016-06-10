@@ -7,7 +7,8 @@
 
 <hr>Input:<br>
 
-@input('id','default value','text')
+@input('id','default value','text')<br>
+@input('id','default value','text',['class'=>'x1','enabled'=>'disable'])
 <br>
 <hr>Button:<br>
 

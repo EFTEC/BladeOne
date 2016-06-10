@@ -1,4 +1,4 @@
-![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)
+![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)   BladeOne
 
 # BladeOne
 BladeOne is a standalone version of Blade Template Engine that uses a single php file and can be ported and used in different projects.
@@ -238,9 +238,9 @@ usage:
 ```
 
 
-## New Tags added by BladeOneHtml (Only for BladeOne)
+## New Tags added by BladeOneHtml
 
-For using this tag, the code requires to use the class BladeOneHtml
+For using this tag, the code requires to use the class BladeOneHtml that extends the class BladeOne
 
 
 
@@ -279,9 +279,9 @@ For using this tag, the code requires to use the class BladeOneHtml
 
 ![commandbutton](http://i.imgur.com/fvRzou1.jpg)
 
-### Extra Parameter
+### Extra Arguments
  
-Additionally, you can add an (optional) last parameter with additional value (see the example of @selectonemenu)
+Additionally, you can add an (optional) last argument with additional value (see the example of @selectonemenu)
 
 ```html
  <!-- code using bootstrap -->
@@ -295,9 +295,29 @@ Additionally, you can add an (optional) last parameter with additional value (se
 </div>
 ```
 
+> The arguments could be a string: "_a1='xx' a2='yy'_" or in a declarative array: _['a1'=>'xx','a2'=>'yy']_
+
+## New Tags added by BladeOneLogic
+
+For using this tag, the code requires to use the class BladeOneLogic that extends the class BladeOne.
+The code extends the class BladeOneHtml by creating a daisy chain.
+
+### switch / case
+
+_Example:(the indentation is not required)_
+```html
+@switch($countrySelected)
+    @case(1)
+        first country selected<br>
+    @case(2)
+        second country selected<br>
+    @defaultcase()
+        other country selected<br>
+@endswitch()
+```
 
 
-## Defintion of Blade Template
+## Definition of Blade Template Engine
 
 https://laravel.com/docs/master/blade
 
@@ -339,5 +359,7 @@ I checked the code of Laravel's Blade and i know that there are a lot of room fo
 
 ##License
 MIT License.
+
 BladeOne (c) 2016 Jorge Patricio Castro Castillo
+
 Blade (c) 2012 Laravel Team (This code is based and use the work of the team of Laravel.)

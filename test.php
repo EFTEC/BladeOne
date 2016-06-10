@@ -31,4 +31,4 @@ echo $blade->run("hello2"
     ,["name"=>"hola mundo"
     ,'records'=>$records
     ,'users'=>$users]
-    ,true);
+    ,true,false);

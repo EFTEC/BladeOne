@@ -8,15 +8,14 @@
  * What's new?
  * 0.2b Use sha1 instead of md5 for generates the file
  *
- * @package  BladeOne
- * @version 0.2b 2016-06-09
- * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
 
 /**
  * Class BladeOne
- * @version 0.2 Beta 2016-06-08
- * @see https://github.com/jorgecc/BladeOne
+ * @package  BladeOne
+ * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
+ * @version 1.1 2016-06-10
+ * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
@@ -65,28 +64,7 @@ class BladeOne
      *
      * @var array
      */
-    /*
-   protected $compilers = array(
-       'Extensions',
-       'Extends',
-       'Comments',
-       'Echos',
-       'Openings',
-       'Closings',
-       'Else',
-       'Unless',
-       'EndUnless',
-       'Includes',
-       'Each',
-       'Yields',
-       'Shows',
-       'Language',
-       'SectionStart',
-       'SectionStop',
-       'SectionAppend',
-       'SectionOverwrite',
-   );
-  */
+
    protected $compilers = [
        'Extensions',
        'Statements',
@@ -141,6 +119,8 @@ class BladeOne
      * @var string
      */
     protected $path;
+
+    protected $isRunFast=false;
 
 
 
@@ -231,23 +211,53 @@ class BladeOne
     public function runChild($view,$variables=array()) {
 
         $newVariables=array_merge($variables,$this->variables);
-        return $this->run($view,$newVariables,false,false);
+        return $this->runInternal($view,$newVariables,false,false,$this->isRunFast);
     }
+
+    /**
+     * run the blade engine. It returns the result of the code.
+     * @param $view
+     * @param array $variables
+     * @param bool $forced if true then it recompiles no matter if the compiled file exists or not.
+     * @param bool $runFast  if true then the code is not compiled neither checked and it runs directly the compiled version.
+     * @return string
+     */
+
+    public function run($view,$variables=array(), $forced=false,$runFast=false)
+    {
+        if ($forced==$runFast && $forced) {
+            $this->showError("run","we can't force and run fast at the same time",true);
+        }
+        return $this->runInternal($view,$variables,$forced,true,$runFast);
+    }
+
     /**
      * run the blade engine. It returns the result of the code.
      * @param $view
      * @param array $variables
      * @param bool $forced if true then it recompiles no matter if the compiled file exists or not.
      * @param bool $isParent
+     * @param bool $runFast  if true then the code is not compiled neither checked and it runs directly the compiled version.
      * @return string
      */
-
-    public function run($view,$variables=array(), $forced=false,$isParent=true)
+    private function runInternal($view,$variables=array(), $forced=false,$isParent=true,$runFast=false)
     {
+
         if ($isParent) {
             $this->variables=$variables;
         }
-        $this->compile($view,$forced);
+        if (!$runFast) {
+            // a) if the compile is forced then we compile the original file, then save the file.
+            // b) if the compile is not forced then we read the datetime of both file and we compared.
+            // c) in both cases, if the compiled doesn't exist then we compile.
+            $this->compile($view, $forced);
+        } else {
+            // running fast, we don't compile neither we check or read the original template.
+            if ($view) {
+                $this->fileName = $view;
+            }
+        }
+        $this->isRunFast=$runFast;
         return $this->evaluatePath($this->getCompiledFile(),$variables);
     }
 
@@ -379,8 +389,7 @@ class BladeOne
             } elseif (method_exists($this, $method = 'compile'.ucfirst($match[1]))) {
                 $match[0] = $this->$method(static::get($match, 3));
             } else {
-                echo "<br>Error BladeOne: operation not defined:".$match[1]."<br>";
-                die(1);
+                $this->showError("@compile","Operation not defined:@".$match[1],true);
             }
 
             return isset($match[3]) ? $match[0] : $match[0].$match[2];
@@ -1084,6 +1093,23 @@ class BladeOne
     }
 
     /**
+     * Convert an array such as ("class1"=>"myclass","style="mystyle") to class1='myclass' style='mystyle' string
+     * @param $array
+     * @return string
+     */
+    protected function convertArg($array) {
+        if (!is_array($array)) {
+            return $array;
+        }
+        function callback($k, $v) {
+            return $k."='{$v}'";
+        }
+
+        return implode(' ',array_map( 'callback', array_keys($array), $array));
+
+    }
+
+    /**
      * Replace the raw placeholders with the original code stored in the raw blocks.
      *
      * @param  string  $result
@@ -1270,15 +1296,7 @@ class BladeOne
         return $expression;
     }
 
-    /**
-     * Get the extensions used by the compiler.
-     *
-     * @return array
-     */
-    public function getExtensions()
-    {
-        return $this->extensions;
-    }
+
 
     /**
      * Register a custom Blade compiler.
@@ -1303,37 +1321,7 @@ class BladeOne
         $this->customDirectives[$name] = $handler;
     }
 
-    /**
-     * Get the list of custom directives.
-     *
-     * @return array
-     */
-    public function getCustomDirectives()
-    {
-        return $this->customDirectives;
-    }
 
-    /**
-     * Gets the raw tags used by the compiler.
-     *
-     * @return array
-     */
-    public function getRawTags()
-    {
-        return $this->rawTags;
-    }
-
-    /**
-     * Sets the raw tags used for the compiler.
-     *
-     * @param  string  $openTag
-     * @param  string  $closeTag
-     * @return void
-     */
-    public function setRawTags($openTag, $closeTag)
-    {
-        $this->rawTags = [preg_quote($openTag), preg_quote($closeTag)];
-    }
 
     /**
      * Sets the content tags used for the compiler.
@@ -1395,16 +1383,7 @@ class BladeOne
         return array_map('stripcslashes', $tags);
     }
 
-    /**
-     * Set the echo format to be used by the compiler.
-     *
-     * @param  string  $format
-     * @return void
-     */
-    public function setEchoFormat($format)
-    {
-        $this->echoFormat = $format;
-    }
+
     //</editor-fold>
 
 
@@ -1572,7 +1551,7 @@ class BladeOne
     public static function first($array, callable $callback = null, $default = null)
     {
         if (is_null($callback)) {
-            return empty($array) ? value($default) : reset($array);
+            return empty($array) ? self::value($default) : reset($array);
         }
 
         foreach ($array as $key => $value) {
@@ -1581,7 +1560,7 @@ class BladeOne
             }
         }
 
-        return value($default);
+        return self::value($default);
     }
     /**
      * Return the last element in an array passing a given truth test.
@@ -1771,6 +1750,21 @@ class BladeOne
         }
 
         return $result;
+    }
+
+    /**
+     * Show an error in the web.
+     * @param string $id Title of the error
+     * @param string $text Message of the error
+     * @param bool $critic if true then the compilation is ended, otherwise it continues
+     */
+    private function showError($id,$text,$critic=false) {
+        echo "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
+        echo "BladeOne Error [{$id}]:<br>";
+        echo "<span style='color:white'>$text</span><br></div>\n";
+        if ($critic) {
+            die(1);
+        }
     }
 
     //</editor-fold>

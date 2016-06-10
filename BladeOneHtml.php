@@ -19,7 +19,7 @@
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
- * @version 1.0 2016-06-09
+ * @version 1.1 2016-06-10
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -48,13 +48,13 @@ class BladeOneHtml extends BladeOne
 
     //<editor-fold desc="used function">
     public function selectOneMenu($name,$extra='') {
-        return "<select id='{$name}' name='{$name}' $extra>\n";
+        return "<select id='{$name}' name='{$name}' {$this->convertArg($extra)}>\n";
     }
     public function endSelectOneMenu() {
         return "</select>";
     }
     public function selectItem($id,$text,$extra='') {
-        return "<option value='{$id}' $extra>{$text}</option>";
+        return "<option value='{$id}' {$this->convertArg($extra)}>{$text}</option>";
     }
 
     /**
@@ -75,12 +75,12 @@ class BladeOneHtml extends BladeOne
         if ($t) {
             foreach($array as $v) {
                 $selected=($v->{$id}==$selectedItem)?'selected':'';
-                $result.="<option value='".$v->{$id}."' $selected $extra>".$v->{$text}."</option>\n";
+                $result.="<option value='".$v->{$id}."' $selected {$this->convertArg($extra)}>".$v->{$text}."</option>\n";
             }
         } else {
             foreach($array as $v) {
                 $selected=($v[$id]==$selectedItem)?'selected':'';
-                $result.="<option value='".$v[$id]."' $selected $extra>".$v[$text]."</option>\n";
+                $result.="<option value='".$v[$id]."' $selected {$this->convertArg($extra)}>".$v[$text]."</option>\n";
             }
         }
         return $result;
@@ -88,11 +88,11 @@ class BladeOneHtml extends BladeOne
 
     public function input($id,$value='',$type='text',$extra='')
     {
-        return "<input id='{$id}' name='{$id}' type='{$type}' {$extra} value='{$value}' />\n";
+        return "<input id='{$id}' name='{$id}' type='{$type}' {$this->convertArg($extra)} value='{$value}' />\n";
     }
     public function commandButton($id,$value='',$text='Button',$extra='')
     {
-        return "<button type='submit' id='{$id}' name='{$id}' value='{value}' {$extra}>{$text}</button>\n";
+        return "<button type='submit' id='{$id}' name='{$id}' value='{value}' {$this->convertArg($extra)}>{$text}</button>\n";
     }
     //</editor-fold>
 }
