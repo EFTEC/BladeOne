@@ -231,7 +231,8 @@ https://laravel.com/docs/master/blade
 
 - 2016-06-08 0.2. Beta First publish launch.
 - 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
-
+- 2016-06-09 1.1 Some fine tune.
+- 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with composer)
 
 
 =======
