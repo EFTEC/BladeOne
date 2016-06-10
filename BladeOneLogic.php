@@ -15,7 +15,7 @@
  *  ...
  * @ endswitch()
  * </code>
- * NOTE: Don't allow nested switch
+ * NOTE: Its not compatible with nested switches
  * @package  BladeOneLogic
  * @version 1.0 2016-06-09
  * @link https://github.com/EFTEC/BladeOne

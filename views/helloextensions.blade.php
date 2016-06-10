@@ -49,9 +49,9 @@ other country selected<br>
     first country selected<br>
 @case(2)
     second country selected<br>
-@defaultcase()
+@defaultcase
     other country selected<br>
-@endswitch()
+@endswitch
 
 </body>
 </html>
