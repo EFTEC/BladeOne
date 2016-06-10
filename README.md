@@ -203,7 +203,25 @@ Additionally, you can add an (optional) last parameter with additional value (se
 </div>
 ```
 
+## New Tags added by BladeOneLogic
+ 
+## Defintion of Blade Template
+For using this tag, the code requires to use the class BladeOneLogic that extends the class BladeOne.
+The code extends the class BladeOneHtml by creating a daisy chain.
 
+### switch / case
+
+_Example:(the indentation is not required)_
+```html
+@switch($countrySelected)
+    @case(1)
+        first country selected<br>
+    @case(2)
+        second country selected<br>
+    @defaultcase()
+        other country selected<br>
+@endswitch()
+```
 
 ## Defintion of Blade Template
 
