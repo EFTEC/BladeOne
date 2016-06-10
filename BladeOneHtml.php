@@ -19,10 +19,13 @@
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
- * @version 1.1 2016-06-10
+ * @version 1.2 2016-06-10
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
+
+namespace eftec\bladeone;
+
 class BladeOneHtml extends BladeOne
 {
     //<editor-fold desc="compile function">

@@ -1,4 +1,4 @@
-![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)   BladeOne
+![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)
 
 # BladeOne
 BladeOne is a standalone version of Blade Template Engine that uses a single php file and can be ported and used in different projects.
@@ -20,105 +20,49 @@ Exists different version of Blade Template that runs without Laravel but most re
 - Most of the code in the original Blade is used for future use, including the chance to use a different template engine.
 - Some Laravel legacy code.
 
-This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces). 
-
-## Why do you need a framework for php?
-
-Simple, let's consider the next code:
-
-_php code:_
-```php
-<h1>Example</h1>
-<form>
-    <label>Field</label><input type='text' value='<?php echo htmlentities($name); ?>' name='name' /><br>
-    <?php if($name=='') {?>
-    Name missing<br>
-    <?php } ?>
-    <?php for($i=0;$i<10;$i++) {?>
-    <?php echo htmlentities($i);?><br>
-    <?php } ?>
-</form>
-```
-
-Using BladeOne you get:
-```php
-<h1>Example</h1>
-<form>
-    <label>Field</label><input type='text' value='{{$name}}' name='name' /><br>
-    @if($name=='')
-    Name missing<br>
-    @endif
-    @for($i;$i<10;$i++)
-    {{$i}}<br>
-    @endfor
-</form>
-```
-
-That its short and easy to understand.
-Also, it separates the business layer with the visual layer so instead of:
-
-_php code_ (
-```php
-<?php
-// here my php code
-$value=@$_GET['id'];
-$obj=new Class();
-...
-?><html>
-<h1>Subtitle</h1>
-<div>Hello World</div>
-</html>
-?>
-here more php code.
-<?
-```
-
-_we should do_
-```php
-<?php
-// here my php code
-$value=@$_GET['id'];
-$obj=new Class();
-$bladeone->run('view',array());
-here more php code.
-<?
-```
-
-_and view.blade.php:_
-```html
-<html>
-<h1>Subtitle</h1>
-<div>Hello World</div>
-</html>
-```
-
+This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]: 
 
 ## Usage
-
-> You only need this file: **BladeOne.php** (and don't forget the license file)
-
 
 example.php:
 ```php
 <?php
 include "BladeOne.php";
+Use eftec\bladeone;
 
 $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
-$blade=new BladeOne($views,$cache);
+define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+$blade=new bladeone\BladeOne($views,$cache);
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
+
+_Or using composer's autoload.php_
+```php
+<?php
+require "vendor/autoload.php";
+
+Use eftec\bladeone;
+
+$views = __DIR__ . '/views';
+$cache = __DIR__ . '/cache';
+define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+$blade=new bladeone\BladeOne($views,$cache);
+echo $blade->run("hello",array("variable1"=>"value1"));
+```
+_(modify composer.json as follow) and run "composer update"_
+```json
+"autoload": {
+  "psr-4": {
+    "eftec\\": "vendor/eftec/"
+  }
+}
+```  
 
 Where $views is the folder where the views (templates not compiled) will be stored. 
 $cache is the folder where the compiled files will be stored.
 
 In this example, the BladeOne opens the template **hello**. So in the views folders it should exists a file called **hello.blade.php**
-
-You also can force the compilation of the code by adding a true as the third parameter.
-
-```php
-echo $blade->run("hello",array("variable1"=>"value1"),true);
-```
 
 views/hello.blade.php:
 ```html
@@ -133,17 +77,17 @@ views/hello.blade.php:
 #### In the master page (layout)
 |Tag|Note|status|
 |---|---|---|
-|@section('sidebar')|Start a new section|0.2b OK|
-|@show|Indicates where the content of section will be displayed|0.2b OK|
-|@yield('title')|Show here the content of a section|0.2b OK|
+|@section('sidebar')|Start a new section|0.2b ok|
+|@show|Indicates where the content of section will be displayed|0.2 ok|
+|@yield('title')|Show here the content of a section|0.2b ok|
 
 #### Using the master page (using the layout)
 |Tag|Note|status|
 |---|---|---|
-|@extends('layouts.master')|Indicates the layout to use|0.2b OK|
-|@section('title', 'Page Title')|Sends a single text to a section|0.2b OK|
-|@section('sidebar')|Start a block of code to send to a section|0.2b OK|
-|@endsection|End a block of code|0.2b OK|
+|@extends('layouts.master')|Indicates the layout to use|0.2b ok|
+|@section('title', 'Page Title')|Sends a single text to a section|0.2b ok|
+|@section('sidebar')|Start a block of code to send to a section|0.2b ok|
+|@endsection|End a block of code|0.2b ok|
 |@parent|Show the original code of the section|REMOVED(*)|
 
 Note :(*) This feature is in the original documentation but its not implemented neither its required. May be its an obsolete feature.
@@ -154,56 +98,56 @@ Note :(*) This feature is in the original documentation but its not implemented 
 
 |Tag|Note|status|
 |---|---|---|
-|{{$variable1}}|show the value of the variable using htmlentities (avoid xss attacks)|0.2b OK|
-|@{{$variable1}}|show the value of the content directly (not evaluated, useful for js)|0.2b OK|
-|{!!$variable1!!}|show the value of the variable without htmlentities (no escaped)|0.2b OK|
-|{{ $name or 'Default' }}|value or default|0.2b OK|
+|{{$variable1}}|show the value of the variable using htmlentities (avoid xss attacks)|0.2b ok|
+|@{{$variable1}}|show the value of the content directly (not evaluated, useful for js)|0.2b ok|
+|{!!$variable1!!}|show the value of the variable without htmlentities (no escaped)|0.2b ok|
+|{{ $name or 'Default' }}|value or default|0.2b ok|
 
 ### logic
 
 |Tag|Note|status|
 |---|---|---|
-|@if (boolean)|if logic-conditional|0.2b OK|
-|@elseif (boolean)|else if logic-conditional|0.2b OK|
-|@else|else logic|0.2b OK|
-|@endif|end if logic|0.2b OK|
-|@unless(boolean)|execute block of code is boolean is false|0.2b OK|
+|@if (boolean)|if logic-conditional|0.2b ok|
+|@elseif (boolean)|else if logic-conditional|0.2b ok|
+|@else|else logic|0.2b ok|
+|@endif|end if logic|0.2b ok|
+|@unless(boolean)|execute block of code is boolean is false|0.2b ok|
 
 ### loop
 
 |Tag|Note|status|
 |---|---|---|
-|@for($i = 0; $i < 10; $i++)|for loop|0.2b OK|
-|@endfor|end of for loop|0.2b OK|
-|@foreach($array as $obj)|foreach loop|0.2b OK|
-|@endforeach|end of foreach loop|0.2b OK|
-|@forelse($array as $obj)|inverse foreach loop|0.2b OK|
-|@empty|if forelse loop is empty the executes the next block|0.2b OK|
-|@endforelse|end of forelse block|0.2b OK|
-|@while(boolean)|while loop|0.2b OK|
-|@endwhile|end while loop|0.2b OK|
+|@for($i = 0; $i < 10; $i++)|for loop|0.2b ok|
+|@endfor|end of for loop|0.2b ok|
+|@foreach($array as $obj)|foreach loop|0.2b ok|
+|@endforeach|end of foreach loop|0.2b ok|
+|@forelse($array as $obj)|inverse foreach loop|not tested|
+|@empty|if forelse loop is empty the executes the next block|not tested|
+|@endforelse|end of forelse block|not tested|
+|@while(boolean)|while loop|not tested|
+|@endwhile|end while loop|not tested|
 
 ### Sub Views
 
 |Tag|Note|status|
 |---|---|---|
-|@include('folder.template')|Include a template|0.2b OK|
-|@include('folder.template',['some' => 'data'])|Include a template with new variables|0.2b OK|
-|@each('view.name', $array, 'variable')|Includes a template for each element of the array|0.2b OK|
+|@include('folder.template')|Include a template|0.2b ok|
+|@include('folder.template',['some' => 'data'])|Include a template with new variables|0.2b ok|
+|@each('view.name', $array, 'variable')|Includes a template for each element of the array|0.2b ok|
 Note: Templates called folder.template is equals to folder/template
 
 ### Comments
 
 |Tag|Note|status|
 |---|---|---|
-|{{-- text --}}|Include a comment|0.2b OK|
+|{{-- text --}}|Include a comment|0.2b ok|
 
 ### Stacks
 |Tag|Note|status|
 |---|---|---|
-|@push('elem')|Add the next block to the push stack|0.2b OK|
-|@endpush|End the push block|0.2b OK|
-|@stack('elem')|Show the stack|0.2b OK|
+|@push('elem')|Add the next block to the push stack|0.2b ok|
+|@endpush|End the push block|0.2b ok|
+|@stack('elem')|Show the stack|0.2b ok|
 
 ### Service Inject
 |Tag|Note|status|
@@ -212,35 +156,11 @@ Note: Templates called folder.template is equals to folder/template
 
 ### Extending Blade
 
-The classes BladeOneHtml and BladeOneLogic are a working example of extending the classes.
+Not compatible with the extension of Laravel's Blade.
 
-#### How to extends BladeOne
-1) Add a new class that (ahem) extends the BladeOne class.
+## New Tags HTML (Only for BladeOne)
 
-BladeOneHtml.php:
-```php
-<?php
-class BladeOneHtml extends BladeOne
-{
-}
-```
-
-2) Add a member to this class with the name starting with "compile" while the rest of the name is the tag used. This function should has a single parameter. This function should returns a string (the string will be saved in the compiled template).
-
-inside the extended class:
-```php
-public function compileSelectOneMenu($expression) {
-```
-
-usage:
-```html
-@selectonemenu('hello')
-```
-
-
-## New Tags added by BladeOneHtml
-
-For using this tag, the code requires to use the class BladeOneHtml that extends the class BladeOne
+For using this tag, the code requires to use the class BladeOneHtml
 
 
 
@@ -265,23 +185,11 @@ For using this tag, the code requires to use the class BladeOneHtml that extends
 @input('iduser',$currentUser,'text'[,$extra])
 ```
 
-@input creates a **input** tag. The first value is the id/name, the second is the default value, the third is the type (by default is text for textbox).
+@input creates a **input** tag. The first value is the id/name, the second is the default value, the third is the type (by default is text for textbox)*[]: 
 
-![input](http://i.imgur.com/pyiwEg7.jpg)
-
-### Button
-
-```html
-@commandbutton('iduser','value','label'[,$extra])
-```
-
-@commandbutton creates a **input** tag. The first value is the id/name, the second is the value, the third is the label of the button. 
-
-![commandbutton](http://i.imgur.com/fvRzou1.jpg)
-
-### Extra Arguments
+### Extra Parameter
  
-Additionally, you can add an (optional) last argument with additional value (see the example of @selectonemenu)
+Additionally, you can add an (optional) last parameter with additional value (see the example of @selectonemenu)
 
 ```html
  <!-- code using bootstrap -->
@@ -295,29 +203,9 @@ Additionally, you can add an (optional) last argument with additional value (see
 </div>
 ```
 
-> The arguments could be a string: "_a1='xx' a2='yy'_" or in a declarative array: _['a1'=>'xx','a2'=>'yy']_
-
-## New Tags added by BladeOneLogic
-
-For using this tag, the code requires to use the class BladeOneLogic that extends the class BladeOne.
-The code extends the class BladeOneHtml by creating a daisy chain.
-
-### switch / case
-
-_Example:(the indentation is not required)_
-```html
-@switch($countrySelected)
-    @case(1)
-        first country selected<br>
-    @case(2)
-        second country selected<br>
-    @defaultcase()
-        other country selected<br>
-@endswitch()
-```
 
 
-## Definition of Blade Template Engine
+## Defintion of Blade Template
 
 https://laravel.com/docs/master/blade
 
@@ -336,14 +224,14 @@ https://laravel.com/docs/master/blade
 - Dependencies to other class removed.
 - All operations use a unique class. Not more Arr and Str classes
 - The engine is self contained.
-- Setter and Getters removed. Instead, we are using the PHP style (public members). 
-- Some of the logic of the code was changed.
-
+- Setter and Getters removed. Instead, we are using the PHP style (public members).
+- 
 
 ##Version
 
-- 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
 - 2016-06-08 0.2. Beta First publish launch.
+- 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
+
 
 
 =======
@@ -352,14 +240,11 @@ https://laravel.com/docs/master/blade
 
 You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
 
-
 ##Future
-I checked the code of Laravel's Blade and i know that there are a lot of room for improvement.
+I checked the code of BladeOne and i know that there are a lot of room for improvement.
 
 
 ##License
 MIT License.
-
 BladeOne (c) 2016 Jorge Patricio Castro Castillo
-
-Blade (c) 2012 Laravel Team (This code is based and use the work of the team of Laravel.)
+Blade (c) 2012 Laravel Team (This code is based and use  the work of the team of Laravel.)

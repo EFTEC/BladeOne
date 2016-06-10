@@ -17,10 +17,13 @@
  * </code>
  * NOTE: Its not compatible with nested switches
  * @package  BladeOneLogic
- * @version 1.0 2016-06-09
+ * @version 1.2 2016-06-10
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
+
+namespace eftec\bladeone;
+
 class BladeOneLogic extends BladeOneHtml
 {
     private $switchCount=0;

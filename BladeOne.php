@@ -5,8 +5,6 @@
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
  * Part of this code is based in the work of Laravel PHP Components.
  *
- * What's new?
- * 0.2b Use sha1 instead of md5 for generates the file
  *
  */
 
@@ -14,9 +12,12 @@
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 1.1 2016-06-10
+ * @version 1.2 2016-06-10
  * @link https://github.com/EFTEC/BladeOne
  */
+
+namespace eftec\bladeone;
+
 class BladeOne
 {
 
@@ -218,14 +219,19 @@ class BladeOne
      * run the blade engine. It returns the result of the code.
      * @param $view
      * @param array $variables
-     * @param bool $forced if true then it recompiles no matter if the compiled file exists or not.
-     * @param bool $runFast  if true then the code is not compiled neither checked and it runs directly the compiled version.
      * @return string
      */
 
-    public function run($view,$variables=array(), $forced=false,$runFast=false)
+    public function run($view,$variables=array())
     {
-        if ($forced==$runFast && $forced) {
+        $mode=0; // mode=0 automatic: not forced and not run fast.
+        if (defined('BLADEONE_MODE')) {
+            $mode=BLADEONE_MODE;
+        }
+        $forced=$mode && 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
+        $runFast=$mode && 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
+
+        if ($mode==3) {
             $this->showError("run","we can't force and run fast at the same time",true);
         }
         return $this->runInternal($view,$variables,$forced,true,$runFast);
@@ -1443,8 +1449,8 @@ class BladeOne
     public function getFile($fileName)
     {
         if (is_file($fileName)) return file_get_contents($fileName);
+        $this->showError('getFile',"File does not exist at path {$fileName}",true);
 
-        throw new Exception("File does not exist at path {$fileName}");
     }
 
     protected function evaluatePath($compiledFile,$variables)
@@ -1478,6 +1484,7 @@ class BladeOne
      */
     protected function handleViewException($e)
     {
+        
         ob_get_clean(); throw $e;
     }
     //</editor-fold>
@@ -1759,6 +1766,7 @@ class BladeOne
      * @param bool $critic if true then the compilation is ended, otherwise it continues
      */
     private function showError($id,$text,$critic=false) {
+        ob_get_clean();
         echo "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
         echo "BladeOne Error [{$id}]:<br>";
         echo "<span style='color:white'>$text</span><br></div>\n";

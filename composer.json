@@ -10,6 +10,10 @@
     {
       "name": "Jorge Patricio Castro Castillo",
       "email": "jcastro@eftec.cl"
-    }
-  ]
+    }],
+  "autoload": {
+      "psr-4": {
+        "eftec\\": "vendor/eftec/"
+      }
+  }
 }
