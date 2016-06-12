@@ -251,7 +251,7 @@ https://laravel.com/docs/master/blade
 - 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
 - 2016-06-09 1.1 Some fine tune.
 - 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with composer)
-
+- 2016-06-12 1.3 Some clean up.  I removed some unused parameters.
 
 =======
 

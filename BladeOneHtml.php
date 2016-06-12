@@ -19,7 +19,7 @@
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
- * @version 1.2 2016-06-10
+ * @version 1.3 2016-06-12
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -51,7 +51,7 @@ class BladeOneHtml extends BladeOne
 
     //<editor-fold desc="used function">
     public function selectOneMenu($name,$extra='') {
-        return "<select id='{$name}' name='{$name}' {$this->convertArg($extra)}>\n";
+        return "<select id='".static::e($name)."' name='".static::e($name)."' {$this->convertArg($extra)}>\n";
     }
     public function endSelectOneMenu() {
         return "</select>";
@@ -78,12 +78,12 @@ class BladeOneHtml extends BladeOne
         if ($t) {
             foreach($array as $v) {
                 $selected=($v->{$id}==$selectedItem)?'selected':'';
-                $result.="<option value='".$v->{$id}."' $selected {$this->convertArg($extra)}>".$v->{$text}."</option>\n";
+                $result.="<option value='".$v->{$id}."' $selected {$this->convertArg($extra)}>".static::e($v->{$text})."</option>\n";
             }
         } else {
             foreach($array as $v) {
                 $selected=($v[$id]==$selectedItem)?'selected':'';
-                $result.="<option value='".$v[$id]."' $selected {$this->convertArg($extra)}>".$v[$text]."</option>\n";
+                $result.="<option value='".$v[$id]."' $selected {$this->convertArg($extra)}>".static::e($v[$text])."</option>\n";
             }
         }
         return $result;
@@ -91,11 +91,11 @@ class BladeOneHtml extends BladeOne
 
     public function input($id,$value='',$type='text',$extra='')
     {
-        return "<input id='{$id}' name='{$id}' type='{$type}' {$this->convertArg($extra)} value='{$value}' />\n";
+        return "<input id='".static::e($id)."' name='".static::e($id)."' type='{$type}' {$this->convertArg($extra)} value='{".static::e($value)."}' />\n";
     }
     public function commandButton($id,$value='',$text='Button',$extra='')
     {
-        return "<button type='submit' id='{$id}' name='{$id}' value='{value}' {$this->convertArg($extra)}>{$text}</button>\n";
+        return "<button type='submit' id='".static::e($id)."' name='".static::e($id)."' value='{".static::e($value)."' {$this->convertArg($extra)}>{$text}</button>\n";
     }
     //</editor-fold>
 }

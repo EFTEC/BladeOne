@@ -12,11 +12,13 @@
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 1.2 2016-06-10
+ * @version 1.3 2016-06-12
  * @link https://github.com/EFTEC/BladeOne
  */
 
 namespace eftec\bladeone;
+
+use Exception;
 
 class BladeOne
 {
@@ -531,10 +533,9 @@ class BladeOne
     /**
      * Compile the show statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileShow($expression)
+    protected function compileShow()
     {
         return $this->phpTag.'echo $this->yieldSection(); ?>';
     }
@@ -554,10 +555,9 @@ class BladeOne
     /**
      * Compile the append statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileAppend($expression)
+    protected function compileAppend()
     {
         return $this->phpTag.'$this->appendSection(); ?>';
     }
@@ -565,10 +565,9 @@ class BladeOne
     /**
      * Compile the end-section statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndsection($expression)
+    protected function compileEndsection()
     {
         return $this->phpTag.'$this->stopSection(); ?>';
     }
@@ -576,10 +575,9 @@ class BladeOne
     /**
      * Compile the stop statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileStop($expression)
+    protected function compileStop()
     {
         return $this->phpTag.'$this->stopSection(); ?>';
     }
@@ -588,10 +586,9 @@ class BladeOne
     /**
      * Compile the overwrite statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileOverwrite($expression)
+    protected function compileOverwrite()
     {
         return $this->phpTag.'$this->stopSection(true); ?>';
     }
@@ -610,10 +607,9 @@ class BladeOne
     /**
      * Compile the end unless statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndunless($expression)
+    protected function compileEndunless()
     {
         return $this->phpTag.'endif; ?>';
     }
@@ -643,10 +639,9 @@ class BladeOne
     /**
      * Compile the else statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileElse($expression)
+    protected function compileElse()
     {
         return $this->phpTag.'else: ?>';
     }
@@ -787,10 +782,9 @@ class BladeOne
     /**
      * Compile the forelse statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEmpty($expression)
+    protected function compileEmpty()
     {
         $empty = '$__empty_'.$this->forelseCounter--;
 
@@ -812,10 +806,9 @@ class BladeOne
     /**
      * Compile the end-while statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndwhile($expression)
+    protected function compileEndwhile()
     {
         return $this->phpTag.'endwhile; ?>';
     }
@@ -823,10 +816,9 @@ class BladeOne
     /**
      * Compile the end-for statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndfor($expression)
+    protected function compileEndfor()
     {
         return $this->phpTag.'endfor; ?>';
     }
@@ -834,10 +826,9 @@ class BladeOne
     /**
      * Compile the end-for-each statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndforeach($expression)
+    protected function compileEndforeach()
     {
         return $this->phpTag.'endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>';
     }
@@ -845,10 +836,9 @@ class BladeOne
     /**
      * Compile the end-can statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndcan($expression)
+    protected function compileEndcan()
     {
         return $this->phpTag.'endif; ?>';
     }
@@ -856,10 +846,9 @@ class BladeOne
     /**
      * Compile the end-cannot statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndcannot($expression)
+    protected function compileEndcannot()
     {
         return $this->phpTag.'endif; ?>';
     }
@@ -867,10 +856,9 @@ class BladeOne
     /**
      * Compile the end-if statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndif($expression)
+    protected function compileEndif()
     {
         return $this->phpTag.'endif; ?>';
     }
@@ -878,10 +866,9 @@ class BladeOne
     /**
      * Compile the end-for-else statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndforelse($expression)
+    protected function compileEndforelse()
     {
         return $this->phpTag.'endif; ?>';
     }
@@ -900,10 +887,9 @@ class BladeOne
     /**
      * Compile end-php statement into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndphp($expression)
+    protected function compileEndphp()
     {
         return ' ?>';
     }
@@ -993,10 +979,9 @@ class BladeOne
     /**
      * Compile the endpush statements into valid PHP.
      *
-     * @param  string  $expression
      * @return string
      */
-    protected function compileEndpush($expression)
+    protected function compileEndpush()
     {
         return $this->phpTag.'$this->stopPush(); ?>';
     }
@@ -1027,18 +1012,15 @@ class BladeOne
      * Stop injecting content into a push section.
      *
      * @return string
-     * @throws \InvalidArgumentException
      */
     public function stopPush()
     {
         if (empty($this->pushStack)) {
-            throw new InvalidArgumentException('Cannot end a section without first starting one.');
+            $this->showError('stopPush','Cannot end a section without first starting one',true);
         }
 
         $last = array_pop($this->pushStack);
-
         $this->extendPush($last, ob_get_clean());
-
         return $last;
     }
 
@@ -1099,22 +1081,29 @@ class BladeOne
     }
 
     /**
-     * Convert an array such as ("class1"=>"myclass","style="mystyle") to class1='myclass' style='mystyle' string
-     * @param $array
+     * Convert an array such as ["class1"=>"myclass","style="mystyle"] to class1='myclass' style='mystyle' string
+     * @param array|string $array array to convert
+     * @param array $merge (optional) array to merge (such as to replace class)
      * @return string
      */
-    protected function convertArg($array) {
-        if (!is_array($array)) {
-            return $array;
-        }
-        function callback($k, $v) {
-            return $k."='{$v}'";
-        }
+    protected function convertArg($array,$merge=null) {
 
-        return implode(' ',array_map( 'callback', array_keys($array), $array));
+        if (!is_array($array)) {
+            // if its text then its converted to an array ['index'=>value,'index2'=>value]..
+            $regexp = "@(\S+)=(\"|'| |)(.*)(\"|'| |>)@isU";
+            preg_match_all($regexp, "<TAG ".$array, $p);
+            $array=array_combine($p[1],$p[3]);
+            // $array=array_change_key_case(array_combine($p[1],$p[3]),CASE_LOWER);
+        }
+        if ($merge!=null) {
+            $array=array_merge($array,$merge);
+        }
+        return implode(' ',array_map( 'static::convertArgCallBack', array_keys($array), $array));
 
     }
-
+    function convertArgCallBack($k, $v) {
+        return $k."='{$v}' ";
+    }
     /**
      * Replace the raw placeholders with the original code stored in the raw blocks.
      *
@@ -1443,17 +1432,21 @@ class BladeOne
      *
      * @param $fileName
      * @return string
-     * @throws Exception
-
      */
     public function getFile($fileName)
     {
         if (is_file($fileName)) return file_get_contents($fileName);
         $this->showError('getFile',"File does not exist at path {$fileName}",true);
-
+        return '';
     }
 
-    protected function evaluatePath($compiledFile,$variables)
+    /**
+     * @param $compiledFile
+     * @param $variables
+     * @return string
+     * @throws Exception
+     */
+    protected function evaluatePath($compiledFile, $variables)
     {
         ob_start();
 
@@ -1464,6 +1457,7 @@ class BladeOne
         // an exception is thrown. This prevents any partial views from leaking.
         try
         {
+            /** @noinspection PhpIncludeInspection */
             include $compiledFile;
         }
         catch (\Exception $e)
