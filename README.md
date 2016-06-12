@@ -168,7 +168,6 @@ Not compatible with the extension of Laravel's Blade.
 
 [BladeOneHtml.md](BladeOneLogic.md)
 
-
 ##Todo
 
 - Some features are missing , with bugs or not tested  but the basic ones are working.
