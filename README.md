@@ -166,7 +166,7 @@ Not compatible with the extension of Laravel's Blade.
 
 ## Defintion of Blade Template
 
-https://laravel.com/docs/master/blade
+[BladeOneHtml.md](BladeOneLogic.md)
 
 
 ##Todo
