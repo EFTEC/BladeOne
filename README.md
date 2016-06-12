@@ -159,69 +159,10 @@ Note: Templates called folder.template is equals to folder/template
 Not compatible with the extension of Laravel's Blade.
 
 ## New Tags HTML (Only for BladeOne)
+[BladeOneHtml.md](BladeOneHtml.md)
 
-For using this tag, the code requires to use the class BladeOneHtml
-
-
-
-### Select
-
-```html
-@selectonemenu('id1')
-    @selectitem('0','--Select a country--')
-    @selectitems($countries,'id','name',$countrySelected)
-@endselectonemenu()
-```
-
-@selectonemenu creates the **select** tag. The first value is the id and name of the tag.
-@selectitem allows to add one element **option** tag. The first value is the id and the second is the visible text
-@selectitems allows to add one list of elements **option** tag. The first value is the list of values, the second and third is the id and name. And the fourth one is the selected value (optional)
-    
-![select](http://i.imgur.com/yaMavQB.jpg?1)
-
-### Input
-
-```html
-@input('iduser',$currentUser,'text'[,$extra])
-```
-
-@input creates a **input** tag. The first value is the id/name, the second is the default value, the third is the type (by default is text for textbox)*[]: 
-
-### Extra Parameter
- 
-Additionally, you can add an (optional) last parameter with additional value (see the example of @selectonemenu)
-
-```html
- <!-- code using bootstrap -->
- <div class="form-group">
-  <label for="sel1">Select list:</label>
-        @selectonemenu('id1')
-            @selectitem('0','--Select a country--',"class='form-control'")
-            @selectitems($countries,'id','name',$countrySelected)
-        @endselectonemenu()
-  </select>
-</div>
-```
 
 ## New Tags added by BladeOneLogic
- 
-## Defintion of Blade Template
-For using this tag, the code requires to use the class BladeOneLogic that extends the class BladeOne.
-The code extends the class BladeOneHtml by creating a daisy chain.
-
-### switch / case
-
-_Example:(the indentation is not required)_
-```html
-@switch($countrySelected)
-    @case(1)
-        first country selected<br>
-    @case(2)
-        second country selected<br>
-    @defaultcase()
-        other country selected<br>
-@endswitch()
-```
 
 ## Defintion of Blade Template
 
@@ -251,7 +192,7 @@ https://laravel.com/docs/master/blade
 - 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
 - 2016-06-09 1.1 Some fine tune.
 - 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with composer)
-- 2016-06-12 1.3 Some clean up.  I removed some unused parameters.
+- 2016-06-12 1.3 Lots of clean up. I removed some unused parameters.  I fixed a problem with forced in BladeOne.  I separates the doc per extension.
 
 =======
 

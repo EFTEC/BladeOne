@@ -230,8 +230,8 @@ class BladeOne
         if (defined('BLADEONE_MODE')) {
             $mode=BLADEONE_MODE;
         }
-        $forced=$mode && 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
-        $runFast=$mode && 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
+        $forced=$mode & 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
+        $runFast=$mode & 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
 
         if ($mode==3) {
             $this->showError("run","we can't force and run fast at the same time",true);
@@ -1087,8 +1087,10 @@ class BladeOne
      * @return string
      */
     protected function convertArg($array,$merge=null) {
-
         if (!is_array($array)) {
+            if ($array=='') {
+                return '';
+            }
             // if its text then its converted to an array ['index'=>value,'index2'=>value]..
             $regexp = "@(\S+)=(\"|'| |)(.*)(\"|'| |>)@isU";
             preg_match_all($regexp, "<TAG ".$array, $p);
@@ -1758,8 +1760,9 @@ class BladeOne
      * @param string $id Title of the error
      * @param string $text Message of the error
      * @param bool $critic if true then the compilation is ended, otherwise it continues
+     * @return string
      */
-    private function showError($id,$text,$critic=false) {
+    public function showError($id,$text,$critic=false) {
         ob_get_clean();
         echo "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
         echo "BladeOne Error [{$id}]:<br>";
@@ -1767,6 +1770,7 @@ class BladeOne
         if ($critic) {
             die(1);
         }
+        return "";
     }
 
     //</editor-fold>

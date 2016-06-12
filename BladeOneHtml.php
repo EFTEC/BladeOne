@@ -32,8 +32,8 @@ class BladeOneHtml extends BladeOne
     public function compileSelectOneMenu($expression) {
         return $this->phpTag."echo \$this->selectOneMenu{$expression}; ?>";
     }
-    public function compileEndSelectOneMenu($expression) {
-        return $this->phpTag."echo \$this->endSelectOneMenu{$expression}; ?>";
+    public function compileEndSelectOneMenu() {
+        return $this->phpTag."echo '</select>'; ?>";
     }
     public function compileSelectItem($expression) {
         return $this->phpTag."echo \$this->selectItem{$expression}; ?>";
@@ -47,14 +47,17 @@ class BladeOneHtml extends BladeOne
     public function compileCommandButton($expression) {
         return $this->phpTag."echo \$this->commandButton{$expression}; ?>";
     }
+    public function compileForm($expression) {
+        return $this->phpTag."echo \$this->form{$expression}; ?>";
+    }
+    public function compileEndForm() {
+        return $this->phpTag."echo '</form>'; ?>";
+    }
     //</editor-fold>
 
     //<editor-fold desc="used function">
     public function selectOneMenu($name,$extra='') {
         return "<select id='".static::e($name)."' name='".static::e($name)."' {$this->convertArg($extra)}>\n";
-    }
-    public function endSelectOneMenu() {
-        return "</select>";
     }
     public function selectItem($id,$text,$extra='') {
         return "<option value='{$id}' {$this->convertArg($extra)}>{$text}</option>";
@@ -78,12 +81,12 @@ class BladeOneHtml extends BladeOne
         if ($t) {
             foreach($array as $v) {
                 $selected=($v->{$id}==$selectedItem)?'selected':'';
-                $result.="<option value='".$v->{$id}."' $selected {$this->convertArg($extra)}>".static::e($v->{$text})."</option>\n";
+                $result.="<option value='".static::e($v->{$id})."' $selected {$this->convertArg($extra)}>".static::e($v->{$text})."</option>\n";
             }
         } else {
             foreach($array as $v) {
                 $selected=($v[$id]==$selectedItem)?'selected':'';
-                $result.="<option value='".$v[$id]."' $selected {$this->convertArg($extra)}>".static::e($v[$text])."</option>\n";
+                $result.="<option value='".static::e($v[$id])."' $selected {$this->convertArg($extra)}>".static::e($v[$text])."</option>\n";
             }
         }
         return $result;
@@ -91,11 +94,16 @@ class BladeOneHtml extends BladeOne
 
     public function input($id,$value='',$type='text',$extra='')
     {
-        return "<input id='".static::e($id)."' name='".static::e($id)."' type='{$type}' {$this->convertArg($extra)} value='{".static::e($value)."}' />\n";
+        return "<input id='".static::e($id)."' name='".static::e($id)."' type='".$type."' ".$this->convertArg($extra)." value='".static::e($value)."' />\n";
     }
     public function commandButton($id,$value='',$text='Button',$extra='')
     {
-        return "<button type='submit' id='".static::e($id)."' name='".static::e($id)."' value='{".static::e($value)."' {$this->convertArg($extra)}>{$text}</button>\n";
+        return "<button type='submit' id='".static::e($id)."' name='".static::e($id)."' value='".static::e($value)."' {$this->convertArg($extra)}>{$text}</button>\n";
     }
+    public function form($action,$method='post',$extra='') {
+        return "<form $action='{$action}' method='{$method}' {$this->convertArg($extra)}>";
+    }
+
+
     //</editor-fold>
 }

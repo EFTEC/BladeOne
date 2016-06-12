@@ -26,28 +26,33 @@ namespace eftec\bladeone;
 
 class BladeOneLogic extends BladeOneHtml
 {
+    /** @var int Indicates the number of open switches */
     private $switchCount=0;
+    /** @var bool Indicates if the switch is recently open */
+    private $switchFirst=true;
     //<editor-fold desc="compile function">
     public function compileSwitch($expression) {
-        $this->switchCount=0;
+        $this->switchCount++;
         return $this->phpTag."switch($expression) { ?>";
     }
     public function compileCase($expression) {
-        if ($this->switchCount!=0) {
-            return $this->phpTag."break;\ncase $expression: ?>";
+        if ($this->switchFirst) {
+            $this->switchFirst=false;
+            return $this->phpTag."case $expression: ?>";
         }
-        $this->switchCount++;
-        return $this->phpTag."case $expression: ?>";
+        return $this->phpTag."break;\n case $expression: ?>";
     }
     public function compileDefaultCase() {
-        if ($this->switchCount!=0) {
-            return $this->phpTag."break;\ndefault: ?>";
+        if ($this->switchFirst) {
+            return $this->showError("@defaultcase","@switch without any @case",true);
         }
-        $this->switchCount++;
-        return $this->phpTag."default: ?>";
+        return $this->phpTag."break;\n default: ?>";
     }
     public function compileEndSwitch() {
-        $this->switchCount=0;
+        $this->switchCount=$this->switchCount-1;
+        if ($this->switchCount<0) {
+            return $this->showError("@endswitch","Missing @switch",true);
+        }
         return $this->phpTag."} // end switch ?>";
     }
     //</editor-fold>
