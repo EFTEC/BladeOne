@@ -22,7 +22,7 @@ _Example:(the indentation is not required)_
 @endswitch()
 ```
 
-@switch. The first value is the variable to evaluate.
-@case. Indicates the value to compare.  It should be runs inside a @switch/@endswitch
-@defaultcase. (optional) If not case is the correct then the block of @defaultcase is evaluated.
-@endswitch. End the switch.
+- @switch. The first value is the variable to evaluate.
+- @case. Indicates the value to compare.  It should be runs inside a @switch/@endswitch
+- @defaultcase. (optional) If not case is the correct then the block of @defaultcase is evaluated.
+- @endswitch. End the switch.
