@@ -4,11 +4,9 @@
 BladeOne is a standalone version of Blade Template Engine that uses a single php file and can be ported and used in different projects.
 
 ## Introduction (From Laravel webpage)
-
 Blade is the simple, yet powerful templating engine provided with Laravel. Unlike other popular PHP templating engines, Blade does not restrict you from using plain PHP code in your views. All Blade views are compiled into plain PHP code and cached until they are modified, meaning Blade adds essentially zero overhead to your application. Blade view files use the .blade.php file extension and are typically stored in the resources/views directory.
 
 ## About this version
-
 By standard, Blade is part of Laravel (Illuminate components) and for to use it, you requires to install Laravel and Illuminate-view components.
 Blade as a template engine is pretty nice and clear. Also it generates a (some that) clean code. And its starting to be considered a de-facto template system for php (Smarty has been riding off the sunset since years ago). So, if we are able to use it without Laravel then its a big plus for many projects. In fact, in theory its is even possible to use with Laravel.
 Exists different version of Blade Template that runs without Laravel but most requires 50 or more files and those templates add a new level of complexity:
@@ -23,7 +21,6 @@ Exists different version of Blade Template that runs without Laravel but most re
 This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]: 
 
 ## Usage
-
 example.php:
 ```php
 <?php
@@ -92,10 +89,7 @@ views/hello.blade.php:
 
 Note :(*) This feature is in the original documentation but its not implemented neither its required. May be its an obsolete feature.
 
-
 ### variables
-
-
 |Tag|Note|status|
 |---|---|---|
 |{{$variable1}}|show the value of the variable using htmlentities (avoid xss attacks)|0.2b ok|
@@ -104,7 +98,6 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |{{ $name or 'Default' }}|value or default|0.2b ok|
 
 ### logic
-
 |Tag|Note|status|
 |---|---|---|
 |@if (boolean)|if logic-conditional|0.2b ok|
@@ -114,7 +107,6 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |@unless(boolean)|execute block of code is boolean is false|0.2b ok|
 
 ### loop
-
 |Tag|Note|status|
 |---|---|---|
 |@for($i = 0; $i < 10; $i++)|for loop|0.2b ok|
@@ -128,7 +120,6 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |@endwhile|end while loop|not tested|
 
 ### Sub Views
-
 |Tag|Note|status|
 |---|---|---|
 |@include('folder.template')|Include a template|0.2b ok|
@@ -137,7 +128,6 @@ Note :(*) This feature is in the original documentation but its not implemented 
 Note: Templates called folder.template is equals to folder/template
 
 ### Comments
-
 |Tag|Note|status|
 |---|---|---|
 |{{-- text --}}|Include a comment|0.2b ok|
@@ -155,18 +145,16 @@ Note: Templates called folder.template is equals to folder/template
 |@inject('metrics', 'App\Services\MetricsService')|Used for insert a Laravel Service|NOT SUPPORTED|
 
 ### Extending Blade
-
 Not compatible with the extension of Laravel's Blade.
 
 ## New Tags HTML (Only for BladeOne)
-[BladeOneHtml.md](BladeOneHtml.md)
-
+[BladeOneHtml Documentation](BladeOneHtml.md)
 
 ## New Tags added by BladeOneLogic
+[BladeOneLogic Documentation](BladeOneLogic.md)
 
-## Defintion of Blade Template
-
-[BladeOneHtml.md](BladeOneLogic.md)
+## Definition of Blade Template
+https://laravel.com/docs/5.2/blade
 
 ##Todo
 
