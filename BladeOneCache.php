@@ -10,6 +10,7 @@ namespace eftec\bladeone;
  * It adds the next tags to the template
  * <code>
  * @ cache([cacheid],[duration=86400]).  The id is optional. The duration of the cache is in seconds
+ * // content here
  * @ endcache()
  * </code>
  * It also adds a new function (optional) to the business or logic layer
