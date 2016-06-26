@@ -51,6 +51,23 @@ echo $blade->run("template",$values);
 ```
 @form creates **form** html tag. The first value (optional) is the action, the second value (optional) is the method ('post','get')
 
+### Others
+
+- selectgroup
+- radio
+- checkbox
+- endselect
+- endradio
+- endcheckbox
+- item
+- items
+- trio
+- trios
+- textarea
+- hidden
+- label
+- commandbutton
+
 ### NOTE: Extra Parameter
  
 Additionally, you can add an (optional) last parameter with additional value (see the example of @select)

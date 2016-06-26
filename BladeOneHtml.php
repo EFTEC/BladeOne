@@ -49,7 +49,6 @@ trait BladeOneHtml
         array_push($this->htmlItem,'checkbox');
         return $this->phpTag."echo \$this->checkbox{$expression}; ?>";
     }
-
     public function compileEndSelect() {
         $r=@array_pop($this->htmlItem);
         if (is_null($r)) {
