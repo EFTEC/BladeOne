@@ -180,7 +180,7 @@ https://laravel.com/docs/5.2/blade
 - 2016-06-09 1.1 Some fine tune.
 - 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with composer)
 - 2016-06-12 1.3 Lots of clean up. I removed some unused parameters.  I fixed a problem with forced in BladeOne.  I separates the doc per extension.
-
+- 2016-06-24 1.4 Updates for extensions.  Now it uses strut instead of classes.
 =======
 
 ##Collaboration

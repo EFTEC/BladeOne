@@ -1,5 +1,5 @@
 <?php
-
+namespace eftec\bladeone;
 /**
  * trait BladeOneHtml
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
@@ -23,8 +23,6 @@
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
-
-namespace eftec\bladeone;
 
 trait BladeOneHtml
 {

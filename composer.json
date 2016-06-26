@@ -16,4 +16,7 @@
         "eftec\\": "vendor/eftec/"
       }
   }
+  ,"require": {
+    "php": ">=5.4"
+  }
 }
