@@ -185,12 +185,12 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ##Todo
 
-~~- Some features are missing , with bugs or not tested  but the basic ones are working.~~ DONE
-~~- @each could be optimized.~~ DONE
-~~- There are several tags of undocumented features of the original Blade code.~~  DONE
-~~- Extending BladeOne opens a world of opportunities.~~ 
+- ~~- Some features are missing , with bugs or not tested  but the basic ones are working.~~ DONE
+- ~~- @each could be optimized.~~ DONE
+- ~~- There are several tags of undocumented features of the original Blade code.~~  DONE
+- ~~- Extending BladeOne opens a world of opportunities.~~ 
 -    **May be a bladeone-bootstrap3 class in the future.**
-~~- Speed up the loading of compiled templates.~~  DONE
+- ~~- Speed up the loading of compiled templates.~~  DONE
 
 ##Version
 
