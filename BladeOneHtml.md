@@ -71,7 +71,6 @@ Additionally, you can add an (optional) last parameter with additional value (se
 
 Optionally, we can add a extension compatible with Bootstrap 3.  It replaces the tags with the bootstrap ones.
 
-
 For use, you must use the trait BladeOneHtmlBootstrap:
 ```php
 class myBlade extends  bladeone\BladeOne {
@@ -82,8 +81,14 @@ $blade=new myBlade($templateFolder,$compiledFolder);
 echo $blade->run("template",$values);
 ```
 
+> Note: The template requires to link manually the css and js files of jqueryui and bootstrap.
+
+###Comparison between Bootstrap and plain html
+
 ![Image](http://i.imgur.com/svJxAEg.jpg)
+
 _Without bootstrap_
 
 ![Image](http://i.imgur.com/DOjUeOv.jpg)
+
 _With bootstrap_
