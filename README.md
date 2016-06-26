@@ -147,11 +147,10 @@ Note: Templates called folder.template is equals to folder/template
 ### Extending Blade
 Not compatible with the extension of Laravel's Blade.
 
-## New Tags HTML (Only for BladeOne)
+## Extensions Libraries (optional) 
 [BladeOneHtml Documentation](BladeOneHtml.md)
-
-## New Tags added by BladeOneLogic
 [BladeOneLogic Documentation](BladeOneLogic.md)
+[BladeOneCache Documentation](BladeOneCache.md)
 
 ## Definition of Blade Template
 https://laravel.com/docs/5.2/blade
@@ -180,7 +179,8 @@ https://laravel.com/docs/5.2/blade
 - 2016-06-09 1.1 Some fine tune.
 - 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with composer)
 - 2016-06-12 1.3 Lots of clean up. I removed some unused parameters.  I fixed a problem with forced in BladeOne.  I separates the doc per extension.
-- 2016-06-24 1.4 Updates for extensions.  Now it uses strut instead of classes.
+- 2016-06-24 1.4 Updates extensions.  Now it uses strut instead of classes. Added a new extension BladeOneCache.
+
 =======
 
 ##Collaboration
