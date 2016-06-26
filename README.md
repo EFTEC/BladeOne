@@ -149,7 +149,9 @@ Not compatible with the extension of Laravel's Blade.
 
 ## Extensions Libraries (optional) 
 [BladeOneHtml Documentation](BladeOneHtml.md)
+
 [BladeOneLogic Documentation](BladeOneLogic.md)
+
 [BladeOneCache Documentation](BladeOneCache.md)
 
 ## Definition of Blade Template
