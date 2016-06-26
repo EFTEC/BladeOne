@@ -157,22 +157,40 @@ Not compatible with the extension of Laravel's Blade.
 ## Definition of Blade Template
 https://laravel.com/docs/5.2/blade
 
-##Todo
-
-- Some features are missing , with bugs or not tested  but the basic ones are working.
-- @each could be optimized.
-- There are several tags of undocumented features of the original Blade code.
-- Extending BladeOne opens a world of opportunities. **May be a bladeone-bootstrap3 class in the future.**
-- Speed up the loading of compiled templates.
-
 ##Differences between Blade and BladeOne
 
 - Laravel's extension removed.
-- Dependencies to other class removed.
-- All operations use a unique class. Not more Arr and Str classes
+- Dependencies to other class removed (around 30 classes).
 - The engine is self contained.
 - Setter and Getters removed. Instead, we are using the PHP style (public members).
-- 
+- BladeOne doesn't support static calls.
+
+## Differences between Blade+Laravel and BladeOne+BladeOneHTML
+
+Instead of use the Laravel functions, for example Form::select
+```html
+{{Form::select('countryID', $arrayCountries,$countrySelected)}}
+```
+
+We have native tags as @select,@item,@items and @endselect
+```html
+@select('countryID')
+    @item('0','--Select a country--',$countrySelected)
+    @items($arrayCountries,'id','name',$countrySelected)
+@endselect()
+```
+
+This new syntaxis add an (optionally) a non-selected row.
+Also, BladeOneHTML adds multiple select, fixed values (without array), grouped select and many more.
+
+##Todo
+
+~~- Some features are missing , with bugs or not tested  but the basic ones are working.~~ DONE
+~~- @each could be optimized.~~ DONE
+~~- There are several tags of undocumented features of the original Blade code.~~  DONE
+~~- Extending BladeOne opens a world of opportunities.~~ 
+-    **May be a bladeone-bootstrap3 class in the future.**
+~~- Speed up the loading of compiled templates.~~  DONE
 
 ##Version
 
