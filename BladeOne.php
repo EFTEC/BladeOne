@@ -43,12 +43,13 @@ class BladeOne
      * @var string
      */
     protected $fileName;
+
+    
     /**
      * The stack of in-progress sections.
      *
      * @var array
      */
-
     protected $sectionStack = array();
 
     /**
@@ -216,6 +217,17 @@ class BladeOne
         $newVariables=array_merge($variables,$this->variables);
         return $this->runInternal($view,$newVariables,false,false,$this->isRunFast);
     }
+    /**
+     * Mode of the engine. 1= force recompile, 2=fast (no verify files)
+     * @return int
+     */
+    public function getMode() {
+        $mode=0;
+        if (defined('BLADEONE_MODE')) {
+            $mode=BLADEONE_MODE;
+        }        
+        return $mode;
+    }    
 
     /**
      * run the blade engine. It returns the result of the code.
@@ -226,10 +238,7 @@ class BladeOne
 
     public function run($view,$variables=array())
     {
-        $mode=0; // mode=0 automatic: not forced and not run fast.
-        if (defined('BLADEONE_MODE')) {
-            $mode=BLADEONE_MODE;
-        }
+        $mode=$this->getMode();
         $forced=$mode & 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
         $runFast=$mode & 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
 
@@ -971,7 +980,7 @@ class BladeOne
      * @param  string  $expression
      * @return string
      */
-    protected function compilePush($expression)
+    public function compilePush($expression)
     {
         return $this->phpTag."\$this->startPush{$expression}; ?>";
     }
@@ -1086,7 +1095,7 @@ class BladeOne
      * @param array $merge (optional) array to merge (such as to replace class)
      * @return string
      */
-    protected function convertArg($array,$merge=null) {
+    public function convertArg($array,$merge=null) {
         if (!is_array($array)) {
             if ($array=='') {
                 return '';
@@ -1387,10 +1396,12 @@ class BladeOne
     //<editor-fold desc="file members">
     /**
      * Get the full path of the compiled file.
+     * @param string $fileName
      * @return string
      */
-    public function getCompiledFile() {
-        return $this->compiledPath.'/'.sha1($this->fileName);
+    public function getCompiledFile($fileName='') {
+        $fileName=($fileName=='')?$this->fileName:$fileName;
+        return $this->compiledPath.'/'.sha1($fileName);
     }
     /**
      * Get the full path of the compiled file.
@@ -1452,6 +1463,7 @@ class BladeOne
     {
         ob_start();
 
+
         extract($variables);
 
         // We'll evaluate the contents of the view inside a try/catch block so we can
@@ -1485,12 +1497,6 @@ class BladeOne
     }
     //</editor-fold>
 
-    /**
-     * @param $compiledFile string
-     * @param $variables array
-     * @return string
-     * @throws Exception
-     */
 
 
 

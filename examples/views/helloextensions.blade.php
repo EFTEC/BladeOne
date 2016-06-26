@@ -1,4 +1,4 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html>
 <body>
 <h1>Example of BladeOne Extensions</h1>
@@ -6,10 +6,16 @@
 <h2>This example show the use of extensions</h2>
 
 <hr>Input:<br>
-
+@label('id','Select the value:')&nbsp;
 @input('id','default value','text')<br>
+@label('id','Select the value:')&nbsp;
 @input('id','default value','text',['class'=>'x1','enabled'=>'disable'])
 <br>
+<br>textarea:<br>
+@textarea('idtext','it is an example\nmoreexample')
+<br>
+<br>hidden:<br>
+@hidden('hidfield','some value')
 <hr>Button:<br>
 
 @commandbutton('boton','v1','Press for Submit')
@@ -18,18 +24,72 @@
 
 Code:<br>
 <pre>
-@@selectonemenu('id1',"class='object'")<br>
-@@selectitem('0','--Select a country--')<br>
-@@selectitems($countries,'id','name',$countrySelected)<br>
-@@endselectonemenu()<br>
+@@select('id1',"class='object'")<br>
+@@item('0','--Select a country--')<br>
+@@items($countries,'id','name',$countrySelected)<br>
+@@endselect()<br>
 </pre>
 <br><br>
 
-
-@selectonemenu('id1',"class='object'")
-    @selectitem('0','--Select a country--')
-    @selectitems($countries,'id','name',$countrySelected)
-@endselectonemenu()
+Simple select:<br>
+@select('id1',"class='object'")
+    @item('0','--Select a country--')
+    @items($countries,'id','name',$countrySelected)
+@endselect()
+<br>
+<br>
+Multi select:<br>
+@select('id1',"class='object' multiple='multiple'")
+    @item('0','--Select a country--')
+    @items($countries,'id','name',$multipleSelect)
+@endselect()
+<br>
+<br>
+Group select (with multi selection):<br>
+@selectgroup('id1',"class='object' multiple='multiple', size='5'")
+    @trio('0','--Select a country--','')
+    @trios($countries,'id','name','continent',$multipleSelect)
+@endselect()
+<br>
+<br>
+Group select (with single selection):<br>
+@selectgroup('id1',"class='object' multiple='multiple', size='5'")
+    @trio('0','--Select a country--','')
+    @trios($countries,'id','name','continent',$countrySelected)
+@endselect()
+<br>
+<br>
+Radio simple:<br>
+@radio('idsimple','777','SelectMe','777')
+<br>
+@radio('idsimple','777','Not selected','778')
+<br>
+<br>
+checkbox simple:<br>
+@checkbox('idsimple','777','SelectMe','777')
+<br>
+@checkbox('idsimple','777','Not selected','778')
+<br>
+<br>
+Radios list:<br>
+@radio('id2')
+    @item('0','--Select a country--')<br>
+    @items($countries,'id','name',$countrySelected,'%s<br>')
+@endradio()
+<br>
+<br>
+Checkboxes list:<br>
+@checkbox('id3')
+    @item('0','--Select a country--')<br>
+    @items($countries,'id','name',$countrySelected,'%s<br>')
+@endcheckbox()
+<br>
+<br>
+Checkboxes with multi selections:<br>
+@checkbox('id4')
+    @item('0','--Select a country--')<br>
+    @items($countries,'id','name',$multipleSelect,'%s<br>')
+@endcheckbox()
 <hr>
 <h2>Test of class BladeOneLogic</h2>
 Code:<br>

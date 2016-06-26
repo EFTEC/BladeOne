@@ -6,8 +6,10 @@ include "../BladeOne.php";
 use eftec\bladeone;
 
 $views = __DIR__ . '/views';
-$cache = __DIR__ . '/cache';
-$blade=new bladeone\BladeOne($views,$cache);
+$compiledFolder = __DIR__ . '/compiled';
+$blade=new bladeone\BladeOne($views,$compiledFolder);
+define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+
 
 //<editor-fold desc="Example data">
 $name="New User";
@@ -26,7 +28,6 @@ $usr=new stdClass();
     $usr->number=5;
 $users[]=$usr;
 //</editor-fold>
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
 
 echo $blade->run("hello2"
     ,["name"=>"hola mundo"

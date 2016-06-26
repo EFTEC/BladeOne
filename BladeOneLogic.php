@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class BladeOneLogic
+ * trait BladeOneLogic
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
  * Extends the tags of the class BladeOne.  Its optional
  * It adds the next tags
@@ -17,14 +17,14 @@
  * </code>
  * NOTE: Its not compatible with nested switches
  * @package  BladeOneLogic
- * @version 1.2 2016-06-10
+ * @version 1.3 2016-06-25
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
 
 namespace eftec\bladeone;
 
-class BladeOneLogic extends BladeOneHtml
+trait BladeOneLogic
 {
     /** @var int Indicates the number of open switches */
     private $switchCount=0;
