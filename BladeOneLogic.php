@@ -17,7 +17,7 @@
  * </code>
  * NOTE: Its not compatible with nested switches
  * @package  BladeOneLogic
- * @version 1.3 2016-06-25
+ * @version 1.4 2016-06-25
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */

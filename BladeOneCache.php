@@ -19,7 +19,7 @@ namespace eftec\bladeone;
  * }
  * </code>
  * @package  BladeOneCache
- * @version 1.0 2016-06-25
+ * @version 1.4 2016-06-25
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
