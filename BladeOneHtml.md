@@ -2,7 +2,16 @@
 
 Requires: BladeOne
 
-For using this tag, the code requires to use the class BladeOneHtml
+For using this tag, the code requires to use the strait BladeOneHtml
+```php
+class myBlade extends  bladeone\BladeOne {
+    use bladeone\BladeOneHtml;
+}
+
+$blade=new myBlade($templateFolder,$compiledFolder);
+// ...
+echo $blade->run("template",$values);
+```
 
 ##New Tags
 
@@ -58,3 +67,23 @@ Additionally, you can add an (optional) last parameter with additional value (se
 </div>
 ```
 
+##Bootstrap extension (optionally)
+
+Optionally, we can add a extension compatible with Bootstrap 3.  It replaces the tags with the bootstrap ones.
+
+
+For use, you must use the trait BladeOneHtmlBootstrap:
+```php
+class myBlade extends  bladeone\BladeOne {
+    use bladeone\BladeOneHtmlBootstrap;
+}
+$blade=new myBlade($templateFolder,$compiledFolder);
+// ...
+echo $blade->run("template",$values);
+```
+
+![Image](http://i.imgur.com/svJxAEg.jpg)
+_Without bootstrap_
+
+![Image](http://i.imgur.com/DOjUeOv.jpg)
+_With bootstrap_

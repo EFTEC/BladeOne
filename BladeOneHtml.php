@@ -109,7 +109,7 @@ trait BladeOneHtml
         return $this->phpTag."echo \$this->hidden{$expression}; ?>";
     }
     public function compileLabel($expression) {
-        return $this->phpTag."echo \$this->label{$expression}; ?>";
+        return $this->phpTag."// {$expression} \n echo \$this->label{$expression}; ?>";
     }
     public function compileCommandButton($expression) {
         return $this->phpTag."echo \$this->commandButton{$expression}; ?>";
@@ -183,27 +183,25 @@ trait BladeOneHtml
             case 'select':
                 $selected=($found)?'selected':'';
                 return sprintf($wrapper,"<option value='{$valueId}' $selected ".
-                    $this->convertArg($extra).">{$valueText}</option>");
+                    $this->convertArg($extra).">{$valueText}</option>\n");
                 break;
             case 'radio':
                 $selected=($found)?'checked':'';
                 return sprintf($wrapper,"<input type='radio' id='".static::e($id)
                     ."' name='".static::e($id)."' value='{$valueId}' $selected "
-                    .$this->convertArg($extra)."> {$valueText}");
+                    .$this->convertArg($extra)."> {$valueText}\n");
                 break;
             case 'checkbox':
                 $selected=($found)?'checked':'';
                 return sprintf($wrapper,"<input type='checkbox' id='".static::e($id)
                     ."' name='".static::e($id)."' value='{$valueId}' $selected "
-                    .$this->convertArg($extra)."> {$valueText}");
+                    .$this->convertArg($extra)."> {$valueText}\n");
                 break;
 
             default:
                 return '???? type undefined: [$type] on @item<br>';
         }
     }
-
-
 
     /**
      * @param string $type type of the current open tag
@@ -257,7 +255,7 @@ trait BladeOneHtml
             case 'selectgroup':
                 $selected=($found)?'selected':'';
                 return sprintf($wrapper,"<option value='{$valueId}' $selected ".
-                    $this->convertArg($extra).">{$valueText}</option>");
+                    $this->convertArg($extra).">{$valueText}</option>\n");
                 break;
             default:
                 return '???? type undefined: [$type] on @item<br>';

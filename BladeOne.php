@@ -1092,22 +1092,11 @@ class BladeOne
     /**
      * Convert an array such as ["class1"=>"myclass","style="mystyle"] to class1='myclass' style='mystyle' string
      * @param array|string $array array to convert
-     * @param array $merge (optional) array to merge (such as to replace class)
      * @return string
      */
-    public function convertArg($array,$merge=null) {
+    public function convertArg($array) {
         if (!is_array($array)) {
-            if ($array=='') {
-                return '';
-            }
-            // if its text then its converted to an array ['index'=>value,'index2'=>value]..
-            $regexp = "@(\S+)=(\"|'| |)(.*)(\"|'| |>)@isU";
-            preg_match_all($regexp, "<TAG ".$array, $p);
-            $array=array_combine($p[1],$p[3]);
-            // $array=array_change_key_case(array_combine($p[1],$p[3]),CASE_LOWER);
-        }
-        if ($merge!=null) {
-            $array=array_merge($array,$merge);
+            return $array;  // nothing to convert.
         }
         return implode(' ',array_map( 'static::convertArgCallBack', array_keys($array), $array));
 
