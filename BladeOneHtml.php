@@ -19,104 +19,106 @@ namespace eftec\bladeone;
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
- * @version 1.4 2016-06-25
+ * @version 1.5 2016-07-01
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
-
 trait BladeOneHtml
 {
-    var $htmlItem=array();
-    var $htmlCurrentId=array();
+    var $htmlItem=array(); // indicates the type of the current tag. such as select/selectgroup/etc.
+    var $htmlCurrentId=array(); //indicates the id of the current tag.
 
     //<editor-fold desc="compile function">
-    public function compileSelect($expression) {
+    protected function compileSelect($expression) {
 
         array_push($this->htmlItem,'select');
         return $this->phpTag."echo \$this->select{$expression}; ?>";
     }
-    public function compileSelectGroup($expression) {
+    protected function compileListBoxes($expression) {
+        return $this->phpTag."echo \$this->listboxes{$expression}; ?>";
+    }
+    protected function compileSelectGroup($expression) {
 
         array_push($this->htmlItem,'selectgroup');
         $this->compilePush('');
         return $this->phpTag."echo \$this->select{$expression}; ?>";
     }
-    public function compileRadio($expression) {
+    protected function compileRadio($expression) {
         array_push($this->htmlItem,'radio');
         return $this->phpTag."echo \$this->radio{$expression}; ?>";
     }
-    public function compileCheckbox($expression) {
+    protected function compileCheckbox($expression) {
         array_push($this->htmlItem,'checkbox');
         return $this->phpTag."echo \$this->checkbox{$expression}; ?>";
     }
-    public function compileEndSelect() {
+    protected function compileEndSelect() {
         $r=@array_pop($this->htmlItem);
         if (is_null($r)) {
             $this->showError("@endselect","Missing @select or so many @endselect",true);
         }
         return $this->phpTag."echo '</select>'; ?>";
     }
-    public function compileEndRadio() {
+    protected function compileEndRadio() {
         $r=@array_pop($this->htmlItem);
         if (is_null($r)) {
             return $this->showError("@EndRadio","Missing @Radio or so many @EndRadio",true);
         }
         return '';
     }
-    public function compileEndCheckbox() {
+    protected function compileEndCheckbox() {
         $r=@array_pop($this->htmlItem);
         if (is_null($r)) {
             return $this->showError("@EndCheckbox","Missing @Checkbox or so many @EndCheckbox",true);
         }
         return '';
     }
-    public function compileItem($expression) {
+    protected function compileItem($expression) {
         // we add a new attribute with the type of the current open tag
         $r=end($this->htmlItem);
         $x=trim($expression);
         $x="('{$r}',".substr($x,1);
         return $this->phpTag."echo \$this->item{$x}; ?>";
     }
-    public function compileItems($expression) {
+    protected function compileItems($expression) {
         // we add a new attribute with the type of the current open tag
         $r=end($this->htmlItem);
         $x=trim($expression);
         $x="('{$r}',".substr($x,1);
         return $this->phpTag."echo \$this->items{$x}; ?>";
     }
-    public function compileTrio($expression) {
+    protected function compileTrio($expression) {
         // we add a new attribute with the type of the current open tag
         $r=end($this->htmlItem);
         $x=trim($expression);
         $x="('{$r}',".substr($x,1);
         return $this->phpTag."echo \$this->trio{$x}; ?>";
     }
-    public function compileTrios($expression) {
+    protected function compileTrios($expression) {
         // we add a new attribute with the type of the current open tag
         $r=end($this->htmlItem);
         $x=trim($expression);
         $x="('{$r}',".substr($x,1);
         return $this->phpTag."echo \$this->trios{$x}; ?>";
     }
-    public function compileInput($expression) {
+    protected function compileInput($expression) {
         return $this->phpTag."echo \$this->input{$expression}; ?>";
     }
-    public function compileTextArea($expression) {
+    protected function compileTextArea($expression) {
         return $this->phpTag."echo \$this->textArea{$expression}; ?>";
     }
-    public function compileHidden($expression) {
+    protected function compileHidden($expression) {
         return $this->phpTag."echo \$this->hidden{$expression}; ?>";
     }
-    public function compileLabel($expression) {
+    protected function compileLabel($expression) {
         return $this->phpTag."// {$expression} \n echo \$this->label{$expression}; ?>";
     }
-    public function compileCommandButton($expression) {
+    protected function compileCommandButton($expression) {
         return $this->phpTag."echo \$this->commandButton{$expression}; ?>";
     }
-    public function compileForm($expression) {
+    protected function compileForm($expression) {
         return $this->phpTag."echo \$this->form{$expression}; ?>";
     }
-    public function compileEndForm() {
+    protected function compileEndForm() {
         return $this->phpTag."echo '</form>'; ?>";
     }
     //</editor-fold>
@@ -124,6 +126,68 @@ trait BladeOneHtml
     //<editor-fold desc="used function">
     public function select($name,$extra='') {
         return "<select id='".static::e($name)."' name='".static::e($name)."' {$this->convertArg($extra)}>\n";
+    }
+
+    /**
+     * Find an element in a array of arrays
+     * If the element doesn't exist in the array then it returns false, otherwise returns true
+     * @param $find
+     * @param $array
+     * @param $field
+     * @return bool
+     */
+    private function listboxesFindArray($find,$array,$field) {
+
+        if (count($array)==0) {
+            return false;
+        }
+        if (!is_array($array[0])) {
+            return in_array($find,$array);
+        } else {
+            foreach ($array as $elem) {
+                if ($elem[$field] == $find) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public function listboxes($name,$allvalues, $fieldId, $fieldText,$selectedId,$extra='') {
+        $html="";
+        $html.= "<table>\n";
+        $html.= "    <tr>\n";
+        $html.= "	    <td>\n";
+        $html.= "		    <select id='{$name}_noselected' size='6' multiple='multiple'>\n";
+        if (count($allvalues)==0) {
+            $allvalues=[];
+        }
+        $html2="";
+        foreach($allvalues as $v) {
+            if (is_object($v)) {
+                $v=(array) $v;
+            }
+            if (!$this->listboxesFindArray($v[$fieldId],$selectedId,$fieldId)) {
+                $html .= "<option value='".$v[$fieldId]."'>".$v[$fieldText]."</option>\n";
+            } else {
+                $html2.= "<option value='".$v[$fieldId]."'>".$v[$fieldText]."</option>\n";
+            }
+        }
+        $html.= "			</select>\n";
+        $html.= "		</td>\n";
+        $html.= "		<td style='text-align:center;'>\n";
+        $html.= "            <input type='button' value='>' id='{$name}_add'/><br>\n";
+        $html.= "            <input type='button' value='>>' id='{$name}_addall'/><br>\n";
+        $html.= "            <input type='button' value='<' id='{$name}_delete'/><br>\n";
+        $html.= "            <input type='button' value='<<' id='{$name}_deleteall'/><br>\n";
+        $html.= "		</td>\n";
+        $html.= "		<td>\n";
+        $html.= "			<select id='{$name}' name='{$name}' size='6' multiple='multiple'>\n";
+        $html.= $html2;
+        $html.= "			</select>\n";
+        $html.= "		</td>\n";
+        $html.= "	</tr>\n";
+        $html.= "</table>\n";
+        return $html;
     }
     public function selectGroup($name,$extra='') {
         return $this->selectGroup($name,$extra);

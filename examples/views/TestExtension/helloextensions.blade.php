@@ -91,6 +91,14 @@ Checkboxes with multi selections:<br>
     @items($countries,'id','name',$multipleSelect,'%s<br>')
 @endcheckbox()
 <hr>
+<h3>New components for html</h3>
+<pre>
+@ listboxes('idlistbox',$countries,'id','name',$multipleSelect)
+</pre>
+<br>
+@listboxes('idlistbox',$countries,'id','name',$multipleSelect)
+
+<hr>
 <h2>Test of class BladeOneLogic</h2>
 Code:<br>
 <pre>

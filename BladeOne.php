@@ -297,7 +297,10 @@ class BladeOne
             $contents = $this->compileString($this->getFile($template));
 
             if (!is_null($this->compiledPath)) {
-                file_put_contents($compiled, $contents);
+                $ok=@file_put_contents($compiled, $contents);
+                if (!$ok) {
+                    $this->showError("Compiling","Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
+                }
             }
         }
     }
@@ -1418,6 +1421,9 @@ class BladeOne
     {
         $compiled = $this->getCompiledFile();
         $template=$this->getTemplateFile();
+        if (!file_exists($template)) {
+            $this->showError("Read file","Template not found :".$this->fileName,true);
+        }
 
         // If the compiled file doesn't exist we will indicate that the view is expired
         // so that it can be re-compiled. Else, we will verify the last modification
@@ -1426,6 +1432,7 @@ class BladeOne
         {
             return true;
         }
+
         return filemtime($compiled) < filemtime($template);
     }
 

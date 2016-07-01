@@ -104,6 +104,13 @@ Checkboxes with multi selections:<br>
 @item('0','--Select a country--')<br>
 @items($countries,'id','name',$multipleSelect,'%s<br>')
 @endcheckbox()
+<hr>
+<h3>New components for html</h3>
+<pre>
+@ listboxes('idlistbox',$countries,'id','name',$multipleSelect)
+</pre>
+<br>
+@listboxes('idlistbox',$countries,'id','name',$multipleSelect)
 
             </div>
         </div>

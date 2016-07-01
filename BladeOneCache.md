@@ -38,7 +38,6 @@ $blade=new MyBlade($views,$compiledFolder);
 ##New Business Logic / Controller function
 
 ### function cacheExpired
-
 ```php
 if ($blade->cacheExpired('hellocache',1,5)) {   //'helloonecache' =template, =1 id cache, 5=duration (seconds)
     // cache expired, so we should do some stuff (such as read from the database)

@@ -1,4 +1,4 @@
-@extends('layouts.newlayout')
+@extends('Shared.newlayout')
 
 @section('title', 'Page Title')
 

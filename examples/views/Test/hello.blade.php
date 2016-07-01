@@ -1,6 +1,6 @@
 
 
-@include('master', ['some' => 'data'])
+@include('Test.master', ['some' => 'data'])
 v2<br>
 
 comentario {{-- esto no debe aparecer --}}<br>
@@ -73,7 +73,7 @@ Default: {{ $name or 'Default' }}<br>
     @break($user->number == 5)
 @endforeach
 <hr>each:<br>
-@each('view.name', $records, 'job')
+@each('Test.InnerView.name', $records, 'job')
 
 <hr>push and stack:<br>
 @push('scripts')

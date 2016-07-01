@@ -29,13 +29,13 @@ $usr=new stdClass();
 $users[]=$usr;
 //</editor-fold>
 
-echo $blade->run("hello2"
+echo $blade->run("Test.hello2"
     ,["name"=>"hola mundo"
     ,'records'=>$records
     ,'users'=>$users]);
 
 
-echo $blade->run("hello"
+echo $blade->run("Test.hello"
     ,["name"=>"hola mundo"
         ,'records'=>$records
         ,'users'=>$users]);

@@ -19,7 +19,7 @@ $blade=new myBlade($views,$compiledFolder);
 define("BLADEONE_MODE",0); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
 
 //<editor-fold desc="Example data">
-if ($blade->cacheExpired('hellocache',1,5)) {
+if ($blade->cacheExpired('TestCache.hellocache',1,5)) {
     echo "<b>Logic layer</b>: cache expired, re-reading the list<br>";
     $list = [1, 2, 3, 4, 5];
 } else {
@@ -33,7 +33,7 @@ $timeUpTo=date('h:i:s A',time()+5); // plus 5 seconds
 //</editor-fold>
 
 
-echo $blade->run("hellocache"
+echo $blade->run("TestCache.hellocache"
     ,["random"=>$random
     ,'time'=>$time
     ,'list'=>$list

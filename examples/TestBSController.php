@@ -49,7 +49,7 @@ $multipleSelect=[1,2];
 //</editor-fold>
 
 
-echo $blade->run("hellobootstrap"
+echo $blade->run("TestBS.hellobootstrap"
     ,["countries"=>$countries
         ,'countrySelected'=>$countrySelected
         ,'multipleSelect'=>$multipleSelect]);

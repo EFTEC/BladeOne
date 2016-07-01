@@ -44,13 +44,10 @@ $countries[]=$country;
         $country->name="Japan";
         $country->continent="Asia";
 $countries[]=$country;
-
 $countrySelected=3;
 $multipleSelect=[1,2];
 //</editor-fold>
-
-
-echo $blade->run("helloextensions"
+echo $blade->run("TestExtension.helloextensions"
     ,["countries"=>$countries
             ,'countrySelected'=>$countrySelected
             ,'multipleSelect'=>$multipleSelect]);

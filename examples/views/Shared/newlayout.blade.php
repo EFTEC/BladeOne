@@ -5,7 +5,7 @@
 <body>
 <hr>body<br>
 @section('sidebar')
-    This is the master sidebar (this content is in the layout)
+    This is the master sidebar (this content is in the Shared layout)
 @show
 <hr>
 
