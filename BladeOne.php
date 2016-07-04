@@ -12,7 +12,7 @@
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 1.4 2016-06-25
+ * @version 1.5 2016-07-03
  * @link https://github.com/EFTEC/BladeOne
  */
 
@@ -44,7 +44,7 @@ class BladeOne
      */
     protected $fileName;
 
-    
+
     /**
      * The stack of in-progress sections.
      *
@@ -69,12 +69,12 @@ class BladeOne
      * @var array
      */
 
-   protected $compilers = [
-       'Extensions',
-       'Statements',
-       'Comments',
-       'Echos',
-   ];
+    protected $compilers = [
+        'Extensions',
+        'Statements',
+        'Comments',
+        'Echos',
+    ];
 
     /**
      * The stack of in-progress push sections.
@@ -213,8 +213,12 @@ class BladeOne
      * @return string
      */
     public function runChild($view,$variables=array()) {
-
-        $newVariables=array_merge($variables,$this->variables);
+        if (is_array($variables)) {
+            $newVariables = array_merge($this->variables, $variables);
+        } else {
+            $this->showError("run/include","Include/run variables should be defined as array ['idx'=>'value']",true);
+            return "";
+        }
         return $this->runInternal($view,$newVariables,false,false,$this->isRunFast);
     }
     /**
@@ -225,9 +229,9 @@ class BladeOne
         $mode=0;
         if (defined('BLADEONE_MODE')) {
             $mode=BLADEONE_MODE;
-        }        
+        }
         return $mode;
-    }    
+    }
 
     /**
      * run the blade engine. It returns the result of the code.
@@ -512,6 +516,12 @@ class BladeOne
         return $this->phpTag.'$'.trim($segments[0])." = app('".trim($segments[1])."'); ?>";
     }
 
+    protected function compileSet($expression)
+    {
+        $segments = explode('=', preg_replace("/[\(\)\\\"\']/", '', $expression));
+        $value=(count($segments)>=2)?' ='.$segments[1]:'++';
+        return $this->phpTag.trim($segments[0]).$value."; ?>";
+    }
     /**
      * Compile the yield statements into valid PHP.
      *
@@ -1393,7 +1403,7 @@ class BladeOne
      */
     public function getCompiledFile($fileName='') {
         $fileName=($fileName=='')?$this->fileName:$fileName;
-        return $this->compiledPath.'/'.sha1($fileName);
+        return $this->compiledPath.'/'.$fileName.' _'.sha1($fileName);
     }
     /**
      * Get the full path of the compiled file.
@@ -1488,7 +1498,7 @@ class BladeOne
      */
     protected function handleViewException($e)
     {
-        
+
         ob_get_clean(); throw $e;
     }
     //</editor-fold>

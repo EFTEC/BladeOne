@@ -19,7 +19,7 @@ namespace eftec\bladeone;
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
- * @version 1.5 2016-07-01
+ * @version 1.6 2016-07-03 (1)
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -132,8 +132,8 @@ trait BladeOneHtml
      * Find an element in a array of arrays
      * If the element doesn't exist in the array then it returns false, otherwise returns true
      * @param $find
-     * @param $array
-     * @param $field
+     * @param array $array array of primitives or objects
+     * @param array $field field to search
      * @return bool
      */
     private function listboxesFindArray($find,$array,$field) {
@@ -284,7 +284,19 @@ trait BladeOneHtml
         if (is_object($arrValues[0])) {
             $arrValues=(array) $arrValues;
         }
+        if (is_array($selectedItem)) {
+            if (is_object($selectedItem[0])) {
+                $primitiveArray=[];
+                foreach($selectedItem as $v) {
+                    $primitiveArray[]=$v->{$fieldId};
+                }
+                $selectedItem=$primitiveArray;
+            }
+        }
         $result='';
+        if (is_object($selectedItem)) {
+            $selectedItem=(array)$selectedItem;
+        }
         foreach($arrValues as $v) {
             if (is_object($v)) {
                 $v=(array)$v;

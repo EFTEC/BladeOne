@@ -75,6 +75,23 @@ Default: {{ $name or 'Default' }}<br>
 <hr>each:<br>
 @each('Test.InnerView.name', $records, 'job')
 
+<h2>New from 1.5</h2>
+<pre>
+@@set($x1=20)
+</pre>
+@set($x1=20)
+x1={{$x1}}<br>
+<pre>
+@@set($x1)
+</pre>
+@set($x1)
+x1={{$x1}}<br>
+<pre>
+@@set($x1=5)
+</pre>
+@set($x1=5)
+x1={{$x1}}<br>
+
 <hr>push and stack:<br>
 @push('scripts')
 script1

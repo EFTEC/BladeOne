@@ -7,7 +7,6 @@ include "../BladeOne.php";
 include "../BladeOneHtml.php";
 include "../BladeOneHtmlBootstrap.php";
 use eftec\bladeone;
-
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
 

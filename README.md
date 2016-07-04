@@ -168,6 +168,12 @@ Note: Templates called folder.template is equals to folder/template
 |@endpush|End the push block|0.2b ok|
 |@stack('elem')|Show the stack|0.2b ok|
 
+### @set (new for 1.5)
+@set($variable=[value])
+@set($variable) is equals to @set($variable=$variable+1)
+- $variable define the variable to add. If not value is defined the it adds +1 to a variable.
+- value (option) define the value to use.
+
 ### Service Inject
 |Tag|Note|status|
 |---|---|---|
