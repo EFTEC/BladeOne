@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
+ * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License..s
  */
 include "../BladeOne.php";
 
