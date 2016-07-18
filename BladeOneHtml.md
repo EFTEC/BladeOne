@@ -6,7 +6,7 @@ For using this tag, the code requires to use the class BladeOneHtml
 
 ##New Tags
 
-### Select
+### Select/endselect
 
 ```html
 @select('id1')
@@ -34,13 +34,46 @@ For using this tag, the code requires to use the class BladeOneHtml
 
 @input creates a **input** tag. The first value is the id/name, the second is the default value, the third is the type (by default is text for textbox)*[]: 
 
-### Form
+### Form/endform
 ```form
 @form(['action'],['post'][,$extra])
     ... form goes here
 @endform
 ```
 @form creates **form** html tag. The first value (optional) is the action, the second value (optional) is the method ('post','get')
+
+###listboxes
+```html
+@listboxes('idlistbox',$countries,'id','name',$multipleSelect)
+```
+
+- @listboxes(id,$listvalues,$fieldid,$fieldvalue,·selected,[$extra]) Creates a list box
+-   The id (indicates the id of the object. It shoulds be unique. I
+-   $listvalues indicates the vlaues to show in the object.
+-   $fieldid indicates the field used as key.
+-   $fieldvalue indicates the field used to show.
+-   $selected indicates the selected values.
+-   $extra (optional) indicates the extra value (see note below).
+
+###selectgroup
+
+###radio/endradio
+
+###checkbox/endcheckbox
+
+###item/trio
+
+###items/trios
+
+###textarea
+
+###hidden
+
+###label
+
+###commandbutton
+
+
 
 ### NOTE: Extra Parameter
  
