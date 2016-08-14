@@ -29,6 +29,12 @@ $usr=new stdClass();
 $users[]=$usr;
 //</editor-fold>
 
+class ClassService {
+    public static function Function() {
+        return "hello world";
+    }
+}
+
 echo $blade->run("Test.hello2"
     ,["name"=>"hola mundo"
     ,'records'=>$records

@@ -125,6 +125,7 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |@{{$variable1}}|show the value of the content directly (not evaluated, useful for js)|0.2b ok|
 |{!!$variable1!!}|show the value of the variable without htmlentities (no escaped)|0.2b ok|
 |{{ $name or 'Default' }}|value or default|0.2b ok|
+|{{Class::StaticFunction($variable)}}|call and show a function (the function should return a value)|0.2b ok|
 
 ### logic
 |Tag|Note|status|
@@ -224,7 +225,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - ~~- @each could be optimized.~~ DONE
 - ~~- There are several tags of undocumented features of the original Blade code.~~  DONE
 - ~~- Extending BladeOne opens a world of opportunities.~~ 
--    **May be a bladeone-bootstrap3 class in the future.**
+- ~~  May be a bladeone-bootstrap3 class in the future.~~ Done  
 - ~~- Speed up the loading of compiled templates.~~  DONE
 
 ##Version
@@ -235,6 +236,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with composer)
 - 2016-06-12 1.3 Lots of clean up. I removed some unused parameters.  I fixed a problem with forced in BladeOne.  I separates the doc per extension.
 - 2016-06-24 1.4 Updates extensions.  Now it uses strut instead of classes. Added a new extension BladeOneCache.
+- 2016-07-03 1.5 New features such as **@set** command
+- 2016-08-14 1.6 Some cleanups. Add new documentation   
 
 =======
 

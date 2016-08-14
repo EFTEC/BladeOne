@@ -19,7 +19,7 @@ namespace eftec\bladeone;
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
- * @version 1.6 2016-07-03 (1)
+ * @version 1.7 2016-08-14 (1)
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -36,6 +36,9 @@ trait BladeOneHtml
     }
     protected function compileListBoxes($expression) {
         return $this->phpTag."echo \$this->listboxes{$expression}; ?>";
+    }
+    protected function compileLink($expression) {
+        return $this->phpTag."echo \$this->link{$expression}; ?>";
     }
     protected function compileSelectGroup($expression) {
 
@@ -127,6 +130,9 @@ trait BladeOneHtml
     public function select($name,$extra='') {
         return "<select id='".static::e($name)."' name='".static::e($name)."' {$this->convertArg($extra)}>\n";
     }
+    public function Link($url,$label,$extra='') {
+        return "<a href='{$url}' {$this->convertArg($extra)}>{$label}</a>";
+    }
 
     /**
      * Find an element in a array of arrays
@@ -208,10 +214,19 @@ trait BladeOneHtml
             return '';
         }
     }
+
+    /**
+     * @param $id
+     * @param string $value
+     * @param string $text
+     * @param string|null $valueSelected
+     * @param string $extra
+     * @return string
+     */
     public function checkbox($id,$value='',$text='',$valueSelected='',$extra='') {
         $num=func_num_args();
         if ($num>2) {
-            if ($value==$valueSelected) {
+            if ($value==$valueSelected ) {
                 if (is_array($extra)) {
                     $extra['checked'] = 'checked';
                 } else {

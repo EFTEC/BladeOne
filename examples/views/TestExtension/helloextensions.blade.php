@@ -121,5 +121,10 @@ other country selected<br>
     other country selected<br>
 @endswitch
 
+<hr><h2>Link</h2>
+<pre>
+@@link('http://www.google.com','Go to google')
+</pre>
+@link('http://www.google.com','Go to google')
 </body>
 </html>

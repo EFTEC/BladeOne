@@ -103,3 +103,6 @@ script2
 script3
 @endpush
 stack :  @stack('scripts')
+<hr>extra functions<br>
+{{ClassService::Function()}}
+

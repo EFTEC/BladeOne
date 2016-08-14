@@ -61,6 +61,29 @@ For using this tag, the code requires to use the class BladeOneHtml
 
 ###checkbox/endcheckbox
 
+Single checkbox: 
+```html
+@checkbox('idsimple','777','SelectMe','777')
+```
+
+Multiple checkboxes:
+```html
+@checkbox('id3')
+    @item('0','--Select a country--')<br>
+    @items($countries,'id','name',$countrySelected,'%s<br>')
+@endcheckbox()
+```
+
+- @checkbox(id,$value,$label,$valueSelected,[$extra])
+-   id indicates the id of the object. It shoulds be unique
+-   $value indicates the value of the checkbox when its selected.
+-   $label shows the label of the object.
+-   $valueselected indicates the selected value. If $value is equals to $valueselected then the checkbox is checked
+-   $extra (optional) indicates the extra value (see section note below).
+
+>  Note: It could be generates as a single value or as a list of checkboxes (see examples)
+
+
 ###item/trio
 
 ###items/trios
@@ -70,8 +93,21 @@ For using this tag, the code requires to use the class BladeOneHtml
 ###hidden
 
 ###label
+```html
+@label('id','Select the value:')
+```
+- @label(id,$label,[$extra])
+-   id indicates the id of the input object related with the label.  
+-   $label shows the label of the object.  
+-   $extra (optional) indicates the extra value (see section note below).
+
 
 ###commandbutton
+
+###link (new in 1.6)
+```html
+@link('http://www.google.com','Go to google')
+```
 
 
 
