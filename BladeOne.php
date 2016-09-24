@@ -935,14 +935,16 @@ class BladeOne
      */
     protected function compileExtends($expression)
     {
+
         $expression = $this->stripParentheses($expression);
         /*
         $data = $this->phpTag."echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
         */
-        $data= $this->phpTag.'echo $this->runChild('.$expression.'); ?>';
+        // the countextend avoids to runchild if a if is not evaluated
+        $uni=uniqid();
+        $data= $this->phpTag.'if (@$_shouldextend[\''.$uni.'\']) { echo $this->runChild('.$expression.'); } ?>';
         $this->footer[] = $data;
-
-        return '';
+        return $this->phpTag.'$_shouldextend[\''.$uni.'\']=1; ?>';
     }
 
     /**

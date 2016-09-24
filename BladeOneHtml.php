@@ -106,6 +106,9 @@ trait BladeOneHtml
     protected function compileInput($expression) {
         return $this->phpTag."echo \$this->input{$expression}; ?>";
     }
+    protected function compileFile($expression) {
+        return $this->phpTag."echo \$this->file{$expression}; ?>";
+    }	
     protected function compileTextArea($expression) {
         return $this->phpTag."echo \$this->textArea{$expression}; ?>";
     }
@@ -296,11 +299,11 @@ trait BladeOneHtml
         if (count($arrValues)==0) {
             return "";
         }
-        if (is_object($arrValues[0])) {
+        if (is_object(@$arrValues[0])) {
             $arrValues=(array) $arrValues;
         }
         if (is_array($selectedItem)) {
-            if (is_object($selectedItem[0])) {
+            if (is_object(@$selectedItem[0])) {
                 $primitiveArray=[];
                 foreach($selectedItem as $v) {
                     $primitiveArray[]=$v->{$fieldId};
@@ -400,6 +403,10 @@ trait BladeOneHtml
     {
         return "<input id='".static::e($id)."' name='".static::e($id)."' type='".$type."' ".$this->convertArg($extra)." value='".static::e($value)."' />\n";
     }
+    public function file($id,$value='',$extra='')
+    {
+        return "<input id='".static::e($id)."' name='".static::e($id)."' type='file' ".$this->convertArg($extra)." value='".static::e($value)."' />\n";
+    }	
     public function textArea($id,$value='',$extra='')
     {
         $value=str_replace('\n',"\n",$value);
