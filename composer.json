@@ -1,5 +1,5 @@
 {
-  "name": "johntaa/bladeone",
+  "name": "eftec/bladeone",
   "description": "The standalone version Blade Template Engine from Laravel in a single php file",
   "type": "library",
   "keywords": ["blade","template","view"],
