@@ -51,7 +51,7 @@ _(modify composer.json as follow) and run "composer update"_
 ```json
 "autoload": {
   "psr-4": {
-    "eftec\\": "vendor/eftec/"
+    "eftec\\bladeone": "/"
   }
 }
 ```  
