@@ -34,14 +34,6 @@ For using this tag, the code requires to use the class BladeOneHtml
 
 @input creates a **input** tag. The first value is the id/name, the second is the default value, the third is the type (by default is text for textbox)*[]: 
 
-### File
-
-```html
-@file('iduser',$currentUser[,$extra])
-```
-
-@file creates a **file input** tag. The first value is the id/name, the second is the default value*[]: 
-
 ### Form/endform
 ```form
 @form(['action'],['post'][,$extra])

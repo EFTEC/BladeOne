@@ -12,7 +12,7 @@
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 1.5 2016-07-03
+ * @version 1.6 2017-02-20
  * @link https://github.com/EFTEC/BladeOne
  */
 
@@ -929,7 +929,7 @@ class BladeOne
 
     /**
      * Compile the extends statements into valid PHP.
-     *
+     * TODO: FIX. it extends at the end of the file. its an error
      * @param  string  $expression
      * @return string
      */

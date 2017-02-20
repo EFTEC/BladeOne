@@ -1,14 +1,30 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jorge
- * Date: 26-06-2016
- * Time: 12:37
- */
 
 namespace eftec\bladeone;
 
-
+/**
+ * trait BladeOneHtmlBootstrap
+ * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
+ * Extends the tags of the class BladeOne.  Its optional
+ * It adds the next tags
+ * <code>
+ * select:
+ * @ select('idCountry'[,$extra])
+ * @ item('0','--select a country'[,$extra])
+ * @ items($countries,'id','name',$currentCountry[,$extra])
+ * @ endselect()
+ * input:
+ * @ input('iduser',$currentUser,'text'[,$extra])
+ * button:
+ * @ commandbutton('idbutton','value','text'[,$extra])
+ *
+ * </code>
+ * Note. The names of the tags are based in Java Server Faces (JSF)
+ * @package  BladeOneHtmlBootstrap
+ * @version 1.8 2018-02-20 (1)
+ * @link https://github.com/EFTEC/BladeOne
+ * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
+ */
 trait BladeOneHtmlBootstrap
 {
     use BladeOneHtml {
@@ -40,30 +56,88 @@ trait BladeOneHtmlBootstrap
         $extra=$this->addClass($extra,'form-control');
         return $this->textAreaParent($id,$value,$extra);
     }
+
+
+
+
+    public function file($id,$fullfilepath='',$file='',$extra='')
+    {
+        return "<input id='".static::e($id)."_file' name='".static::e($id)."_file' type='hidden' value='".static::e($file)."' />
+        <div class='input-group'>
+        <label class='input-group-btn'>
+            <span class='btn btn-primary'>
+            Browse&hellip;<a href='$fullfilepath' class='afile' ><i class='fa fa-paperclip'></i></a> 
+            <input type='file' style='display: none;' id='".static::e($id)."' name='".static::e($id)."' $extra />
+            </span>
+        </label>
+        <input type='text' class='form-control' readonly></div>";
+        // return "<a href='$fullfilepath'>$file</a>
+        //<input id='".static::e($id)."_file' name='".static::e($id)."_file' type='hidden' value='".static::e($file)."' />
+        // <input id='".static::e($id)."' name='".static::e($id)."' type='file' ".$this->convertArg($extra)." value='".static::e($fullfilepath)."' />\n";
+    }
+
+    /**
+     * @param string $id of the field
+     * @param string $fullfilepath full file path of the image
+     * @param string $file filename of the file
+     * @param string $extra extra field of the input file
+     * @return string html
+     */
+    public function image($id,$fullfilepath='',$file='',$extra='')
+    {
+        return "<input id='".static::e($id)."_file' name='".static::e($id)."_file' type='hidden' value='".static::e($file)."' />
+        <img src='$fullfilepath' class='img-thumbnail' />
+        <div class='input-group'>
+        
+        <label class='input-group-btn'>
+            <span class='btn btn-primary'>
+            Browse&hellip; 
+            <input type='file' style='display: none;' id='".static::e($id)."' name='".static::e($id)."' $extra />
+            </span>
+        </label>
+        <input type='text' class='form-control' readonly></div>";
+        // return "<a href='$fullfilepath'>$file</a>
+        //<input id='".static::e($id)."_file' name='".static::e($id)."_file' type='hidden' value='".static::e($file)."' />
+        // <input id='".static::e($id)."' name='".static::e($id)."' type='file' ".$this->convertArg($extra)." value='".static::e($fullfilepath)."' />\n";
+    }
+
+    /**
+     * @param string $type type of the current open tag
+     * @param array|string $valueId if is an array then the first value is used as value, the second is used as extra
+     * @param $valueText
+     * @param array|string $selectedItem Item selected (optional)
+     * @param string $wrapper Wrapper of the element.  For example, <li>%s</li>
+     * @param string $extra
+     * @return string
+     * @internal param string $fieldId Field of the id
+     * @internal param string $fieldText Field of the value visible
+     */
     public function item($type,$valueId, $valueText, $selectedItem='',$wrapper='', $extra='') {
         $id=@end($this->htmlCurrentId);
         $wrapper=($wrapper=='')?'%s':$wrapper;
+
         if (is_array($selectedItem)) {
             $found=in_array($valueId,$selectedItem);
         } else {
             $found = $valueId == $selectedItem;
         }
+        $valueHtml= (!is_array($valueId))?"value='{$valueId}'":"value='{$valueId[0]}' data='{$valueId[1]}'";
         switch ($type) {
             case 'select':
                 $selected=($found)?'selected':'';
-                return sprintf($wrapper,"<option value='{$valueId}' $selected ".
+                return sprintf($wrapper,"<option $valueHtml $selected ".
                     $this->convertArg($extra).">{$valueText}</option>\n");
                 break;
             case 'radio':
                 $selected=($found)?'checked':'';
                 return sprintf($wrapper,"<label><input type='radio' id='".static::e($id)
-                    ."' name='".static::e($id)."' value='{$valueId}' $selected "
+                    ."' name='".static::e($id)."' $valueHtml $selected "
                     .$this->convertArg($extra)."> {$valueText}</label>\n");
                 break;
             case 'checkbox':
                 $selected=($found)?'checked':'';
                 return sprintf($wrapper,"<label><input type='checkbox' id='".static::e($id)
-                    ."' name='".static::e($id)."' value='{$valueId}' $selected "
+                    ."' name='".static::e($id)."' $valueHtml $selected "
                     .$this->convertArg($extra)."> {$valueText}</label>\n");
                 break;
 
@@ -81,10 +155,12 @@ trait BladeOneHtmlBootstrap
                     $extra.=' checked="checked"';
                 }
             }
-            return '<div class="checkbox"><label>'.$this->inputParent($id, $value, 'checkbox', $extra) . ' ' . $text.'</label></div>';
+            return '<div><label>'.$this->inputParent($id, $value, 'checkbox', $extra) . ' ' . $text.'</label></div>';
+            //return '<div class="checkbox"><label>'.$this->inputParent($id, $value, 'checkbox', $extra) . ' ' . $text.'</label></div>';
         } else {
             array_push($this->htmlCurrentId,$id);
-            return '<div class="checkbox">';
+            return '<div>';
+            //return '<div class="checkbox">';
         }
     }
     public function radio($id,$value='',$text='',$valueSelected='',$extra='') {

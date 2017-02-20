@@ -51,7 +51,7 @@ _(modify composer.json as follow) and run "composer update"_
 ```json
 "autoload": {
   "psr-4": {
-    "eftec\\bladeone": "/"
+    "eftec\\": "vendor/eftec/"
   }
 }
 ```  
@@ -67,15 +67,16 @@ views/hello.blade.php:
 {{$variable1}}
 ```
 
-## Business Logic/Controller methods (code in the php file)
+## Business Logic/Controller methods
 
 ### constructor
 ```php
 $blade=new bladeone\BladeOne($views,$cache);
 ```
 - BladeOne(templatefolder,compiledfolder) Creates the instance of BladeOne.
--   **$views** indicates the folder (without ending backslash) of where the template files (*.blade.php) are located.
--   **$cache** indicates the folder where the result of files will be saves. This folder should has write permission. Also, this folder could be located outside of the Web Root.  
+-   templatefolders indicates the folder (without ending backslash) of where the template files (*.blade.php) are located.
+-   compiledfolder indicates the folder where the result of files will be saves. This folder should has write permission. Also, this folder could be located outside of the Web Root.
+
 
 
 ### run
@@ -83,21 +84,39 @@ $blade=new bladeone\BladeOne($views,$cache);
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
 - run([template,[array])  Runs the template and generates a compiled version (if its required), then it shows the result.
--   **template** is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder\example.blade.php"
--   **array** (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
+-   template is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder\example.blade.php"
+-   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
 
 ### BLADEONE_MODE (global constant) (optional)
 ```php
 define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
 ```
-- **BLADEONE_MODE** Is a global constant that defines the behaviour of the engine.
+- BLADEONE_MODE Is a global constant that defines the behaviour of the engine.
 -   1=forced. Indicates that the engine always will compile the template.
 -   2=fast. Indicates that the engine always will use the compiled version
 
 
-## Template tags 
+## Template tags
 
-[Template Documentation](readme.template.md)
+### Template Inheritance
+
+#### In the master page (layout)
+|Tag|Note|status|
+|---|---|---|
+|@section('sidebar')|Start a new section|0.2b ok|
+|@show|Indicates where the content of section will be displayed|0.2 ok|
+|@yield('title')|Show here the content of a section|0.2b ok|
+
+#### Using the master page (using the layout)
+|Tag|Note|status|
+|---|---|---|
+|@extends('layouts.master')|Indicates the layout to use|0.2b ok|
+|@section('title', 'Page Title')|Sends a single text to a section|0.2b ok|
+|@section('sidebar')|Start a block of code to send to a section|0.2b ok|
+|@endsection|End a block of code|0.2b ok|
+|@parent|Show the original code of the section|REMOVED(*)|
+
+Note :(*) This feature is in the original documentation but its not implemented neither its required. May be its an obsolete feature.
 
 ### variables
 |Tag|Note|status|

@@ -19,7 +19,7 @@ namespace eftec\bladeone;
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
- * @version 1.7 2016-08-14 (1)
+ * @version 1.8 2018-02-20 (1)
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -108,7 +108,10 @@ trait BladeOneHtml
     }
     protected function compileFile($expression) {
         return $this->phpTag."echo \$this->file{$expression}; ?>";
-    }	
+    }
+    protected function compileImage($expression) {
+        return $this->phpTag."echo \$this->image{$expression}; ?>";
+    }
     protected function compileTextArea($expression) {
         return $this->phpTag."echo \$this->textArea{$expression}; ?>";
     }
@@ -166,7 +169,7 @@ trait BladeOneHtml
         $html.= "<table>\n";
         $html.= "    <tr>\n";
         $html.= "	    <td>\n";
-        $html.= "		    <select id='{$name}_noselected' size='6' multiple='multiple'>\n";
+        $html.= "		    <select id='{$name}_noselected' size='6' multiple='multiple' $extra>\n";
         if (count($allvalues)==0) {
             $allvalues=[];
         }
@@ -245,12 +248,14 @@ trait BladeOneHtml
 
     /**
      * @param string $type type of the current open tag
-     * @param string $fieldId Field of the id
-     * @param string $fieldText Field of the value visible
+     * @param array|string $valueId if is an array then the first value is used as value, the second is used as extra
+     * @param $valueText
      * @param array|string $selectedItem Item selected (optional)
      * @param string $wrapper Wrapper of the element.  For example, <li>%s</li>
      * @param string $extra
      * @return string
+     * @internal param string $fieldId Field of the id
+     * @internal param string $fieldText Field of the value visible
      */
     public function item($type,$valueId, $valueText, $selectedItem='',$wrapper='', $extra='') {
         $id=@end($this->htmlCurrentId);
@@ -260,22 +265,23 @@ trait BladeOneHtml
         } else {
             $found = $valueId == $selectedItem;
         }
+        $valueHtml= (!is_array($valueId))?"value='{$valueId}'":"value='{$valueId[0]}' data='{$valueId[1]}'";
         switch ($type) {
             case 'select':
                 $selected=($found)?'selected':'';
-                return sprintf($wrapper,"<option value='{$valueId}' $selected ".
+                return sprintf($wrapper,"<option $valueHtml $selected ".
                     $this->convertArg($extra).">{$valueText}</option>\n");
                 break;
             case 'radio':
                 $selected=($found)?'checked':'';
                 return sprintf($wrapper,"<input type='radio' id='".static::e($id)
-                    ."' name='".static::e($id)."' value='{$valueId}' $selected "
+                    ."' name='".static::e($id)."' $valueHtml $selected "
                     .$this->convertArg($extra)."> {$valueText}\n");
                 break;
             case 'checkbox':
                 $selected=($found)?'checked':'';
                 return sprintf($wrapper,"<input type='checkbox' id='".static::e($id)
-                    ."' name='".static::e($id)."' value='{$valueId}' $selected "
+                    ."' name='".static::e($id)."' $valueHtml $selected "
                     .$this->convertArg($extra)."> {$valueText}\n");
                 break;
 
@@ -287,18 +293,20 @@ trait BladeOneHtml
     /**
      * @param string $type type of the current open tag
      * @param array $arrValues Array of objects/arrays to show.
-     * @param string $fieldId Field of the id
-     * @param string $fieldText Field of the value visible
+     * @param string $fieldId Field of the id (for arrValues)
+     * @param string $fieldText Field of the id of selectedItem
      * @param array|string $selectedItem Item selected (optional)
+     * @param string $selectedFieldId field of the selected item.
      * @param string $wrapper Wrapper of the element.  For example, <li>%s</li>
      * @param string $extra (optional) is used for add additional information for the html object (such as class)
      * @return string
-     * @version 1.0
+     * @version 1.1 2017
      */
-    public function items($type, $arrValues, $fieldId, $fieldText, $selectedItem='', $wrapper='', $extra='') {
+    public function items($type, $arrValues, $fieldId, $fieldText, $selectedItem='',$selectedFieldId='', $wrapper='', $extra='') {
         if (count($arrValues)==0) {
             return "";
         }
+
         if (is_object(@$arrValues[0])) {
             $arrValues=(array) $arrValues;
         }
@@ -306,7 +314,7 @@ trait BladeOneHtml
             if (is_object(@$selectedItem[0])) {
                 $primitiveArray=[];
                 foreach($selectedItem as $v) {
-                    $primitiveArray[]=$v->{$fieldId};
+                    $primitiveArray[]=$v->{$selectedFieldId};
                 }
                 $selectedItem=$primitiveArray;
             }
@@ -403,10 +411,12 @@ trait BladeOneHtml
     {
         return "<input id='".static::e($id)."' name='".static::e($id)."' type='".$type."' ".$this->convertArg($extra)." value='".static::e($value)."' />\n";
     }
-    public function file($id,$value='',$extra='')
+    public function file($id,$fullfilepath='',$file='',$extra='')
     {
-        return "<input id='".static::e($id)."' name='".static::e($id)."' type='file' ".$this->convertArg($extra)." value='".static::e($value)."' />\n";
-    }	
+        return "<a href='$fullfilepath'>$file</a>
+        <input id='".static::e($id)."_file' name='".static::e($id)."_file' type='hidden' value='".static::e($file)."' />
+        <input id='".static::e($id)."' name='".static::e($id)."' type='file' ".$this->convertArg($extra)." value='".static::e($fullfilepath)."' />\n";
+    }
     public function textArea($id,$value='',$extra='')
     {
         $value=str_replace('\n',"\n",$value);

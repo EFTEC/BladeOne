@@ -30,7 +30,7 @@ $users[]=$usr;
 //</editor-fold>
 
 class ClassService {
-    public static function Function() {
+    public static function myfunction() {
         return "hello world";
     }
 }
