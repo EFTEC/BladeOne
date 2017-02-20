@@ -238,6 +238,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2016-06-24 1.4 Updates extensions.  Now it uses strut instead of classes. Added a new extension BladeOneCache.
 - 2016-07-03 1.5 New features such as **@set** command
 - 2016-08-14 1.6 Some cleanups. Add new documentation   
+- 2017-02-20 1.6 More cleanups. Refactored file,image and other tags.
 
 =======
 
