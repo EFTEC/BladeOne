@@ -44,6 +44,12 @@ class BladeOne
      */
     protected $fileName;
 
+	/**
+	 * File extension for the template files.
+	 *
+	 * @var string
+	 */
+	protected $fileExtension = '.blade.php';
 
     /**
      * The stack of in-progress sections.
@@ -1419,12 +1425,12 @@ class BladeOne
         $arr=explode('.',$this->fileName);
         $c=count($arr);
         if ($c==1) {
-            return $this->templatePath . '/' . $this->fileName . '.blade.php';
+            return $this->templatePath . '/' . $this->fileName . $this->fileExtension;
         } else {
             $file=$arr[$c-1];
             array_splice($arr,$c-1,$c-1); // delete the last element
             $path=implode('/',$arr);
-            return $this->templatePath . '/' .$path.'/'. $file . '.blade.php';
+            return $this->templatePath . '/' .$path.'/'. $file . $this->fileExtension;
         }
     }
     /**
@@ -1463,6 +1469,28 @@ class BladeOne
         if (is_file($fileName)) return file_get_contents($fileName);
         $this->showError('getFile',"File does not exist at path {$fileName}",true);
         return '';
+    }
+
+    /**
+     * Get the file extension for template files.
+     *
+     * @return string
+     */
+    public function getFileExtension()
+    {
+        return $this->fileExtension;
+    }
+
+    /**
+     * Set the file extension for the template files.
+     *
+     * Including the leading dot for the extension is required, e.g. .blade.php
+     *
+     * @param $fileExtension
+     */
+    public function setFileExtension($fileExtension)
+    {
+        $this->fileExtension = $fileExtension;
     }
 
     /**
