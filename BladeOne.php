@@ -301,6 +301,10 @@ class BladeOne
             $contents = $this->compileString($this->getFile($template));
 
             if (!is_null($this->compiledPath)) {
+            	$dir = dirname($compiled);
+				if (!file_exists($dir)) {
+					@mkdir($dir, 777, true);
+				}
                 $ok=@file_put_contents($compiled, $contents);
                 if (!$ok) {
                     $this->showError("Compiling","Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
