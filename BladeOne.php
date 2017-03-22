@@ -44,12 +44,12 @@ class BladeOne
      */
     protected $fileName;
 
-	/**
-	 * File extension for the template files.
-	 *
-	 * @var string
-	 */
-	protected $fileExtension = '.blade.php';
+    /**
+     * File extension for the template files.
+     *
+     * @var string
+     */
+    protected $fileExtension = '.blade.php';
 
     /**
      * The stack of in-progress sections.
@@ -307,10 +307,10 @@ class BladeOne
             $contents = $this->compileString($this->getFile($template));
 
             if (!is_null($this->compiledPath)) {
-            	$dir = dirname($compiled);
-				if (!file_exists($dir)) {
-					@mkdir($dir, 777, true);
-				}
+                $dir = dirname($compiled);
+                if (!file_exists($dir)) {
+                    @mkdir($dir, 777, true);
+                }
                 $ok=@file_put_contents($compiled, $contents);
                 if (!$ok) {
                     $this->showError("Compiling","Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
