@@ -513,19 +513,6 @@ class BladeOne
         return $this->phpTag."echo \$this->renderEach{$expression}; ?>";
     }
 
-    /**
-     * Compile the inject statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileInject($expression)
-    {
-        $segments = explode(',', preg_replace("/[\(\)\\\"\']/", '', $expression));
-
-        return $this->phpTag.'$'.trim($segments[0])." = app('".trim($segments[1])."'); ?>";
-    }
-
     protected function compileSet($expression)
     {
         $segments = explode('=', preg_replace("/[\(\)\\\"\']/", '', $expression));
@@ -647,28 +634,6 @@ class BladeOne
     }
 
     /**
-     * Compile the lang statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileLang($expression)
-    {
-        return $this->phpTag."echo app('translator')->get$expression; ?>";
-    }
-
-    /**
-     * Compile the choice statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileChoice($expression)
-    {
-        return $this->phpTag."echo app('translator')->choice$expression; ?>";
-    }
-
-    /**
      * Compile the else statements into valid PHP.
      *
      * @return string
@@ -743,50 +708,6 @@ class BladeOne
         $empty = '$__empty_'.++$this->forelseCounter;
 
         return $this->phpTag."{$empty} = true; foreach{$expression}: {$empty} = false; ?>";
-    }
-
-    /**
-     * Compile the can statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileCan($expression)
-    {
-        return $this->phpTag."if (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->check{$expression}): ?>";
-    }
-
-    /**
-     * Compile the else-can statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileElsecan($expression)
-    {
-        return $this->phpTag."elseif (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->check{$expression}): ?>";
-    }
-
-    /**
-     * Compile the cannot statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileCannot($expression)
-    {
-        return $this->phpTag."if (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->denies{$expression}): ?>";
-    }
-
-    /**
-     * Compile the else-can statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileElsecannot($expression)
-    {
-        return $this->phpTag."elseif (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->denies{$expression}): ?>";
     }
 
     /**
