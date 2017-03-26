@@ -301,7 +301,7 @@ class BladeOne
             $this->fileName = $fileName;
         }
         $compiled = $this->getCompiledFile();
-        $template=$this->getTemplateFile();
+        $template = $this->getTemplateFile();
         if ($this->isExpired() || $forced) {
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
@@ -309,9 +309,12 @@ class BladeOne
             if (!is_null($this->compiledPath)) {
                 $dir = dirname($compiled);
                 if (!file_exists($dir)) {
-                    @mkdir($dir, 777, true);
+                    $ok = @mkdir($dir, 0777, true);
+                    if (!$ok) {
+                        $this->showError("Compiling","Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
+                    }
                 }
-                $ok=@file_put_contents($compiled, $contents);
+                $ok = @file_put_contents($compiled, $contents);
                 if (!$ok) {
                     $this->showError("Compiling","Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
                 }
