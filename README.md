@@ -137,6 +137,35 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |@unless(boolean)|execute block of code is boolean is false|0.2b ok|
 
 ### loop
+
+####@for($variable;$condition;$increment) / @endfor
+_Generates a loop until the condition is meet and the variable is incremented for each loop_
+
+$variable is a variable. Example $i=0    
+$condition is the condition that must be true, otherwise the cycle will end. Ex: $i<10
+$increment is how the variable is incremented in each loop. Ex: $i++
+
+Example:
+```html
+@for ($i = 0; $i < 10; $i++)
+    The current value is {{ $i }}<br>
+@endfor
+```
+
+Returns:
+```html
+The current value is 0
+The current value is 1
+The current value is 2
+The current value is 3
+The current value is 4
+The current value is 5
+The current value is 6
+The current value is 7
+The current value is 8
+The current value is 9
+```
+
 |Tag|Note|status|
 |---|---|---|
 |@for($i = 0; $i < 10; $i++)|for loop|0.2b ok|
@@ -148,7 +177,7 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |@endforelse|end of forelse block|not tested|
 |@while(boolean)|while loop|not tested|
 |@endwhile|end while loop|not tested|
-
+|@splitforeach|split a foreach by adding a code for "n" interaction|1.7 ok|
 ### Sub Views
 |Tag|Note|status|
 |---|---|---|
@@ -239,7 +268,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2016-07-03 1.5 New features such as **@set** command
 - 2016-08-14 1.6 Some cleanups. Add new documentation   
 - 2017-02-20 1.6 More cleanups. Refactored file,image and other tags.
-
+- 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature splitforeach.
 =======
 
 ##Collaboration

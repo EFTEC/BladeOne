@@ -3,9 +3,7 @@
 @section('title', 'Page Title')
 
 @section('sidebar')
-
-
-    <p>This is appended to the master sidebar.</p>
+    <p>It is a sidebar created in hello2.blade.php. It could be used as many times as you want</p>
 @endsection
 
 @section('content')
