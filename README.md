@@ -94,7 +94,7 @@ With BladeOne, we could do the same with
     @nextforeach
 </select>
 ```
-And with html extension we could even reduces to
+And with html extension we could even reduce to
 
 ```php // template.blade.php
 @select('id1')
@@ -114,7 +114,7 @@ The second time the template is called then, it uses the compiled file.   The co
 
 ## Scalable
 
-You could add and use your own function by adding a new method (or extending) to the bladeone class
+You could add and use your own function by adding a new method (or extending) to the bladeone class. NOTE: The function should starts with the name "compile"
 ```php
 protected function compileMyFunction($expression)
 {
@@ -250,7 +250,7 @@ Note :(*) This feature is in the original documentation but its not implemented 
 
 ## loop
 
-## @for($variable;$condition;$increment) / @endfor
+### @for($variable;$condition;$increment) / @endfor
 _Generates a loop until the condition is meet and the variable is incremented for each loop_   
 
 |Tag|Note|Example|
@@ -279,7 +279,7 @@ The current value is 8
 The current value is 9
 ```
 
-## @foreach($array as $alias) / @endforeach
+### @foreach($array as $alias) / @endforeach
 Generates a loop for each values of the variable.    
 
 |Tag|Note|Example|
@@ -299,18 +299,99 @@ This is user 1
 This is user 2
 ```
 
-|Tag|Note|status|
+### @forelse($array as $alias) / @empty / @endforelse
+Its the same than foreach but jumps to the @empty tag if the array is null or empty   
+
+|Tag|Note|Example|
 |---|---|---|
-|@for($i = 0; $i < 10; $i++)|for loop|0.2b ok|
-|@endfor|end of for loop|0.2b ok|
-|@foreach($array as $obj)|foreach loop|0.2b ok|
-|@endforeach|end of foreach loop|0.2b ok|
-|@forelse($array as $obj)|inverse foreach loop|not tested|
-|@empty|if forelse loop is empty the executes the next block|not tested|
-|@endforelse|end of forelse block|not tested|
-|@while(boolean)|while loop|not tested|
-|@endwhile|end while loop|not tested|
-|@splitforeach|split a foreach by adding a code for "n" interaction|1.7 ok|
+|$array|Is an array with values.|$countries|  
+|$alias|is a new variable that it stores each interaction of the cycle.|$country|
+
+
+Example: ($users is an array of objects)
+```html
+@forelse($users as $user)
+    <li>{{ $user->name }}</li>
+@empty
+    <p>No users</p>
+@endforelse
+```
+Returns:
+```html
+John Doe
+Anna Smith
+```
+
+### @while($condition) / @endwhile
+Loops until the condition is not meet.
+
+|Tag|Note|Example|
+|---|---|---|
+|$condition|The cycle loops until the condition is false.|$counter<10|  
+
+
+Example: ($users is an array of objects)
+```html
+@set($whilecounter=0)
+@while($whilecounter<3)
+    @set($whilecounter)
+    I'm looping forever.<br>
+@endwhile
+```
+Returns:
+```html
+I'm looping forever.
+I'm looping forever.
+I'm looping forever.
+```
+
+### @splitforeach($nElem,$textbetween,$textend="")  inside @foreach
+This functions show a text inside a @foreach cycle every "n" of elements.  This function could be used when you want to add columns to a list of elements.   
+NOTE: The $textbetween is not displayed if its the last element of the last.  With the last element it show the variable $textend
+
+|Tag|Note|Example|
+|---|---|---|
+|$nElem|Number of elements|2, for every 2 element the text is displayed|  
+|$textbetween|Text to show|'</tr><tr>'| 
+|$textend|Text to show|'</tr>'| 
+
+Example: ($users is an array of objects)
+```html
+<table border="1">
+<tr>
+@foreach($drinks7 as $drink)
+    <td>{{$drink}}</td>
+    @splitforeach(2,'</tr><tr>','</tr>')
+    @endforeach
+</table>
+```
+Returns a table with 2 columns.
+
+### @continue / @break
+Continue jump to the next iteraction of a cycle.  @Break jump out of a cycle.
+
+|Tag|Note|Example|
+|---|---|---|
+
+Example: ($users is an array of objects)
+```html
+@foreach($users as $user)
+    @if($user->type == 1) // ignores the first user John Smith
+    @continue
+    @endif
+    <li>{{ $user->type }} - {{ $user->name }}</li>
+
+    @if($user->number == 5) // ends the cycle.
+        @break
+    @endif
+@endforeach
+```
+Returns:
+```html
+2 - Anna Smith
+```
+
+
 ## Sub Views
 |Tag|Note|status|
 |---|---|---|
