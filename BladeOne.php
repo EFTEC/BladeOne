@@ -28,7 +28,7 @@ class BladeOne
 	 *
 	 * @var string
 	 */
-	protected $ext = '.html';
+	protected $ext = '.blade.php';
     //<editor-fold desc="fields">
     /**
      * All of the registered extensions.
@@ -1421,12 +1421,12 @@ class BladeOne
         $arr=explode('.',$this->fileName);
         $c=count($arr);
         if ($c==1) {
-            return $this->templatePath . '/' . $this->fileName . '.blade.php';
+            return $this->templatePath . '/' . $this->fileName . $this->ext;
         } else {
             $file=$arr[$c-1];
             array_splice($arr,$c-1,$c-1); // delete the last element
             $path=implode('/',$arr);
-            return $this->templatePath . '/' .$path.'/'. $file . '.blade.php';
+			return $this->templatePath . '/' .$path.'/'. $file .  $this->ext;
         }
     }
     /**
