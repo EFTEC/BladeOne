@@ -44,6 +44,12 @@ class BladeOne
      */
     protected $fileName;
 
+    /**
+     * File extension for the template files.
+     *
+     * @var string
+     */
+    protected $fileExtension = '.blade.php';
 
     /**
      * The stack of in-progress sections.
@@ -295,13 +301,20 @@ class BladeOne
             $this->fileName = $fileName;
         }
         $compiled = $this->getCompiledFile();
-        $template=$this->getTemplateFile();
+        $template = $this->getTemplateFile();
         if ($this->isExpired() || $forced) {
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
 
             if (!is_null($this->compiledPath)) {
-                $ok=@file_put_contents($compiled, $contents);
+                $dir = dirname($compiled);
+                if (!file_exists($dir)) {
+                    $ok = @mkdir($dir, 0777, true);
+                    if (!$ok) {
+                        $this->showError("Compiling","Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
+                    }
+                }
+                $ok = @file_put_contents($compiled, $contents);
                 if (!$ok) {
                     $this->showError("Compiling","Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
                 }
@@ -503,19 +516,6 @@ class BladeOne
         return $this->phpTag."echo \$this->renderEach{$expression}; ?>";
     }
 
-    /**
-     * Compile the inject statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileInject($expression)
-    {
-        $segments = explode(',', preg_replace("/[\(\)\\\"\']/", '', $expression));
-
-        return $this->phpTag.'$'.trim($segments[0])." = app('".trim($segments[1])."'); ?>";
-    }
-
     protected function compileSet($expression)
     {
         $segments = explode('=', preg_replace("/[\(\)\\\"\']/", '', $expression));
@@ -637,28 +637,6 @@ class BladeOne
     }
 
     /**
-     * Compile the lang statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileLang($expression)
-    {
-        return $this->phpTag."echo app('translator')->get$expression; ?>";
-    }
-
-    /**
-     * Compile the choice statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileChoice($expression)
-    {
-        return $this->phpTag."echo app('translator')->choice$expression; ?>";
-    }
-
-    /**
      * Compile the else statements into valid PHP.
      *
      * @return string
@@ -733,50 +711,6 @@ class BladeOne
         $empty = '$__empty_'.++$this->forelseCounter;
 
         return $this->phpTag."{$empty} = true; foreach{$expression}: {$empty} = false; ?>";
-    }
-
-    /**
-     * Compile the can statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileCan($expression)
-    {
-        return $this->phpTag."if (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->check{$expression}): ?>";
-    }
-
-    /**
-     * Compile the else-can statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileElsecan($expression)
-    {
-        return $this->phpTag."elseif (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->check{$expression}): ?>";
-    }
-
-    /**
-     * Compile the cannot statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileCannot($expression)
-    {
-        return $this->phpTag."if (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->denies{$expression}): ?>";
-    }
-
-    /**
-     * Compile the else-can statements into valid PHP.
-     *
-     * @param  string  $expression
-     * @return string
-     */
-    protected function compileElsecannot($expression)
-    {
-        return $this->phpTag."elseif (app('Illuminate\\Contracts\\Auth\\Access\\Gate')->denies{$expression}): ?>";
     }
 
     /**
@@ -1415,12 +1349,12 @@ class BladeOne
         $arr=explode('.',$this->fileName);
         $c=count($arr);
         if ($c==1) {
-            return $this->templatePath . '/' . $this->fileName . '.blade.php';
+            return $this->templatePath . '/' . $this->fileName . $this->fileExtension;
         } else {
             $file=$arr[$c-1];
             array_splice($arr,$c-1,$c-1); // delete the last element
             $path=implode('/',$arr);
-            return $this->templatePath . '/' .$path.'/'. $file . '.blade.php';
+            return $this->templatePath . '/' .$path.'/'. $file . $this->fileExtension;
         }
     }
     /**
@@ -1459,6 +1393,28 @@ class BladeOne
         if (is_file($fileName)) return file_get_contents($fileName);
         $this->showError('getFile',"File does not exist at path {$fileName}",true);
         return '';
+    }
+
+    /**
+     * Get the file extension for template files.
+     *
+     * @return string
+     */
+    public function getFileExtension()
+    {
+        return $this->fileExtension;
+    }
+
+    /**
+     * Set the file extension for the template files.
+     *
+     * Including the leading dot for the extension is required, e.g. .blade.php
+     *
+     * @param $fileExtension
+     */
+    public function setFileExtension($fileExtension)
+    {
+        $this->fileExtension = $fileExtension;
     }
 
     /**
