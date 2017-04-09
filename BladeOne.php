@@ -23,6 +23,12 @@ use Exception;
 class BladeOne
 {
 
+	/**
+	 * Extention for tpl files
+	 *
+	 * @var string
+	 */
+	protected $ext = '.html';
     //<editor-fold desc="fields">
     /**
      * All of the registered extensions.
