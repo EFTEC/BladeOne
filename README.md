@@ -138,7 +138,7 @@ Note :(*) This feature is in the original documentation but its not implemented 
 
 ### loop
 
-####@for($variable;$condition;$increment) / @endfor
+#### @for($variable;$condition;$increment) / @endfor
 _Generates a loop until the condition is meet and the variable is incremented for each loop_
 
 $variable is a variable. Example $i=0    
@@ -268,7 +268,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2016-07-03 1.5 New features such as **@set** command
 - 2016-08-14 1.6 Some cleanups. Add new documentation   
 - 2017-02-20 1.6 More cleanups. Refactored file,image and other tags.
-- 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature splitforeach.
+- 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature splitforeach.   
 =======
 
 ##Collaboration
