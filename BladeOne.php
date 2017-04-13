@@ -166,8 +166,8 @@ class BladeOne
     //<editor-fold desc="constructor">
     /**
      * Bob the constructor.
-	 * 
-	 * The folder at $compiledPath is created in case it doesn't exist.
+     * 
+     * The folder at $compiledPath is created in case it doesn't exist.
      *
      * @param string $templatePath
      * @param string $compiledPath
@@ -176,13 +176,13 @@ class BladeOne
     {
         $this->templatePath = $templatePath;
         $this->compiledPath = $compiledPath;
-		
-		if (!file_exists($this->compiledPath)) {
-			$ok = @mkdir($this->compiledPath, 0777, true);
-			if (!$ok) {
-				$this->showError("Constructing", "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.", true);
-			}
-		}
+
+        if (!file_exists($this->compiledPath)) {
+            $ok = @mkdir($this->compiledPath, 0777, true);
+            if (!$ok) {
+                $this->showError("Constructing", "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.", true);
+            }
+        }
     }
     //</editor-fold>
     //<editor-fold desc="common">
