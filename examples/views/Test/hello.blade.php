@@ -1,5 +1,6 @@
 
 
+
 @include('Test.master', ['some' => 'data'])
 v2<br>
 
@@ -32,48 +33,6 @@ Default: {{ $name or 'Default' }}<br>
 @unless (false)
     You are not signed in.
 @endunless
-<hr>loops:<br>
-
-@for ($i = 0; $i < 10; $i++)
-    The current value is {{ $i }}<br>
-@endfor
-
-@foreach ($users as $user)
-    <p>This is user {{ $user->id }}</p>
-@endforeach
-<hr>Forelse:<br>
-@forelse ($users as $user)
-    <li>{{ $user->name }}</li>
-@empty
-    <p>No users</p>
-@endforelse
-
-@while (false)
-    <p>I'm looping forever.</p>
-@endwhile
-
-@foreach ($users as $user)
-    @if($user->type == 1)
-        @continue
-    @endif
-
-    <li>{{ $user->name }}</li>
-
-    @if($user->number == 5)
-        @break
-    @endif
-@endforeach
-
-<hr>continue:<br>
-@foreach ($users as $user)
-    @continue($user->type == 1)
-
-    <li>{{ $user->name }}</li>
-
-    @break($user->number == 5)
-@endforeach
-<hr>each:<br>
-@each('Test.InnerView.name', $records, 'job')
 
 <h2>New from 1.5</h2>
 <pre>
@@ -91,8 +50,15 @@ x1={{$x1}}<br>
 </pre>
 @set($x1=5)
 x1={{$x1}}<br>
+<pre>
+@@set($x1='hello')
+</pre>
+@set($x1='hello')
+x1={{$x1}}<br>
 
 <hr>push and stack:<br>
+
+pushing:<br>
 @push('scripts')
 script1
 @endpush
@@ -102,7 +68,9 @@ script2
 @push('scripts')
 script3
 @endpush
+
+Show all the stack:<br>
 stack :  @stack('scripts')
 <hr>extra functions<br>
-{{ClassService::Function()}}
+@{{ClassService::Function()}}
 

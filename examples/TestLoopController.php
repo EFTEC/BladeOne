@@ -16,20 +16,20 @@ $name="New User";
 $records=array(1,2,3);
 $users=array();
 $usr=new stdClass();
-    $usr->id=1;
-    $usr->name="John Doe";
-    $usr->type=1;
-    $usr->number=1;
+$usr->id=1;
+$usr->name="John Doe";
+$usr->type=1;
+$usr->number=1;
 $users[]=$usr;
 $usr=new stdClass();
-    $usr->id=2;
-    $usr->name="Anna Smith";
-    $usr->type=2;
-    $usr->number=5;
+$usr->id=2;
+$usr->name="Anna Smith";
+$usr->type=2;
+$usr->number=5;
 $users[]=$usr;
 
-$drinks7=array('Cocacola','Pepsi','Fanta','Sprite','7up');
-$drinks8=array('Cocacola','Pepsi','Fanta','Sprite','7up','Bilz&Pap');
+$drinks7=array('Cocacola','Pepsi','Fanta','Sprite','7up',"Mountain Dew","Dr Pepper");
+$drinks8=array('Cocacola','Pepsi','Fanta','Sprite','7up',"Mountain Dew","Dr Pepper",'Bilz&Pap');
 //</editor-fold>
 
 class ClassService {
@@ -38,13 +38,9 @@ class ClassService {
     }
 }
 
-echo $blade->run("Test.hello2"
-    ,["name"=>"hola mundo"
-    ,'records'=>$records
-    ,'users'=>$users]);
 
 
-echo $blade->run("Test.hello"
+echo $blade->run("Test.loop"
     ,["name"=>"hola mundo"
         ,'records'=>$records
         ,'users'=>$users
