@@ -166,14 +166,23 @@ class BladeOne
     //<editor-fold desc="constructor">
     /**
      * Bob the constructor.
+     * 
+     * The folder at $compiledPath is created in case it doesn't exist.
      *
-     * @param  string $templatePath
-     * @param $compiledPath
+     * @param string $templatePath
+     * @param string $compiledPath
      */
     public function __construct($templatePath, $compiledPath)
     {
         $this->templatePath = $templatePath;
         $this->compiledPath = $compiledPath;
+
+        if (!file_exists($this->compiledPath)) {
+            $ok = @mkdir($this->compiledPath, 0777, true);
+            if (!$ok) {
+                $this->showError("Constructing", "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.", true);
+            }
+        }
     }
     //</editor-fold>
     //<editor-fold desc="common">
@@ -267,13 +276,6 @@ class BladeOne
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
             if (!is_null($this->compiledPath)) {
-                $dir = dirname($compiled);
-                if (!file_exists($dir)) {
-                    $ok = @mkdir($dir, 0777, true);
-                    if (!$ok) {
-                        $this->showError("Compiling", "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
-                    }
-                }
                 $ok = @file_put_contents($compiled, $contents);
                 if (!$ok) {
                     $this->showError("Compiling", "Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
