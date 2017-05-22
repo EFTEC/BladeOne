@@ -12,7 +12,6 @@ define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production)
 
 $drinks= array('Cocacola','Pepsi','Fanta','Sprite','7up');
 $json=json_encode($drinks);
-
 header('Content-Type: application/json');
 echo $blade->run("TestJson.example",['json'=>$json]);
 
