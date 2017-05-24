@@ -485,7 +485,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2016-08-14 1.6 Some cleanups. Add new documentation   
 - 2017-02-20 1.6 More cleanups. Refactored file,image and other tags.
 - 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature **@splitforeach**.    
-    
+- 2017-05-24 1.8 Maintenance.  Remove mb_string dependency.    
 
 
 #Collaboration
