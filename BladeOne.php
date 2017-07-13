@@ -10,7 +10,7 @@
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 1.8 2017-09-04
+ * @version 1.8.1 2017-07-13
  * @link https://github.com/EFTEC/BladeOne
  */
 namespace eftec\bladeone;
@@ -1383,11 +1383,18 @@ class BladeOne
      */
     public static function contains($haystack, $needles)
     {
-        foreach ((array)$needles as $needle) {
-            if ($needle != '' && strpos($haystack, $needle) !== false) {
-                return true;
+        foreach ((array) $needles as $needle) {
+            if (function_exists('mb_strpos')) {
+                if ($needle != '' && mb_strpos($haystack, $needle) !== false) {
+                    return true;
+                }
+            } else {
+                if ($needle != '' && strpos($haystack, $needle) !== false) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
     /**
@@ -1399,11 +1406,19 @@ class BladeOne
      */
     public static function startsWith($haystack, $needles)
     {
-        foreach ((array)$needles as $needle) {
-            if ($needle != '' && strpos($haystack, $needle) === 0) {
-                return true;
+        foreach ((array) $needles as $needle) {
+            if (function_exists('mb_strpos')) {
+                if ($needle != '' && mb_strpos($haystack, $needle) === 0) {
+                    return true;
+                }
+            } else {
+                if ($needle != '' && strpos($haystack, $needle) === 0) {
+                    return true;
+                }
+
             }
         }
+
         return false;
     }
     /**
