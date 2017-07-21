@@ -437,6 +437,10 @@ Note: Templates called folder.template is equals to folder/template
 ## Extending Blade
 Not compatible with the extension of Laravel's Blade.
 
+## component / slots
+
+
+
 # Extensions Libraries (optional) 
 [BladeOneHtml Documentation](BladeOneHtml.md)
 
@@ -488,7 +492,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2017-02-20 1.6 More cleanups. Refactored file,image and other tags.
 - 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature **@splitforeach**.    
 - 2017-05-24 1.8 Maintenance.  Remove mb_string dependency.    
-
+- 2017-07-21 1.9 Components and Slots.  Note: im not really convinced in its usability.
 
 #Collaboration
 

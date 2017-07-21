@@ -10,7 +10,7 @@
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 1.8.1 2017-07-13
+ * @version 1.9 2017-07-21
  * @link https://github.com/EFTEC/BladeOne
  */
 namespace eftec\bladeone;
@@ -162,6 +162,38 @@ class BladeOne
      */
     protected $forelseCounter = 0;
     public $phpTag = '<?php ';
+
+
+    /**
+     * The components being rendered.
+     *
+     * @var array
+     */
+    protected $componentStack = [];
+
+    /**
+     * The original data passed to the component.
+     *
+     * @var array
+     */
+    protected $componentData = [];
+
+    /**
+     * The slot contents for the component.
+     *
+     * @var array
+     */
+    protected $slots = [];
+
+    /**
+     * The names of the slots being rendered.
+     *
+     * @var array
+     */
+    protected $slotStack = [];
+
+
+
     //</editor-fold>
     //<editor-fold desc="constructor">
     /**
@@ -828,6 +860,51 @@ class BladeOne
     {
         return $this->phpTag . '$this->stopPush(); ?>';
     }
+
+    /**
+     * Compile the component statements into valid PHP.
+     *
+     * @param  string  $expression
+     * @return string
+     */
+    protected function compileComponent($expression)
+    {
+        return "<?php \$this->startComponent{$expression}; ?>";
+    }
+
+    /**
+     * Compile the end-component statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileEndComponent()
+    {
+        return '<?php echo $this->renderComponent(); ?>';
+    }
+
+    /**
+     * Compile the slot statements into valid PHP.
+     *
+     * @param  string  $expression
+     * @return string
+     */
+    protected function compileSlot($expression)
+    {
+        return "<?php \$this->slot{$expression}; ?>";
+    }
+
+    /**
+     * Compile the end-slot statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileEndSlot()
+    {
+        return '<?php $this->endSlot(); ?>';
+    }
+
+
+
     //</editor-fold>
     //<editor-fold desc="push">
     /**
@@ -1557,5 +1634,99 @@ class BladeOne
         }
         return "";
     }
+
+    /**
+     * Start a component rendering process.
+     *
+     * @param  string  $name
+     * @param  array  $data
+     * @return void
+     */
+    public function startComponent($name, array $data = [])
+    {
+        if (ob_start()) {
+            $this->componentStack[] = $name;
+
+            $this->componentData[$this->currentComponent()] = $data;
+
+            $this->slots[$this->currentComponent()] = [];
+        }
+    }
+
+    /**
+     * Render the current component.
+     *
+     * @return string
+     */
+    public function renderComponent()
+    {
+        $name = array_pop($this->componentStack);
+      //  return $this->runChild($name, $this->componentData($name))->render();
+        return $this->runChild($name, $this->componentData());
+    }
+
+    /**
+     * Get the data for the given component.
+     *
+     * @param  string  $name
+     * @return array
+     */
+    protected function componentData()
+    {
+        return array_merge(
+            $this->componentData[count($this->componentStack)],
+            ['slot' => trim(ob_get_clean())],
+            $this->slots[count($this->componentStack)]
+        );
+    }
+
+    /**
+     * Start the slot rendering process.
+     *
+     * @param  string  $name
+     * @param  string|null  $content
+     * @return void
+     */
+    public function slot($name, $content = null)
+    {
+        if (count(func_get_args()) == 2) {
+            $this->slots[$this->currentComponent()][$name] = $content;
+        } else {
+            if (ob_start()) {
+                $this->slots[$this->currentComponent()][$name] = '';
+
+                $this->slotStack[$this->currentComponent()][] = $name;
+            }
+        }
+    }
+
+    /**
+     * Save the slot content for rendering.
+     *
+     * @return void
+     */
+    public function endSlot()
+    {
+        last($this->componentStack);
+
+        $currentSlot = array_pop(
+            $this->slotStack[$this->currentComponent()]
+        );
+
+        $this->slots[$this->currentComponent()]
+        [$currentSlot] = trim(ob_get_clean());
+    }
+
+    /**
+     * Get the index for the current component.
+     *
+     * @return int
+     */
+    protected function currentComponent()
+    {
+        return count($this->componentStack) - 1;
+    }
+
+
     //</editor-fold>
 }
