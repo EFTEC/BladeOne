@@ -1,7 +1,5 @@
 ![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)
 
-
-
 # BladeOne
 BladeOne is a standalone version of Blade Template Engine that uses a single php file and can be ported and used in different projects.
 
@@ -12,7 +10,6 @@ BladeOne is a standalone version of Blade Template Engine that uses a single php
 [![php](https://img.shields.io/badge/php->5.4-green.svg)]()
 [![php](https://img.shields.io/badge/php-7.x-green.svg)]()
 [![CocoaPods](https://img.shields.io/badge/docs-40%25-yellow.svg)]()
-
 
 # Introduction (From Laravel webpage)
 Blade is the simple, yet powerful templating engine provided with Laravel. Unlike other popular PHP templating engines, Blade does not restrict you from using plain PHP code in your views. All Blade views are compiled into plain PHP code and cached until they are modified, meaning Blade adds essentially zero overhead to your application. Blade view files use the .blade.php file extension and are typically stored in the resources/views directory.
@@ -491,8 +488,12 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2016-08-14 1.6 Some cleanups. Add new documentation   
 - 2017-02-20 1.6 More cleanups. Refactored file,image and other tags.
 - 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature **@splitforeach**.    
-- 2017-05-24 1.8 Maintenance.  Remove mb_string dependency.    
+- 2017-05-24 1.8 Maintenance.  Now, it runs with or without mb_string module
 - 2017-07-21 1.9 Components and Slots.  Note: im not really convinced in its usability.
+- 2017-09-28 2.0 Some fixes there and here.  
+	Fixed foreach bug when the name of the variable contains the letters 'as' for example @foreach($list**As**Fast as $v)      
+	Fixed @item (BladeOneHtml). Now, it considers null and 0 as different.
+
 
 #Collaboration
 

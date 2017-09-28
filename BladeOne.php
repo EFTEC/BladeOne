@@ -1,20 +1,13 @@
 <?php
-/**
- * BladeOne - A Blade Template implementation in a single file
- * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
- * Part of this code is based in the work of Laravel PHP Components.
- *
- *
- */
+namespace eftec\bladeone;
+use Exception;
 /**
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 1.9 2017-07-21
+ * @version 2.0 2017-09-28
  * @link https://github.com/EFTEC/BladeOne
  */
-namespace eftec\bladeone;
-use Exception;
 class BladeOne
 {    //<editor-fold desc="fields">
     /**
@@ -162,7 +155,7 @@ class BladeOne
      */
     protected $forelseCounter = 0;
     public $phpTag = '<?php ';
-
+	
 
     /**
      * The components being rendered.
@@ -193,13 +186,12 @@ class BladeOne
     protected $slotStack = [];
 
 
-
     //</editor-fold>
     //<editor-fold desc="constructor">
     /**
      * Bob the constructor.
      * 
-     * The folder at $compiledPath is created in case it doesn't exist.
+     * The folder at $compiledPath is created in case it doesn't exist.	   																   
      *
      * @param string $templatePath
      * @param string $compiledPath
@@ -214,7 +206,7 @@ class BladeOne
             if (!$ok) {
                 $this->showError("Constructing", "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.", true);
             }
-        }
+		}
     }
     //</editor-fold>
     //<editor-fold desc="common">
@@ -308,6 +300,13 @@ class BladeOne
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
             if (!is_null($this->compiledPath)) {
+                $dir = dirname($compiled);
+                if (!file_exists($dir)) {
+                    $ok = @mkdir($dir, 0777, true);
+                    if (!$ok) {
+                        $this->showError("Compiling", "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
+                    }
+                }
                 $ok = @file_put_contents($compiled, $contents);
                 if (!$ok) {
                     $this->showError("Compiling", "Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
@@ -607,7 +606,7 @@ class BladeOne
      */
     protected function compileForeach($expression)
     {
-        preg_match('/\( *(.*) *as *([^\)]*)/', $expression, $matches);
+        preg_match('/\( *(.*) * as *([^\)]*)/', $expression, $matches);
         $iteratee = trim($matches[1]);
         $iteration = trim($matches[2]);
         $initLoop = "\$__currentLoopData = {$iteratee}; \$this->addLoop(\$__currentLoopData);";
@@ -1730,3 +1729,10 @@ class BladeOne
 
     //</editor-fold>
 }
+/**
+ * BladeOne - A Blade Template implementation in a single file
+ * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
+ * Part of this code is based in the work of Laravel PHP Components.
+ *
+ *
+ */

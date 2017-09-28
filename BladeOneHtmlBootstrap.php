@@ -21,7 +21,7 @@ namespace eftec\bladeone;
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtmlBootstrap
- * @version 1.8 2018-02-20 (1)
+ * @version 1.9 2017-09-28 (1)
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -119,7 +119,13 @@ trait BladeOneHtmlBootstrap
         if (is_array($selectedItem)) {
             $found=in_array($valueId,$selectedItem);
         } else {
-            $found = $valueId == $selectedItem;
+            if (is_null($selectedItem)) {
+                // diferentiate null = '' != 0
+                $found =$valueId==='' || $valueId===null;
+            } else {
+                $found =$selectedItem==$valueId ;
+            }
+
         }
         $valueHtml= (!is_array($valueId))?"value='{$valueId}'":"value='{$valueId[0]}' data='{$valueId[1]}'";
         switch ($type) {

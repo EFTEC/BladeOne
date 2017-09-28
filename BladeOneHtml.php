@@ -264,7 +264,9 @@ trait BladeOneHtml
             $found=in_array($valueId,$selectedItem);
         } else {
             $found = $valueId == $selectedItem;
+
         }
+
         $valueHtml= (!is_array($valueId))?"value='{$valueId}'":"value='{$valueId[0]}' data='{$valueId[1]}'";
         switch ($type) {
             case 'select':
