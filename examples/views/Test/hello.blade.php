@@ -69,8 +69,11 @@ script2
 script3
 @endpush
 
+kevinbacon @@gmail.com
+
 Show all the stack:<br>
 stack :  @stack('scripts')
 <hr>extra functions<br>
 @{{ClassService::Function()}}
+
 

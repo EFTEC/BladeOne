@@ -493,7 +493,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2017-09-28 2.0 Some fixes there and here.  
 	Fixed foreach bug when the name of the variable contains the letters 'as' for example @foreach($list**As**Fast as $v)      
 	Fixed @item (BladeOneHtml). Now, it considers null and 0 as different.
-
+- 2017-10-20 2.1 Fixed with @parent
 
 #Collaboration
 

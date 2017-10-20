@@ -5,7 +5,7 @@ use Exception;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 2.0 2017-09-28
+ * @version 2.1 2017-09-28
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -184,6 +184,8 @@ class BladeOne
      * @var array
      */
     protected $slotStack = [];
+
+    protected $PARENTKEY='@parentXYZABC';
 
 
     //</editor-fold>
@@ -804,6 +806,16 @@ class BladeOne
         $this->footer[] = $data;
         return $this->phpTag . '$_shouldextend[\'' . $uni . '\']=1; ?>';
     }
+
+    /**
+     * Execute the @parent command. This operation works in tandem with extendSection
+     * @return string
+     * @see extendSection
+     */
+    protected function compileParent() {
+        return $this->PARENTKEY;
+    }
+
     /**
      * Compile the include statements into valid PHP.
      *
@@ -1123,7 +1135,7 @@ class BladeOne
     protected function extendSection($section, $content)
     {
         if (isset($this->sections[$section])) {
-            $content = str_replace('@parent', $content, $this->sections[$section]);
+            $content = str_replace($this->PARENTKEY, $content, $this->sections[$section]);
             $this->sections[$section] = $content;
         } else {
             $this->sections[$section] = $content;
@@ -1154,7 +1166,7 @@ class BladeOne
      */
     public function yieldContent($section, $default = '')
     {
-        return isset($this->sections[$section]) ? $this->sections[$section] : $default;
+        return isset($this->sections[$section]) ? $this->sections[$section]: $default;
     }
     /**
      * Compile the while statements into valid PHP.
