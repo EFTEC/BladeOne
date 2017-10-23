@@ -43,10 +43,11 @@ echo $blade->run("Test.hello2"
     ,'records'=>$records
     ,'users'=>$users]);
 
-
+/*
 echo $blade->run("Test.hello"
     ,["name"=>"hola mundo"
         ,'records'=>$records
         ,'users'=>$users
         ,'drinks7'=>$drinks7
         ,'drinks8'=>$drinks8]);
+*/

@@ -1108,7 +1108,8 @@ class BladeOne
      */
     public function yieldSection()
     {
-        return $this->yieldContent($this->stopSection());
+        $r=@$this->sections[$this->stopSection()];
+        return $r;
     }
     /**
      * Start injecting content into a section.
@@ -1166,7 +1167,12 @@ class BladeOne
      */
     public function yieldContent($section, $default = '')
     {
-        return isset($this->sections[$section]) ? $this->sections[$section]: $default;
+        if (isset($this->sections[$section])) {
+            $content = str_replace($this->PARENTKEY, $default, $this->sections[$section]);
+            return $content;
+        } else {
+            return $default;
+        }
     }
     /**
      * Compile the while statements into valid PHP.

@@ -12,13 +12,18 @@
 <h1>Example</h1>
 <em>This file is Shared/newlayout.blade.php</em><br>
 @section('sidebar')
-    IT IS NOT VISIBLE.  A BUG???
+    <b style="background-color: cadetblue"> its the parent of the siderbar</b>
+@show
+<hr>
+@section('sidebar2')
+    <b style="background-color: cadetblue"> its the parent of the siderbar2</b>
 @show
 <hr>
 
+
 <div class="container">
-    <hr>container<br>
-    @yield('content')
+    <hr style="background-color: cadetblue">container<br>
+    @yield('footer')
     <hr>
 </div>
 </body>
