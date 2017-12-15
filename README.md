@@ -436,6 +436,15 @@ Not compatible with the extension of Laravel's Blade.
 
 ## component / slots
 
+## @asset (new for 2.2)
+@asset('js/jquery.js')
+
+Note: it requires to set the base address as 
+```php
+$obj=new BladeOne();
+$obj->baseUrl="https://www.example.com/urlbase/";
+```
+Security: Don't use Don't use $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the server is protected or the address is sanitized.
 
 
 # Extensions Libraries (optional) 
@@ -494,6 +503,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 	Fixed foreach bug when the name of the variable contains the letters 'as' for example @foreach($list**As**Fast as $v)      
 	Fixed @item (BladeOneHtml). Now, it considers null and 0 as different.
 - 2017-10-20 2.1 Fixed with @parent
+- 2017-12-14 2.2 Added @asset
 
 #Collaboration
 

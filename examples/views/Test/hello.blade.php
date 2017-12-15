@@ -56,6 +56,8 @@ x1={{$x1}}<br>
 @set($x1='hello')
 x1={{$x1}}<br>
 
+
+
 <hr>push and stack:<br>
 
 pushing:<br>
@@ -75,5 +77,7 @@ Show all the stack:<br>
 stack :  @stack('scripts')
 <hr>extra functions<br>
 @{{ClassService::Function()}}
+
+
 
 

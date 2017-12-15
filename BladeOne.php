@@ -5,7 +5,7 @@ use Exception;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 2.1 2017-09-28
+ * @version 2.2 2017-12-14
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -99,12 +99,18 @@ class BladeOne
      * @var array
      */
     protected $customDirectives = [];
+
+    /**
+     * The main url of the system. Don't use $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the server is protected
+     * @var string
+     */
+    var $baseUrl='./';
+
     /**
      * The file currently being compiled.
      *
      * @var string
      */
-    protected $path;
     protected $isRunFast = false;
     /**
      * Array of opening and closing tags for raw echos.
@@ -914,6 +920,10 @@ class BladeOne
         return '<?php $this->endSlot(); ?>';
     }
 
+
+    protected function compileAsset($expression) {
+        return "<?php echo \$this->baseUrl.{$expression}; ?>";
+    }
 
 
     //</editor-fold>

@@ -32,11 +32,18 @@ $drinks7=array('Cocacola','Pepsi','Fanta','Sprite','7up');
 $drinks8=array('Cocacola','Pepsi','Fanta','Sprite','7up','Bilz&Pap');
 //</editor-fold>
 
+
+
 class ClassService {
     public static function myfunction() {
         return "hello world";
     }
 }
+
+function asset($url) {
+    return "hello world";
+}
+
 
 echo $blade->run("Test.hello2"
     ,["name"=>"hola mundo"
