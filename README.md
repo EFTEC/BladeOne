@@ -444,7 +444,7 @@ Note: it requires to set the base address as
 $obj=new BladeOne();
 $obj->baseUrl="https://www.example.com/urlbase/";
 ```
-Security: Don't use Don't use $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the server is protected or the address is sanitized.
+Security: Don't use the variables $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the server is protected or the address is sanitized.
 
 
 # Extensions Libraries (optional) 
