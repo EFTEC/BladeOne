@@ -454,6 +454,8 @@ Security: Don't use the variables $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME']
 
 [BladeOneCache Documentation](BladeOneCache.md)
 
+[BladeOneLang Documentation](BladeOneLang.md)
+
 # Definition of Blade Template
 https://laravel.com/docs/5.2/blade
 
@@ -504,6 +506,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 	Fixed @item (BladeOneHtml). Now, it considers null and 0 as different.
 - 2017-10-20 2.1 Fixed with @parent
 - 2017-12-14 2.2 Added @asset
+- 2017-12-18 Added BladeOneLang 
 
 #Collaboration
 
