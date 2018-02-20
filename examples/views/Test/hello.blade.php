@@ -71,8 +71,21 @@ script2
 script3
 @endpush
 
-kevinbacon @@gmail.com
+<hr>Push inverted:<br>
+first stack...<br>
+@stack('first')
+then push..<br>
+@push('first')
+after the stack<br>
+@endpush
 
+
+
+
+
+
+kevinbacon @@gmail.com
+²²²²²
 Show all the stack:<br>
 stack :  @stack('scripts')
 <hr>extra functions<br>

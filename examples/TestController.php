@@ -42,10 +42,11 @@ class ClassService {
 
 function asset($url) {
     return "hello world";
+    
 }
 
 
-echo $blade->run("Test.hello2"
+echo $blade->run("Test.hello"
     ,["name"=>"hola mundo"
     ,'records'=>$records
     ,'users'=>$users]);
