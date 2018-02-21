@@ -161,7 +161,7 @@ class BladeOne
      */
     protected $forelseCounter = 0;
     public $phpTag = '<?php ';
-	
+
 
     /**
      * The components being rendered.
@@ -198,8 +198,8 @@ class BladeOne
     //<editor-fold desc="constructor">
     /**
      * Bob the constructor.
-     * 
-     * The folder at $compiledPath is created in case it doesn't exist.	   																   
+     *
+     * The folder at $compiledPath is created in case it doesn't exist.
      *
      * @param string $templatePath
      * @param string $compiledPath
@@ -261,6 +261,32 @@ class BladeOne
             $this->showError("run", "we can't force and run fast at the same time", true);
         }
         return $this->runInternal($view, $variables, $forced, true, $runFast);
+    }
+    /**
+     * run the blade engine. It returns the result of the code.
+     * @param string HTML to parse
+     * @param array $variables
+     * @return string
+     */
+    public function runString($string, $data)
+    {
+        $php = $this->compileString($string);
+
+        $obLevel = ob_get_level();
+        ob_start();
+        extract($data, EXTR_SKIP);
+
+        try {
+            eval('?' . '>' . $php);
+        } catch (Exception $e) {
+            while (ob_get_level() > $obLevel) ob_end_clean();
+            throw $e;
+        } catch (Throwable $e) {
+            while (ob_get_level() > $obLevel) ob_end_clean();
+            throw new FatalThrowableError($e);
+        }
+
+        return ob_get_clean();
     }
     /**
      * run the blade engine. It returns the result of the code.
