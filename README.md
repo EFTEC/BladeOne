@@ -5,7 +5,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single php
 
 
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)]()
-[![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
 [![npm](https://img.shields.io/badge/npm-%3E4.1-blue.svg)]()
 [![php](https://img.shields.io/badge/php->5.4-green.svg)]()
 [![php](https://img.shields.io/badge/php-7.x-green.svg)]()
