@@ -534,7 +534,7 @@ this is a bug
 </html>
 ```
 
-bad too: (check the empty line at the bottom).  Ok, this is not as bad.
+bad too: (check the empty line at the bottom).  This is not as bad but a small annoying.
 ```html
 @endsection(line carriage)
 (empty line)
