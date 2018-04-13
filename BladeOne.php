@@ -161,7 +161,7 @@ class BladeOne
      */
     protected $forelseCounter = 0;
     public $phpTag = '<?php ';
-	
+
 
     /**
      * The components being rendered.
@@ -198,8 +198,8 @@ class BladeOne
     //<editor-fold desc="constructor">
     /**
      * Bob the constructor.
-     * 
-     * The folder at $compiledPath is created in case it doesn't exist.	   																   
+     *
+     * The folder at $compiledPath is created in case it doesn't exist.
      *
      * @param string $templatePath
      * @param string $compiledPath
@@ -315,7 +315,11 @@ class BladeOne
                         $this->showError("Compiling", "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
                     }
                 }
-                $ok = @file_put_contents($compiled, $contents);
+
+                $optimizedContent = preg_replace('/^ {2,}/m', ' ', $contents);
+                $optimizedContent = preg_replace('/^\t{2,}/m', ' ', $optimizedContent);
+
+                $ok = @file_put_contents($compiled, $optimizedContent);
                 if (!$ok) {
                     $this->showError("Compiling", "Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
                 }
