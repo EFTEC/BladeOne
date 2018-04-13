@@ -534,10 +534,10 @@ this is a bug
 </html>
 ```
 
-bad too: (check the empty line at the bottom)
+bad too: (check the empty line at the bottom).  Ok, this is not as bad.
 ```html
-@endsection
-
+@endsection(line carriage)
+(empty line)
 ```
 
 good:
