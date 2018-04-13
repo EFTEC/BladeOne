@@ -1,7 +1,7 @@
 ![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)
 
 # BladeOne
-BladeOne is a standalone version of Blade Template Engine that uses a single php file and can be ported and used in different projects.
+BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects.
 
 
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)]()
@@ -15,8 +15,8 @@ BladeOne is a standalone version of Blade Template Engine that uses a single php
 Blade is the simple, yet powerful templating engine provided with Laravel. Unlike other popular PHP templating engines, Blade does not restrict you from using plain PHP code in your views. All Blade views are compiled into plain PHP code and cached until they are modified, meaning Blade adds essentially zero overhead to your application. Blade view files use the .blade.php file extension and are typically stored in the resources/views directory.
 
 # About this version
-By standard, Blade is part of Laravel (Illuminate components) and for to use it, you requires to install Laravel and Illuminate-view components.
-Blade as a template engine is pretty nice and clear. Also it generates a (some that) clean code. And its starting to be considered a de-facto template system for php (Smarty has been riding off the sunset since years ago). So, if we are able to use it without Laravel then its a big plus for many projects. In fact, in theory its is even possible to use with Laravel.
+By standard, Blade is part of Laravel (Illuminate components) and for to use it, you require to install Laravel and Illuminate-view components.
+Blade as a template engine is pretty nice and clear. Also, it generates a (some that) clean code. And its starting to be considered a de-facto template system for PHP (Smarty has been riding off the sunset since years ago). So, if we are able to use it without Laravel then its a big plus for many projects. In fact, in theory, it is even possible to use with Laravel.
 Exists different version of Blade Template that runs without Laravel but most requires 50 or more files and those templates add a new level of complexity:
 
 - More files to manages.
@@ -83,7 +83,7 @@ My name is {{$name}}
 ```
 ## Easy to use
 
-BladeOne is focused in templates and the syntax of the code is aiming to be clean.
+BladeOne is focused on templates and the syntax of the code is aiming to be clean.
 
 Let's consider the next template:
 
@@ -122,7 +122,7 @@ The second time the template is called then, it uses the compiled file.   The co
 
 ## Scalable
 
-You could add and use your own function by adding a new method (or extending) to the bladeone class. NOTE: The function should starts with the name "compile"
+You could add and use your own function by adding a new method (or extending) to the BladeOne class. NOTE: The function should starts with the name "compile"
 ```php
 protected function compileMyFunction($expression)
 {
@@ -355,7 +355,7 @@ I'm looping forever.
 
 ### @splitforeach($nElem,$textbetween,$textend="")  inside @foreach
 This functions show a text inside a @foreach cycle every "n" of elements.  This function could be used when you want to add columns to a list of elements.   
-NOTE: The $textbetween is not displayed if its the last element of the last.  With the last element it show the variable $textend
+NOTE: The $textbetween is not displayed if its the last element of the last.  With the last element, it shows the variable $textend
 
 |Tag|Note|Example|
 |---|---|---|
@@ -376,7 +376,7 @@ Example: ($users is an array of objects)
 Returns a table with 2 columns.
 
 ### @continue / @break
-Continue jump to the next iteraction of a cycle.  @Break jump out of a cycle.
+Continue jump to the next iteration of a cycle.  @Break jump out of a cycle.
 
 |Tag|Note|Example|
 |---|---|---|
@@ -463,7 +463,7 @@ https://laravel.com/docs/5.2/blade
 
 - Laravel's extension removed.
 - Dependencies to other class removed (around 30 classes).
-- The engine is self contained.
+- The engine is self-contained.
 - Setter and Getters removed. Instead, we are using the PHP style (public members).
 - BladeOne doesn't support static calls.
 
@@ -490,33 +490,72 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 #Version
 
 - 2016-06-08 0.2. Beta First publish launch.
-- 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag is not defined.
+- 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag are not defined.
 - 2016-06-09 1.1 Some fine tune.
-- 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with composer)
-- 2016-06-12 1.3 Lots of clean up. I removed some unused parameters.  I fixed a problem with forced in BladeOne.  I separates the doc per extension.
+- 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with Composer)
+- 2016-06-12 1.3 Lots of clean up. I removed some unused parameters.  I fixed a problem with forced in BladeOne.  I separate the doc per extension.
 - 2016-06-24 1.4 Updates extensions.  Now it uses strut instead of classes. Added a new extension BladeOneCache.
 - 2016-07-03 1.5 New features such as **@set** command
 - 2016-08-14 1.6 Some cleanups. Add new documentation   
-- 2017-02-20 1.6 More cleanups. Refactored file,image and other tags.
+- 2017-02-20 1.6 More cleanups. Refactored file, image, and other tags.
 - 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature **@splitforeach**.    
 - 2017-05-24 1.8 Maintenance.  Now, it runs with or without mb_string module
-- 2017-07-21 1.9 Components and Slots.  Note: im not really convinced in its usability.
+- 2017-07-21 1.9 Components and Slots.  Note: I'm not really convinced in its usability.
 - 2017-09-28 2.0 Some fixes there and here.  
-	Fixed foreach bug when the name of the variable contains the letters 'as' for example @foreach($list**As**Fast as $v)      
-	Fixed @item (BladeOneHtml). Now, it considers null and 0 as different.
+    Fixed foreach bug when the name of the variable contains the letters 'as' for example @foreach($list**As**Fast as $v)      
+    Fixed @item (BladeOneHtml). Now, it considers null and 0 as different.
 - 2017-10-20 2.1 Fixed with @parent
 - 2017-12-14 2.2 Added @asset
-- 2017-12-18 Added BladeOneLang 
+- 2017-12-18 Added BladeOneLang
+- 2018-04-13 2.3 The end result clean spaces.   PHPDoc cleaned (checked with PHPStorm 2018.1). Fixed some typos (sorry about that).     
+
+# todo
+
+- hello@@world fails to render hello@world.  However, hello @@world render hello@world.  
+
+- extends bug. If you use extends then, every content after the last @endsetion will be rendered at the top of the page.  
+  Solution: avoid to add any content after the last @endsection,including spaces and empty lines.
+
+bad example:
+```html
+@extends("_shared.htmltemplate")
+@section("content")
+@endsection
+this is a bug
+```
+
+result:
+```html
+this is a bug
+<!DOCTYPE html>
+<html>
+   <head>....</head>
+   <body>....</body>
+</html>
+```
+
+bad too: (check the empty line at the bottom)
+```html
+@endsection
+
+```
+
+good:
+```html
+@endsection
+```
+
 
 #Collaboration
 
 You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
 
 #Future
-I checked the code of BladeOne and i know that there are a lot of room for improvement.
+I checked the code of BladeOne and I know that there is a lot of room for improvement.
 
 
 #License
 MIT License.
 BladeOne (c) 2016 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and use  the work of the team of Laravel.)
+

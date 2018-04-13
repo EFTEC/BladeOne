@@ -1,11 +1,14 @@
 <?php
 namespace eftec\bladeone;
+use ArrayAccess;
+use Closure;
+use Countable;
 use Exception;
 /**
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 2.2 2017-12-14
+ * @version 2.3 2018-04-13
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -161,7 +164,7 @@ class BladeOne
      */
     protected $forelseCounter = 0;
     public $phpTag = '<?php ';
-	
+
 
     /**
      * The components being rendered.
@@ -198,8 +201,8 @@ class BladeOne
     //<editor-fold desc="constructor">
     /**
      * Bob the constructor.
-     * 
-     * The folder at $compiledPath is created in case it doesn't exist.	   																   
+     *
+     * The folder at $compiledPath is created in case it doesn't exist.
      *
      * @param string $templatePath
      * @param string $compiledPath
@@ -221,8 +224,9 @@ class BladeOne
     /**
      * Macro of function run
      * @param $view
-     * @param $variables
+     * @param array $variables
      * @return string
+     * @throws Exception
      */
     public function runChild($view, $variables = array())
     {
@@ -246,11 +250,13 @@ class BladeOne
         }
         return $mode;
     }
+
     /**
      * run the blade engine. It returns the result of the code.
      * @param $view
      * @param array $variables
      * @return string
+     * @throws Exception
      */
     public function run($view, $variables = array())
     {
@@ -262,6 +268,7 @@ class BladeOne
         }
         return $this->runInternal($view, $variables, $forced, true, $runFast);
     }
+
     /**
      * run the blade engine. It returns the result of the code.
      * @param $view
@@ -270,6 +277,7 @@ class BladeOne
      * @param bool $isParent
      * @param bool $runFast if true then the code is not compiled neither checked and it runs directly the compiled version.
      * @return string
+     * @throws Exception
      */
     private function runInternal($view, $variables = array(), $forced = false, $isParent = true, $runFast = false)
     {
@@ -315,7 +323,9 @@ class BladeOne
                         $this->showError("Compiling", "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
                     }
                 }
-                $ok = @file_put_contents($compiled, $contents);
+                $optimizedContent = preg_replace('/^ {2,}/m', ' ', $contents);
+                $optimizedContent = preg_replace('/^\t{2,}/m', ' ', $optimizedContent);
+                $ok = @file_put_contents($compiled, $optimizedContent);
                 if (!$ok) {
                     $this->showError("Compiling", "Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
                 }
@@ -1252,19 +1262,21 @@ class BladeOne
     {
         $this->setContentTags($openTag, $closeTag, true);
     }
+
     /**
      * Gets the content tags used for the compiler.
      *
-     * @return string
+     * @return array
      */
     public function getContentTags()
     {
         return $this->getTags();
     }
+
     /**
      * Gets the escaped content tags used for the compiler.
      *
-     * @return string
+     * @return array
      */
     public function getEscapedContentTags()
     {
@@ -1609,6 +1621,7 @@ class BladeOne
     {
         return $this->loopsStack;
     }
+
     /**
      * Get the rendered contents of a partial from a loop.
      *
@@ -1617,6 +1630,7 @@ class BladeOne
      * @param  string $iterator
      * @param  string $empty
      * @return string
+     * @throws Exception
      */
     public function renderEach($view, $data, $iterator, $empty = 'raw|')
     {
@@ -1684,18 +1698,17 @@ class BladeOne
      * Render the current component.
      *
      * @return string
+     * @throws Exception
      */
     public function renderComponent()
     {
         $name = array_pop($this->componentStack);
-      //  return $this->runChild($name, $this->componentData($name))->render();
         return $this->runChild($name, $this->componentData());
     }
 
     /**
      * Get the data for the given component.
      *
-     * @param  string  $name
      * @return array
      */
     protected function componentData()
