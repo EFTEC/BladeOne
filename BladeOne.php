@@ -289,10 +289,10 @@ class BladeOne
         } catch (Exception $e) {
             while (ob_get_level() > $obLevel) ob_end_clean();
             throw $e;
-        } catch (Throwable $e) {
+        }/* catch (Throwable $e) {
             while (ob_get_level() > $obLevel) ob_end_clean();
             throw new Exception($e->getMessage(),$e->getCode());
-        }
+        }*/
         return ob_get_clean();
     }
 
