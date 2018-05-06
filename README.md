@@ -203,9 +203,18 @@ $blade=new bladeone\BladeOne($views,$cache);
 ```php
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
-- run([template,[array])  Runs the template and generates a compiled version (if its required), then it shows the result.
+- run([template],[array])  Runs the template and generates a compiled version (if its required), then it shows the result.
 -   template is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder\example.blade.php"
 -   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
+
+## runString
+```php
+echo $blade->runString('<p>{{$direccion}}</p>', array('direccion'=>'cra 20 #33-58'));
+```
+- runString([expression],[array])  Evaluates the expression and returns the result.
+-   expression = is the expression to evaluate
+-   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
+
 
 ## BLADEONE_MODE (global constant) (optional)
 ```php
@@ -508,7 +517,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2017-12-14 2.2 Added @asset
 - 2017-12-18 Added BladeOneLang
 - 2018-04-13 2.3 The end result clean spaces.   PHPDoc cleaned (checked with PHPStorm 2018.1). Fixed some typos (sorry about that).     
-- 2018-05-06 2.3.1 Fixed a problem with @verbatim
+- 2018-05-06 2.3.1 Fixed a problem with @verbatim. Add the method runString for evaluating a function
 # todo
 
 - hello@@world fails to render hello@world.  However, hello @@world render hello@world.  
