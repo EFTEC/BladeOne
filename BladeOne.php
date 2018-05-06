@@ -8,7 +8,7 @@ use Exception;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 2.3 2018-04-13
+ * @version 2.3.1 2018-05-06
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -150,7 +150,7 @@ class BladeOne
      *
      * @var string
      */
-    protected $verbatimPlaceholder = '@__verbatim__@';
+    protected $verbatimPlaceholder = '$__verbatim__$';
     /**
      * Array to temporary store the verbatim blocks found in the template.
      *

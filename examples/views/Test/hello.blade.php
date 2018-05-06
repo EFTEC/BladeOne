@@ -2,21 +2,30 @@
 
 
 @include('Test.master', ['some' => 'data'])
-v2<br>
 
-comentario {{-- esto no debe aparecer --}}<br>
 
-Hello World {{$name}}<br>
+<hr>Verbatim:
+@verbatim
+    v2<br>
 
-Hello World escaped {{{$name}}}<br>
+    comentario {{-- esto no debe aparecer --}}<br>
 
-The current UNIX timestamp is {{ time() }}.<br>
+    Hello World {{$name}}<br>
 
-Not compile: Hello, @{{ name }}.<br>
+    Hello World escaped {{{$name}}}<br>
 
-No escape: Hello, {!! $name !!}.<br>
+    The current UNIX timestamp is {{ time() }}.<br>
 
-Default: {{ $name or 'Default' }}<br>
+    Not compile: Hello, @{{ name }}.<br>
+
+    No escape: Hello, {!! $name !!}.<br>
+
+    Default: {{ $name or 'Default' }}<br>
+    @aaaaaa
+
+
+@endverbatim
+
 
 <hr>
 
@@ -90,6 +99,8 @@ Show all the stack:<br>
 stack :  @stack('scripts')
 <hr>extra functions<br>
 @{{ClassService::Function()}}
+
+
 
 
 
