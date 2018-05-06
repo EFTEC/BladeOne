@@ -3,10 +3,26 @@
 
 @include('Test.master', ['some' => 'data'])
 
+v2<br>
 
-<hr>Verbatim:
+comentario {{-- esto no debe aparecer --}}<br>
+
+Hello World {{$name}}<br>
+
+Hello World escaped {{{$name}}}<br>
+
+The current UNIX timestamp is {{ time() }}.<br>
+
+Not compile: Hello, @{{ name }}.<br>
+
+No escape: Hello, {!! $name !!}.<br>
+
+Default: {{ $name or 'Default' }}<br>
+
+
+<hr>Verbatim:<hr>
 @verbatim
-    v2<br>
+
 
     comentario {{-- esto no debe aparecer --}}<br>
 
