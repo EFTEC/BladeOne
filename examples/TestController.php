@@ -45,6 +45,10 @@ function asset($url) {
     
 }
 
+echo $blade->runString('<p>{{$direccion}}</p>', array('direccion'=>'cra 20 #33-58'));
+
+die(1);
+
 
 echo $blade->run("Test.hello"
     ,["name"=>"hola mundo"
