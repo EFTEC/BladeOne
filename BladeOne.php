@@ -299,6 +299,32 @@ class BladeOne
 
     /**
      * run the blade engine. It returns the result of the code.
+     * @param string HTML to parse
+     * @param array $variables
+     * @return string
+     */
+    public function runString($string, $data)
+    {
+        $php = $this->compileString($string);
+
+        $obLevel = ob_get_level();
+        ob_start();
+        extract($data, EXTR_SKIP);
+
+        try {
+            eval('?' . '>' . $php);
+        } catch (Exception $e) {
+            while (ob_get_level() > $obLevel) ob_end_clean();
+            throw $e;
+        } catch (Throwable $e) {
+            while (ob_get_level() > $obLevel) ob_end_clean();
+            throw new FatalThrowableError($e);
+        }
+
+        return ob_get_clean();
+    }
+    /**
+     * run the blade engine. It returns the result of the code.
      * @param $view
      * @param array $variables
      * @param bool $forced if true then it recompiles no matter if the compiled file exists or not.
