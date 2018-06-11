@@ -8,7 +8,7 @@ use Exception;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 2.3.1 2018-05-06
+ * @version 2.3.2 2018-06-11
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne

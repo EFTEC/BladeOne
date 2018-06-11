@@ -7,7 +7,7 @@ namespace eftec\bladeone;
  * It adds the next tags
  * <code>
  * select:
- * @ select('idCountry'[,$extra])
+ * @ select('idCountry','value',[,$extra])
  * @ item('0','--select a country'[,$extra])
  * @ items($countries,'id','name',$currentCountry[,$extra])
  * @ endselect()
@@ -19,7 +19,7 @@ namespace eftec\bladeone;
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtml
- * @version 1.8 2018-02-20 (1)
+ * @version 1.9.1 2018-06-11 (1)
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -133,8 +133,14 @@ trait BladeOneHtml
     //</editor-fold>
 
     //<editor-fold desc="used function">
-    public function select($name,$extra='') {
-        return "<select id='".static::e($name)."' name='".static::e($name)."' {$this->convertArg($extra)}>\n";
+    public function select($name,$value,$extra='') {
+        if (strpos($extra,'readonly')===false) {
+            return "<select id='" . static::e($name) . "' name='" . static::e($name) . "' {$this->convertArg($extra)}>\n";
+        } else {
+            return "
+                <input id='".static::e($name)."' name='".static::e($name)."' type='hidden' value='".static::e($value)."' />
+                <select id='" . static::e($name) . "_disable' name='" . static::e($name) . "_disable' disabled {$this->convertArg($extra)}>\n";
+        }
     }
     public function Link($url,$label,$extra='') {
         return "<a href='{$url}' {$this->convertArg($extra)}>{$label}</a>";

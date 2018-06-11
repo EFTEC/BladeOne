@@ -9,7 +9,7 @@ namespace eftec\bladeone;
  * It adds the next tags
  * <code>
  * select:
- * @ select('idCountry'[,$extra])
+ * @ select('idCountry','value',[,$extra])
  * @ item('0','--select a country'[,$extra])
  * @ items($countries,'id','name',$currentCountry[,$extra])
  * @ endselect()
@@ -21,7 +21,7 @@ namespace eftec\bladeone;
  * </code>
  * Note. The names of the tags are based in Java Server Faces (JSF)
  * @package  BladeOneHtmlBootstrap
- * @version 1.9 2017-09-28 (1)
+ * @version 1.9.1 2018-06-11 (1)
  * @link https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -40,9 +40,9 @@ trait BladeOneHtmlBootstrap
 
     }
     //<editor-fold desc="Override methods">
-    public function select($name,$extra='') {
+    public function select($name,$value,$extra='') {
         $extra=$this->addClass($extra,'form-control');
-        return $this->selectParent($name,$extra);
+        return $this->selectParent($name,$value,$extra);
     }
     public function input($id,$value='',$type='text',$extra='') {
         $extra=$this->addClass($extra,'form-control');
