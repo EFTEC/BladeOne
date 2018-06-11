@@ -518,6 +518,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2017-12-18 Added BladeOneLang
 - 2018-04-13 2.3 The end result clean spaces.   PHPDoc cleaned (checked with PHPStorm 2018.1). Fixed some typos (sorry about that).     
 - 2018-05-06 2.3.1 Fixed a problem with @verbatim. Add the method runString for evaluating a function
+- 2018-06-11 2.3.2 Fixed bladeonehtml to allows readonly value.
 # todo
 
 - hello@@world fails to render hello@world.  However, hello @@world render hello@world.  
