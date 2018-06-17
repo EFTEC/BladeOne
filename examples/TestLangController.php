@@ -2,8 +2,8 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../lib/BladeOne.php";
-include "../lib/BladeOneLang.php";
+include "../src/BladeOne.php";
+include "../src/BladeOneLang.php";
 use eftec\bladeone;
 use eftec\bladeone\BladeOneLang;
 
@@ -28,4 +28,8 @@ include './lang/'.$lang.'.php';
 //<editor-fold desc="Example data">
 
 
-echo $blade->run("Lang.test");
+try {
+    echo $blade->run("Lang.test");
+} catch (Exception $e) {
+    echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
+}

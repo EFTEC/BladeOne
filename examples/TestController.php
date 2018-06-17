@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../lib/BladeOne.php";
+include "../src/BladeOne.php";
 use eftec\bladeone;
 
 $views = __DIR__ . '/views';
@@ -45,7 +45,11 @@ function asset($url) {
     
 }
 
-echo $blade->runString('<p>{{$direccion}}</p>', array('direccion'=>'cra 20 #33-58'));
+try {
+    echo $blade->runString('<p>{{$direccion}}</p>', array('direccion' => 'cra 20 #33-58'));
+} catch (Exception $e) {
+    echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
+}
 
 die(1);
 

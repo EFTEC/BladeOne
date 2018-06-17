@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../lib/BladeOne.php";
+include "../src/BladeOne.php";
 use eftec\bladeone;
 
 $views = __DIR__ . '/views';

@@ -4,7 +4,7 @@
  */
 include "../BladeOne.php";
 
-include "../lib/BladeOneCache.php";
+include "../src/BladeOneCache.php";
 
 use eftec\bladeone;
 
@@ -33,8 +33,12 @@ $timeUpTo=date('h:i:s A',time()+5); // plus 5 seconds
 //</editor-fold>
 
 
-echo $blade->run("TestCache.hellocache"
-    ,["random"=>$random
-    ,'time'=>$time
-    ,'list'=>$list
-    ,'timeUpTo'=>$timeUpTo]);
+try {
+    echo $blade->run("TestCache.hellocache"
+        , ["random" => $random
+            , 'time' => $time
+            , 'list' => $list
+            , 'timeUpTo' => $timeUpTo]);
+} catch (Exception $e) {
+    echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
+}

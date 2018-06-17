@@ -2,11 +2,11 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../lib/BladeOne.php";
+include "../src/BladeOne.php";
 
-include "../lib/BladeOneHtml.php";
-include "../lib/BladeOneLogic.php";
-include "../lib/BladeOneCustom.php";
+include "../src/BladeOneHtml.php";
+include "../src/BladeOneLogic.php";
+include "../src/BladeOneCustom.php";
 use eftec\bladeone;
 
 $views = __DIR__ . '/views';
@@ -20,5 +20,9 @@ $blade=new myBlade($views,$compiledFolder);
 define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
 
 //</editor-fold>
-echo $blade->run("TestCustom.test"
-    ,[]);
+try {
+    echo $blade->run("TestCustom.test"
+        , []);
+} catch (Exception $e) {
+    echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
+}

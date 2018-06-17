@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../lib/BladeOne.php";
+include "../src/BladeOne.php";
 use eftec\bladeone;
 
 $views = __DIR__ . '/views';
@@ -39,10 +39,13 @@ class ClassService {
 }
 
 
-
-echo $blade->run("Test.loop"
-    ,["name"=>"hola mundo"
-        ,'records'=>$records
-        ,'users'=>$users
-        ,'drinks7'=>$drinks7
-        ,'drinks8'=>$drinks8]);
+try {
+    echo $blade->run("Test.loop"
+        , ["name" => "hola mundo"
+            , 'records' => $records
+            , 'users' => $users
+            , 'drinks7' => $drinks7
+            , 'drinks8' => $drinks8]);
+} catch (Exception $e) {
+    echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
+}

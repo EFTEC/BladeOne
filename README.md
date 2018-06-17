@@ -144,7 +144,7 @@ Alternatively, BladeOne allows to run arbitrary code from any class or method if
 example.php:
 ```php
 <?php
-include "lib/BladeOne.php";
+include "src/BladeOne.php";
 Use eftec\bladeone;
 
 $views = __DIR__ . '/views';

@@ -2,10 +2,10 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License..s
  */
-include "../lib/BladeOne.php";
+include "../src/BladeOne.php";
 
-include "../lib/BladeOneHtml.php";
-include "../lib/BladeOneHtmlBootstrap.php";
+include "../src/BladeOneHtml.php";
+include "../src/BladeOneHtmlBootstrap.php";
 use eftec\bladeone;
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
@@ -48,7 +48,11 @@ $multipleSelect=[1,2];
 //</editor-fold>
 
 
-echo $blade->run("TestBS.hellobootstrap"
-    ,["countries"=>$countries
-        ,'countrySelected'=>$countrySelected
-        ,'multipleSelect'=>$multipleSelect]);
+try {
+    echo $blade->run("TestBS.hellobootstrap"
+        , ["countries" => $countries
+            , 'countrySelected' => $countrySelected
+            , 'multipleSelect' => $multipleSelect]);
+} catch (Exception $e) {
+    echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
+}
