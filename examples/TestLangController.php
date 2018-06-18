@@ -2,8 +2,8 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../src/BladeOne.php";
-include "../src/BladeOneLang.php";
+include "../lib/BladeOne/BladeOne.php";
+include "../lib/BladeOne/BladeOneLang.php";
 use eftec\bladeone;
 use eftec\bladeone\BladeOneLang;
 

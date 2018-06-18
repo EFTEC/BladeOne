@@ -2,9 +2,9 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../BladeOne.php";
+include "../lib/BladeOne/BladeOne.php";
 
-include "../src/BladeOneCache.php";
+include "../lib/BladeOne/BladeOneCache.php";
 
 use eftec\bladeone;
 
