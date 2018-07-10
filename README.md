@@ -178,7 +178,12 @@ _(modify composer.json as follow) and run "composer update"_
 
 or
 ```
-composer require eftec/bladeone
+{
+    "require": {
+        "eftec/bladeone": "^2.0"
+    }
+}
+
 ```  
 
 Where $views is the folder where the views (templates not compiled) will be stored. 
