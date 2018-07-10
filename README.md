@@ -176,6 +176,11 @@ _(modify composer.json as follow) and run "composer update"_
 }
 ```  
 
+or
+```
+composer require eftec/bladeone
+```  
+
 Where $views is the folder where the views (templates not compiled) will be stored. 
 $cache is the folder where the compiled files will be stored.
 
