@@ -4,6 +4,8 @@ use ArrayAccess;
 use Closure;
 use Countable;
 use Exception;
+use InvalidArgumentException;
+
 /**
  * Class BladeOne
  * @package  BladeOne
@@ -1347,11 +1349,33 @@ class BladeOne
      */
     public function stopSection($overwrite = false)
     {
+        if (empty($this->sectionStack)) {
+            throw new InvalidArgumentException('Cannot end a section without first starting one.');
+        }
         $last = array_pop($this->sectionStack);
         if ($overwrite) {
             $this->sections[$last] = ob_get_clean();
         } else {
             $this->extendSection($last, ob_get_clean());
+        }
+        return $last;
+    }
+    /**
+     * Stop injecting content into a section and append it.
+     *
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function appendSection()
+    {
+        if (empty($this->sectionStack)) {
+            throw new InvalidArgumentException('Cannot end a section without first starting one.');
+        }
+        $last = array_pop($this->sectionStack);
+        if (isset($this->sections[$last])) {
+            $this->sections[$last] .= ob_get_clean();
+        } else {
+            $this->sections[$last] = ob_get_clean();
         }
         return $last;
     }

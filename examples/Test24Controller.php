@@ -16,6 +16,9 @@ try {
             , 'records' => $records
             , 'emptyArray' => array()
         ]);
+
+    echo $blade->run('Test.testappend',array());
+
 } catch (Exception $e) {
     echo $e->getMessage();
 }

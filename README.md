@@ -530,7 +530,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2018-05-06 2.3.1 Fixed a problem with @verbatim. Add the method runString for evaluating a function
 - 2018-06-11 2.3.2 Fixed bladeonehtml to allows readonly value.
 - 2018-06-12 2.3.3 Reorder folders.
-- 2018-07-11 2.4 Some fixes, new tags @json(var),@isset($records),@endisset,@includewhen,@includefirst,@prepend,@endprepend,@empty,@endempty
+- 2018-07-11 2.4 Some fixes, new tags @json(var),@isset($records),@endisset,@includewhen,@includefirst,@prepend,@endprepend,@empty,@endempty,@append
 
 # todo
 

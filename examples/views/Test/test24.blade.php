@@ -48,3 +48,6 @@ This will be first...
 @empty($emptyArray)
     $emptyArray is empty
 @endempty
+
+<h2> Test append</h2>
+
