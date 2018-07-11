@@ -3,6 +3,8 @@
 # BladeOne
 BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects.
 
+NOTE: So far it's apparently the only one project that it's updated with the latest version of Blade.  It miss some commands (laravel's commands and @php tag) but nothing more.
+
 
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)]()
 [![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
