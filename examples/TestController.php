@@ -40,24 +40,26 @@ class ClassService {
     }
 }
 
-function asset($url) {
-    return "hello world";
+function asset($url='') {
+    return "hello world ".$url;
     
 }
 
 try {
-    echo $blade->runString('<p>{{$direccion}}</p>', array('direccion' => 'cra 20 #33-58'));
+    echo $blade->runString('<p>{{$direccion}}</p>', array('direccion' => 'Some address 20 #33-58'));
 } catch (Exception $e) {
     echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
 }
 
-die(1);
 
-
-echo $blade->run("Test.hello"
-    ,["name"=>"hola mundo"
-    ,'records'=>$records
-    ,'users'=>$users]);
+try {
+    echo $blade->run("Test.hello"
+        , ["name" => "hola mundo"
+            , 'records' => $records
+            , 'users' => $users]);
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 
 /*
 echo $blade->run("Test.hello"

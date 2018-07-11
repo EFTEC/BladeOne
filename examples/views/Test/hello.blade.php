@@ -5,7 +5,7 @@
 
 v2<br>
 
-comentario {{-- esto no debe aparecer --}}<br>
+Commentary {{-- this shouldn't appear --}}<br>
 
 Hello World {{$name}}<br>
 
@@ -24,7 +24,7 @@ Default: {{ $name or 'Default' }}<br>
 @verbatim
 
 
-    comentario {{-- esto no debe aparecer --}}<br>
+    Commentary {{-- this shouldn't appear --}}<br>
 
     Hello World {{$name}}<br>
 
@@ -107,10 +107,7 @@ after the stack<br>
 
 
 
-
-
 kevinbacon @@gmail.com
-²²²²²
 Show all the stack:<br>
 stack :  @stack('scripts')
 <hr>extra functions<br>

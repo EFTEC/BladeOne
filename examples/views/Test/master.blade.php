@@ -1,5 +1,5 @@
 <hr>
-<h1>v2 este es el encabezado</h1>
+<h1>v2 it is the header</h1>
 <h2>{{$name}}</h2>
 <hr>
 

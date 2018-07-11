@@ -8,7 +8,7 @@ use Exception;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 2.3.2 2018-06-11
+ * @version 2.4 2018-07-11
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -720,15 +720,23 @@ class BladeOne
     {
         return $this->phpTag . "elseif{$expression}: ?>";
     }
+
     /**
      * Compile the forelse statements into valid PHP.
      *
+     * @param string $expression empty if it's inside a for loop.
      * @return string
      */
-    protected function compileEmpty()
+    protected function compileEmpty($expression='')
     {
-        $empty = '$__empty_' . $this->forelseCounter--;
-        return $this->phpTag . "endforeach; if ({$empty}): ?>";
+
+        if (($expression == '')) {
+            $empty = '$__empty_' . $this->forelseCounter--;
+            return $this->phpTag . "endforeach; if ({$empty}): ?>";
+        } else {
+            return $this->phpTag . "if (empty{$expression}): ?>";
+        }
+
     }
     /**
      * Compile the has section statements into valid PHP.
@@ -887,6 +895,62 @@ class BladeOne
         */
     }
     /**
+     * Compile the include statements into valid PHP.
+     *
+     * @param  string $expression
+     * @return string
+     */
+    protected function compileIncludeWhen($expression)
+    {
+        $expression = $this->stripParentheses($expression);
+        return $replace = $this->phpTag . 'echo $this->includeWhen('.$expression.'); ?>';
+        /*return $this->phpTag."if (\$__env->exists($expression)) echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
+        */
+    }
+    /**
+     * Compile the includefirst statement
+     *
+     * @param  string $expression
+     * @return string
+     */
+    protected function compileIncludeFirst($expression)
+    {
+        $expression = $this->stripParentheses($expression);
+        return $replace = $this->phpTag . 'echo $this->includeFirst('.$expression.'); ?>';
+        /*return $this->phpTag."if (\$__env->exists($expression)) echo \$__env->make($expression, array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>";
+        */
+    }
+
+    /**
+     * @param bool $bool
+     * @param string $view name of the view
+     * @param array $value arrays of values
+     * @return string
+     * @throws Exception
+     */
+    public function includeWhen($bool=false,$view='',$value=[])  {
+        if ($bool) {
+            return $this->runChild($view, $value);
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * @param array $views array of views
+     * @param array $value
+     * @return string
+     * @throws Exception
+     */
+    public function includeFirst($views=[],$value=[]) {
+        foreach($views as $view) {
+            if ($this->templateExist($view)) {
+                return $this->runChild($view, $value);
+            }
+        };
+        return '';
+    }
+    /**
      * Compile the stack statements into the content.
      *
      * @param  string $expression
@@ -906,6 +970,17 @@ class BladeOne
     {
         return $this->phpTag . "\$this->startPush{$expression}; ?>";
     }
+
+    /**
+     * Compile the push statements into valid PHP.
+     *
+     * @param  string $expression
+     * @return string
+     */
+    public function compilePrepend($expression)
+    {
+        return $this->phpTag . "\$this->startPush{$expression}; ?>";
+    }
     /**
      * Compile the endpush statements into valid PHP.
      *
@@ -914,6 +989,15 @@ class BladeOne
     protected function compileEndpush()
     {
         return $this->phpTag . '$this->stopPush(); ?>';
+    }
+    /**
+     * Compile the endpush statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileEndPrepend()
+    {
+        return $this->phpTag . '$this->stopPrepend(); ?>';
     }
 
     /**
@@ -963,9 +1047,42 @@ class BladeOne
         return "<?php echo \$this->baseUrl.{$expression}; ?>";
     }
 
+    protected function compileJSon($expression) {
+        return "<?php echo json_encode({$expression}); ?>";
+    }
+
+    protected function compileIsset($expression)
+    {
+        return $this->phpTag . "if(isset{$expression}): ?>";
+    }
+    protected function compileEndIsset()
+    {
+        return $this->phpTag . 'endif; ?>';
+    }
+    protected function compileEndEmpty()
+    {
+        return $this->phpTag . 'endif; ?>';
+    }
 
     //</editor-fold>
     //<editor-fold desc="push">
+    /**
+ * Start injecting content into a push section.
+ *
+ * @param  string $section
+ * @param  string $content
+ * @return void
+ */
+    public function startPush($section, $content = '')
+    {
+        if ($content === '') {
+            if (ob_start()) {
+                $this->pushStack[] = $section;
+            }
+        } else {
+            $this->extendPush($section, $content);
+        }
+    }
     /**
      * Start injecting content into a push section.
      *
@@ -973,11 +1090,11 @@ class BladeOne
      * @param  string $content
      * @return void
      */
-    public function startPush($section, $content = '')
+    public function startPrepend($section, $content = '')
     {
         if ($content === '') {
             if (ob_start()) {
-                $this->pushStack[] = $section;
+                array_unshift($this->pushStack[],$section);
             }
         } else {
             $this->extendPush($section, $content);
@@ -998,6 +1115,20 @@ class BladeOne
         return $last;
     }
     /**
+     * Stop injecting content into a push section.
+     *
+     * @return string
+     */
+    public function stopPrepend()
+    {
+        if (empty($this->pushStack)) {
+            $this->showError('stopPrepend', 'Cannot end a section without first starting one', true);
+        }
+        $last = array_shift($this->pushStack);
+        $this->extendStartPush($last, ob_get_clean());
+        return $last;
+    }
+    /**
      * Append content to a given push section.
      *
      * @param  string $section
@@ -1007,12 +1138,30 @@ class BladeOne
     protected function extendPush($section, $content)
     {
         if (!isset($this->pushes[$section])) {
-            $this->pushes[$section] = [];
+            $this->pushes[$section] = []; // start an empty section
         }
         if (!isset($this->pushes[$section][$this->renderCount])) {
             $this->pushes[$section][$this->renderCount] = $content;
         } else {
             $this->pushes[$section][$this->renderCount] .= $content;
+        }
+    }
+    /**
+     * Append content to a given push section.
+     *
+     * @param  string $section
+     * @param  string $content
+     * @return void
+     */
+    protected function extendStartPush($section, $content)
+    {
+        if (!isset($this->pushes[$section])) {
+            $this->pushes[$section] = []; // start an empty section
+        }
+        if (!isset($this->pushes[$section][$this->renderCount])) {
+            $this->pushes[$section][$this->renderCount] = $content;
+        } else {
+            $this->pushes[$section][$this->renderCount] = $content.$this->pushes[$section][$this->renderCount];
         }
     }
     /**
@@ -1041,7 +1190,7 @@ class BladeOne
     public function splitForeach($each=1, $splitText,$splitEnd='')
     {
 
-        $loopStack=self::last($this->loopsStack); // array(7) { ["index"]=> int(0) ["remaining"]=> int(6) ["count"]=> int(5) ["first"]=> bool(true) ["last"]=> bool(false) ["depth"]=> int(1) ["parent"]=> NULL }
+        $loopStack=static::last($this->loopsStack); // array(7) { ["index"]=> int(0) ["remaining"]=> int(6) ["count"]=> int(5) ["first"]=> bool(true) ["last"]=> bool(false) ["depth"]=> int(1) ["parent"]=> NULL }
         if ($loopStack['index']==$loopStack['count']) {
             return $splitEnd;
         }
@@ -1333,21 +1482,24 @@ class BladeOne
         $fileName = ($fileName == '') ? $this->fileName : $fileName;
         return $this->compiledPath . '/' . $fileName . ' _' . sha1($fileName);
     }
+
     /**
      * Get the full path of the compiled file.
+     * @param string $template template name. If not template is set then it uses the base template.
      * @return string
      */
-    public function getTemplateFile()
+    public function getTemplateFile($template='')
     {
-        $arr = explode('.', $this->fileName);
+        $template=($template=='')?$this->fileName:$template;
+        $arr = explode('.', $template);
         $c = count($arr);
         if ($c == 1) {
-            return $this->templatePath . '/' . $this->fileName . $this->fileExtension;
+            return $this->templatePath.'/'.$template.$this->fileExtension;
         } else {
             $file = $arr[$c - 1];
             array_splice($arr, $c - 1, $c - 1); // delete the last element
             $path = implode('/', $arr);
-            return $this->templatePath . '/' . $path . '/' . $file . $this->fileExtension;
+            return $this->templatePath.'/'.$path .'/'.$file.$this->fileExtension;
         }
     }
     /**
@@ -1370,6 +1522,12 @@ class BladeOne
         }
         return filemtime($compiled) < filemtime($template);
     }
+
+    private function templateExist($template) {
+        $file=$this->getTemplateFile($template);
+        return file_exists($file);
+    }
+
     /**
      * Get the contents of a file.
      *
@@ -1450,7 +1608,7 @@ class BladeOne
     {
         $accesible = is_array($array) || $array instanceof ArrayAccess;
         if (!$accesible) {
-            return self::value($default);
+            return static::value($default);
         }
         if (is_null($key)) {
             return $array;
@@ -1462,7 +1620,7 @@ class BladeOne
             if ($accesible && static::exists($array, $segment)) {
                 $array = $array[$segment];
             } else {
-                return self::value($default);
+                return static::value($default);
             }
         }
         return $array;
@@ -1492,14 +1650,14 @@ class BladeOne
     public static function first($array, callable $callback = null, $default = null)
     {
         if (is_null($callback)) {
-            return empty($array) ? self::value($default) : reset($array);
+            return empty($array) ? static::value($default) : reset($array);
         }
         foreach ($array as $key => $value) {
             if (call_user_func($callback, $key, $value)) {
                 return $value;
             }
         }
-        return self::value($default);
+        return static::value($default);
     }
     /**
      * Return the last element in an array passing a given truth test.
@@ -1775,7 +1933,7 @@ class BladeOne
      */
     public function endSlot()
     {
-        self::last($this->componentStack);
+        static::last($this->componentStack);
 
         $currentSlot = array_pop(
             $this->slotStack[$this->currentComponent()]
