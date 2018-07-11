@@ -1775,7 +1775,7 @@ class BladeOne
      */
     public function endSlot()
     {
-        last($this->componentStack);
+        self::last($this->componentStack);
 
         $currentSlot = array_pop(
             $this->slotStack[$this->currentComponent()]
