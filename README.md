@@ -306,7 +306,7 @@ Note :(*) This feature is in the original documentation but its not implemented 
 
 ## variables
 |Tag|Note|
-|---|---|---|
+|---|---|
 |{{$variable1}}|show the value of the variable using htmlentities (avoid xss attacks)|
 |@{{$variable1}}|show the value of the content directly (not evaluated, useful for js)|
 |{!!$variable1!!}|show the value of the variable without htmlentities (no escaped)|
@@ -315,7 +315,7 @@ Note :(*) This feature is in the original documentation but its not implemented 
 
 ## logic
 |Tag|Note|
-|---|---|---|
+|---|---|
 |@if (boolean)|if logic-conditional|
 |@elseif (boolean)|else if logic-conditional|
 |@else|else logic|
