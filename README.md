@@ -287,40 +287,40 @@ define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production)
 ## Template Inheritance
 
 ## In the master page (layout)
-|Tag|Note|status|
-|---|---|---|
-|@section('sidebar')|Start a new section|0.2b ok|
-|@show|Indicates where the content of section will be displayed|0.2 ok|
-|@yield('title')|Show here the content of a section|0.2b ok|
+|Tag|Note|
+|---|---|
+|@section('sidebar')|Start a new section|
+|@show|Indicates where the content of section will be displayed|
+|@yield('title')|Show here the content of a section|
 
 ## Using the master page (using the layout)
-|Tag|Note|status|
-|---|---|---|
-|@extends('layouts.master')|Indicates the layout to use|0.2b ok|
-|@section('title', 'Page Title')|Sends a single text to a section|0.2b ok|
-|@section('sidebar')|Start a block of code to send to a section|0.2b ok|
-|@endsection|End a block of code|0.2b ok|
-|@parent|Show the original code of the section|REMOVED(*)|
+|Tag|Note|
+|---|---|
+|@extends('layouts.master')|Indicates the layout to use|
+|@section('title', 'Page Title')|Sends a single text to a section|
+|@section('sidebar')|Start a block of code to send to a section|
+|@endsection|End a block of code|
+
 
 Note :(*) This feature is in the original documentation but its not implemented neither its required. May be its an obsolete feature.
 
 ## variables
-|Tag|Note|status|
+|Tag|Note|
 |---|---|---|
-|{{$variable1}}|show the value of the variable using htmlentities (avoid xss attacks)|0.2b ok|
-|@{{$variable1}}|show the value of the content directly (not evaluated, useful for js)|0.2b ok|
-|{!!$variable1!!}|show the value of the variable without htmlentities (no escaped)|0.2b ok|
-|{{ $name or 'Default' }}|value or default|0.2b ok|
-|{{Class::StaticFunction($variable)}}|call and show a function (the function should return a value)|0.2b ok|
+|{{$variable1}}|show the value of the variable using htmlentities (avoid xss attacks)|
+|@{{$variable1}}|show the value of the content directly (not evaluated, useful for js)|
+|{!!$variable1!!}|show the value of the variable without htmlentities (no escaped)|
+|{{ $name or 'Default' }}|value or default|
+|{{Class::StaticFunction($variable)}}|call and show a function (the function should return a value)|
 
 ## logic
-|Tag|Note|status|
+|Tag|Note|
 |---|---|---|
-|@if (boolean)|if logic-conditional|0.2b ok|
-|@elseif (boolean)|else if logic-conditional|0.2b ok|
-|@else|else logic|0.2b ok|
-|@endif|end if logic|0.2b ok|
-|@unless(boolean)|execute block of code is boolean is false|0.2b ok|
+|@if (boolean)|if logic-conditional|
+|@elseif (boolean)|else if logic-conditional|
+|@else|else logic|
+|@endif|end if logic|
+|@unless(boolean)|execute block of code is boolean is false|
 
 ## loop
 
@@ -496,24 +496,24 @@ _Example:(the indentation is not required)_
 - @endswitch. End the switch.
 
 ## Sub Views
-|Tag|Note|status|
+|Tag|Note|
 |---|---|---|
-|@include('folder.template')|Include a template|0.2b ok|
-|@include('folder.template',['some' => 'data'])|Include a template with new variables|0.2b ok|
-|@each('view.name', $array, 'variable')|Includes a template for each element of the array|0.2b ok|
+|@include('folder.template')|Include a template|
+|@include('folder.template',['some' => 'data'])|Include a template with new variables|
+|@each('view.name', $array, 'variable')|Includes a template for each element of the array|
 Note: Templates called folder.template is equals to folder/template
 
 ## Comments
-|Tag|Note|status|
+|Tag|Note|
 |---|---|---|
-|{{-- text --}}|Include a comment|0.2b ok|
+|{{-- text --}}|Include a comment|
 
 ## Stacks
-|Tag|Note|status|
+|Tag|Note|
 |---|---|---|
-|@push('elem')|Add the next block to the push stack|0.2b ok|
-|@endpush|End the push block|0.2b ok|
-|@stack('elem')|Show the stack|0.2b ok|
+|@push('elem')|Add the next block to the push stack|
+|@endpush|End the push block|
+|@stack('elem')|Show the stack|
 
 ## @set (new for 1.5)
 @set($variable=[value])
@@ -522,7 +522,7 @@ Note: Templates called folder.template is equals to folder/template
 - value (option) define the value to use.
 
 ## Service Inject
-|Tag|Note|status|
+|Tag|Note|
 |---|---|---|
 |@inject('metrics', 'App\Services\MetricsService')|Used for insert a Laravel Service|NOT SUPPORTED|
 
