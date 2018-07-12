@@ -1,7 +1,7 @@
 ![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)
 
-# BladeOne
-BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects.
+# BladeOne Blade Template Engine
+BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows to use use blade template outside laravel.
 
 NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**.  It miss some commands (laravel's own commands, custom if, blade extension, and @php tag) but nothing more.
 
@@ -13,10 +13,11 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
 [![php](https://img.shields.io/badge/php-7.x-green.svg)]()
 [![CocoaPods](https://img.shields.io/badge/docs-40%25-yellow.svg)]()
 
-# Introduction (From Laravel webpage)
-Blade is the simple, yet powerful templating engine provided with Laravel. Unlike other popular PHP templating engines, Blade does not restrict you from using plain PHP code in your views. All Blade views are compiled into plain PHP code and cached until they are modified, meaning Blade adds essentially zero overhead to your application. Blade view files use the .blade.php file extension and are typically stored in the resources/views directory.
+## laravel blade tutorial
 
-# About this version
+You can find some tutorials and example on the folder examples.
+
+## About this version
 By standard, Blade is part of Laravel (Illuminate components) and for to use it, you require to install Laravel and Illuminate-view components.
 Blade as a template engine is pretty nice and clear. Also, it generates a (some that) clean code. And its starting to be considered a de-facto template system for PHP (Smarty has been riding off the sunset since years ago). So, if we are able to use it without Laravel then its a big plus for many projects. In fact, in theory, it is even possible to use with Laravel.
 Exists different version of Blade Template that runs without Laravel but most requires 50 or more files and those templates add a new level of complexity:
@@ -30,9 +31,9 @@ Exists different version of Blade Template that runs without Laravel but most re
 
 This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]: 
 
-# Why to use it instead of native PHP?
+## Why to use it instead of native PHP?
 
-## Separation of concerns
+### Separation of concerns
 Let’s say that we have the next code
 
 ```php
@@ -115,14 +116,14 @@ And with html extension we could even reduce to
 
 
 
-## Performance  
+### Performance
 
 This library works in two stages.   
 
 The first is when the template is called the first time. In this case, the template is compiled and stored in a folder.   
 The second time the template is called then, it uses the compiled file.   The compiled file consist mainly in native PHP, so **the performance is equals than native code.** since the compiled version IS PHP.
 
-## Scalable
+### Scalable
 
 You could add and use your own function by adding a new method (or extending) to the BladeOne class. NOTE: The function should starts with the name "compile"
 ```php
@@ -142,7 +143,7 @@ Alternatively, BladeOne allows to run arbitrary code from any class or method if
 ```
 
 
-# Usage
+## Usage
 example.php:
 ```php
 <?php
@@ -244,9 +245,9 @@ or
 
 
 
-# Business Logic/Controller methods
+## Business Logic/Controller methods
 
-## constructor
+### constructor
 ```php
 $blade=new bladeone\BladeOne($views,$cache);
 ```
@@ -256,7 +257,7 @@ $blade=new bladeone\BladeOne($views,$cache);
 
 
 
-## run
+### run
 ```php
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
@@ -264,7 +265,7 @@ echo $blade->run("hello",array("variable1"=>"value1"));
 -   template is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder\example.blade.php"
 -   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
 
-## runString
+### runString
 ```php
 echo $blade->runString('<p>{{$direccion}}</p>', array('direccion'=>'cra 20 #33-58'));
 ```
@@ -273,7 +274,7 @@ echo $blade->runString('<p>{{$direccion}}</p>', array('direccion'=>'cra 20 #33-5
 -   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
 
 
-## BLADEONE_MODE (global constant) (optional)
+### BLADEONE_MODE (global constant) (optional)
 ```php
 define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
 ```
@@ -282,18 +283,18 @@ define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production)
 -   2=fast. Indicates that the engine always will use the compiled version
 
 
-# Template tags
+## Template tags
 
-## Template Inheritance
+### Template Inheritance
 
-## In the master page (layout)
+### In the master page (layout)
 |Tag|Note|
 |---|---|
 |@section('sidebar')|Start a new section|
 |@show|Indicates where the content of section will be displayed|
 |@yield('title')|Show here the content of a section|
 
-## Using the master page (using the layout)
+### Using the master page (using the layout)
 |Tag|Note|
 |---|---|
 |@extends('layouts.master')|Indicates the layout to use|
@@ -304,7 +305,7 @@ define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production)
 
 Note :(*) This feature is in the original documentation but its not implemented neither its required. May be its an obsolete feature.
 
-## variables
+### variables
 |Tag|Note|
 |---|---|
 |{{$variable1}}|show the value of the variable using htmlentities (avoid xss attacks)|
@@ -313,7 +314,7 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |{{ $name or 'Default' }}|value or default|
 |{{Class::StaticFunction($variable)}}|call and show a function (the function should return a value)|
 
-## logic
+### logic
 |Tag|Note|
 |---|---|
 |@if (boolean)|if logic-conditional|
@@ -322,9 +323,9 @@ Note :(*) This feature is in the original documentation but its not implemented 
 |@endif|end if logic|
 |@unless(boolean)|execute block of code is boolean is false|
 
-## loop
+### loop
 
-### @for($variable;$condition;$increment) / @endfor
+#### @for($variable;$condition;$increment) / @endfor
 _Generates a loop until the condition is meet and the variable is incremented for each loop_   
 
 |Tag|Note|Example|
@@ -353,7 +354,7 @@ The current value is 8
 The current value is 9
 ```
 
-### @inject('class',['namespace'])
+#### @inject('class',['namespace'])
 
 ```html
 @inject('metric', 'App\Services\MetricsService')
@@ -362,7 +363,7 @@ The current value is 9
 </div>
 ```
 
-### @foreach($array as $alias) / @endforeach
+#### @foreach($array as $alias) / @endforeach
 Generates a loop for each values of the variable.    
 
 |Tag|Note|Example|
@@ -382,7 +383,7 @@ This is user 1
 This is user 2
 ```
 
-### @forelse($array as $alias) / @empty / @endforelse
+#### @forelse($array as $alias) / @empty / @endforelse
 Its the same than foreach but jumps to the @empty tag if the array is null or empty   
 
 |Tag|Note|Example|
@@ -405,7 +406,7 @@ John Doe
 Anna Smith
 ```
 
-### @while($condition) / @endwhile
+#### @while($condition) / @endwhile
 Loops until the condition is not meet.
 
 |Tag|Note|Example|
@@ -428,7 +429,7 @@ I'm looping forever.
 I'm looping forever.
 ```
 
-### @splitforeach($nElem,$textbetween,$textend="")  inside @foreach
+#### @splitforeach($nElem,$textbetween,$textend="")  inside @foreach
 This functions show a text inside a @foreach cycle every "n" of elements.  This function could be used when you want to add columns to a list of elements.   
 NOTE: The $textbetween is not displayed if its the last element of the last.  With the last element, it shows the variable $textend
 
@@ -450,7 +451,7 @@ Example: ($users is an array of objects)
 ```
 Returns a table with 2 columns.
 
-### @continue / @break
+#### @continue / @break
 Continue jump to the next iteration of a cycle.  @Break jump out of a cycle.
 
 |Tag|Note|Example|
@@ -473,7 +474,7 @@ Returns:
 ```html
 2 - Anna Smith
 ```
-## switch / case
+### switch / case
 
 _Example:(the indentation is not required)_
 ```html
@@ -495,7 +496,7 @@ _Example:(the indentation is not required)_
 - @break Break the case
 - @endswitch. End the switch.
 
-## Sub Views
+### Sub Views
 |Tag|Note|
 |---|---|
 |@include('folder.template')|Include a template|
@@ -508,7 +509,7 @@ Note: Templates called folder.template is equals to folder/template
 |---|---|
 |{{-- text --}}|Include a comment|
 
-## Stacks
+### Stacks
 |Tag|Note|
 |---|---|
 |@push('elem')|Add the next block to the push stack|
@@ -521,7 +522,7 @@ Note: Templates called folder.template is equals to folder/template
 - $variable define the variable to add. If not value is defined the it adds +1 to a variable.
 - value (option) define the value to use.
 
-## Service Inject
+### Service Inject
 |Tag|Note|
 |---|---|
 |@inject('metrics', 'App\Services\MetricsService')|Used for insert a Laravel Service|NOT SUPPORTED|
@@ -529,9 +530,9 @@ Note: Templates called folder.template is equals to folder/template
 ## Extending Blade
 Not compatible with the extension of Laravel's Blade.
 
-## component / slots
+### component / slots
 
-## @asset (new for 2.2)
+### @asset (new for 2.2)
 @asset('js/jquery.js')
 
 Note: it requires to set the base address as 
@@ -542,17 +543,17 @@ $obj->baseUrl="https://www.example.com/urlbase/";
 Security: Don't use the variables $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the server is protected or the address is sanitized.
 
 
-# Extensions Libraries (optional) 
+## Extensions Libraries (optional)
 [BladeOneHtml Documentation](BladeOneHtml.md)
 
 [BladeOneCache Documentation](BladeOneCache.md)
 
 [BladeOneLang Documentation](BladeOneLang.md)
 
-# Definition of Blade Template
+## Definition of Blade Template
 https://laravel.com/docs/5.6/blade
 
-#Differences between Blade and BladeOne
+## Differences between Blade and BladeOne
 
 - Laravel's extension removed.
 - Dependencies to other class removed (around 30 classes).
@@ -560,7 +561,7 @@ https://laravel.com/docs/5.6/blade
 - Setter and Getters removed. Instead, we are using the PHP style (public members).
 - BladeOne doesn't support static calls.
 
-# Differences between Blade+Laravel and BladeOne+BladeOneHTML
+## Differences between Blade+Laravel and BladeOne+BladeOneHTML
 
 Instead of use the Laravel functions, for example Form::select
 ```html
@@ -580,7 +581,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 
 
-#Version
+## Version
 
 - 2016-06-08 0.2. Beta First publish launch.
 - 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag are not defined.
@@ -607,7 +608,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2018-07-11 2.4 Some fixes, new tags @json(var),@isset($records),@endisset,@includewhen,@includefirst,@prepend,@endprepend,@empty,@endempty,@append
 - 2018-07-12 3.0 BladeOneLogic now is fused with BladeOne. And a lot of new changes.
 
-## Changes between 2.x and 3.0
+### Changes between 2.x and 3.0
 
 - @defaultcase now is called @default  (BladeOneLogic)
 - @break is now required for @switch/@case
@@ -616,7 +617,9 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - New tags for injection
 
 
-# todo
+## todo
+
+- @section / @show versus @endsection
 
 - hello@@world fails to render hello@world.  However, hello @@world render hello@world.  
 
@@ -653,7 +656,7 @@ good:
 ```
 
 
-#Collaboration
+## Collaboration
 
 You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
 
@@ -679,7 +682,7 @@ I checked the code of BladeOne and I know that there is a lot of room for improv
 
 
 
-#License
+## License
 MIT License.
 BladeOne (c) 2016-2018 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is mostly a original work)
