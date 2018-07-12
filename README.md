@@ -661,7 +661,7 @@ You are welcome to use it, share it, ask for changes and whatever you want to. J
 I checked the code of BladeOne and I know that there is a lot of room for improvement.
 
 - @canany
-- @can
+- @can ( https://laravel.com/docs/5.6/authorization )
 - @cannot
 - @elseauth
 - @elseguest
