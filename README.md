@@ -3,7 +3,7 @@
 # BladeOne
 BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects.
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of Blade.  It miss some commands (laravel's commands and @php tag) but nothing more.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**.  It miss some commands (laravel's own commands, custom if, blade extension, and @php tag) but nothing more.
 
 
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)]()
@@ -199,6 +199,51 @@ views/hello.blade.php:
 {{$variable1}}
 ```
 
+## Security (optional)
+
+```php
+<?php
+require "vendor/autoload.php";
+
+Use eftec\bladeone;
+
+$views = __DIR__ . '/views';
+$cache = __DIR__ . '/cache';
+define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+$blade=new bladeone\BladeOne($views,$cache);
+
+$blade->login('johndoe','admin'); // where johndoe is an user and admin is the role. The role is optional
+
+echo $blade->run("hello",array("variable1"=>"value1"));
+```
+
+If you login using blade then you could use the tags @auth/@endauth/@guest/@endguest
+
+
+```html
+@auth
+    // The user is authenticated...
+@endauth
+
+@guest
+    // The user is not authenticated...
+@endguest
+```
+
+or
+
+```html
+@auth('admin')
+    // The user is authenticated...
+@endauth
+
+@guest('admin')
+    // The user is not authenticated...
+@endguest
+```
+
+
+
 # Business Logic/Controller methods
 
 ## constructor
@@ -306,6 +351,15 @@ The current value is 6
 The current value is 7
 The current value is 8
 The current value is 9
+```
+
+### @inject('class',['namespace'])
+
+```html
+@inject('metric', 'App\Services\MetricsService')
+<div>
+    Monthly Revenue: {{ $metric->monthlyRevenue() }}.
+</div>
 ```
 
 ### @foreach($array as $alias) / @endforeach
@@ -419,7 +473,27 @@ Returns:
 ```html
 2 - Anna Smith
 ```
+## switch / case
 
+_Example:(the indentation is not required)_
+```html
+@switch($countrySelected)
+    @case(1)
+        first country selected<br>
+    @break
+    @case(2)
+        second country selected<br>
+    @break
+    @defaultcase()
+        other country selected<br>
+@endswitch()
+```
+
+- @switch. The first value is the variable to evaluate.
+- @case. Indicates the value to compare.  It should be runs inside a @switch/@endswitch
+- @default. (optional) If not case is the correct then the block of @defaultcase is evaluated.
+- @break Break the case
+- @endswitch. End the switch.
 
 ## Sub Views
 |Tag|Note|status|
@@ -533,6 +607,16 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2018-06-11 2.3.2 Fixed bladeonehtml to allows readonly value.
 - 2018-06-12 2.3.3 Reorder folders.
 - 2018-07-11 2.4 Some fixes, new tags @json(var),@isset($records),@endisset,@includewhen,@includefirst,@prepend,@endprepend,@empty,@endempty,@append
+- 2018-07-12 3.0 BladeOneLogic now is fused with BladeOne. And a lot of new changes.
+
+## Changes between 2.x and 3.0
+
+- @defaultcase now is called @default  (BladeOneLogic)
+- @break is now required for @switch/@case
+- BladeOneLogic is now merged with BladeOne.  BladeOneLogic is discontinued.
+- New tags of security (optional).
+- New tags for injection
+
 
 # todo
 
@@ -581,6 +665,6 @@ I checked the code of BladeOne and I know that there is a lot of room for improv
 
 #License
 MIT License.
-BladeOne (c) 2016 Jorge Patricio Castro Castillo
+BladeOne (c) 2016-2018 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and use  the work of the team of Laravel.)
 

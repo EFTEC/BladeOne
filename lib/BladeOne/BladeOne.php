@@ -10,7 +10,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 2.4 2018-07-11
+ * @version 3 2018-07-12
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -198,6 +198,16 @@ class BladeOne
 
     protected $PARENTKEY='@parentXYZABC';
 
+    /** @var string $currentUser Current user */
+    public $currentUser=null;
+    /** @var string $currentRole Current role */
+    public $currentRole=null;
+
+    /** @var int Indicates the number of open switches */
+    private $switchCount=0;
+
+    /** @var bool Indicates if the switch is recently open */
+    private $switchFirst=true;
 
     //</editor-fold>
     //<editor-fold desc="constructor">
@@ -240,6 +250,12 @@ class BladeOne
         }
         return $this->runInternal($view, $newVariables, false, false, $this->isRunFast);
     }
+
+    public function login($user='',$role=null) {
+        $this->currentUser=$user;
+        $this->currentRole=$role;
+    }
+
     /**
      * Mode of the engine. 1= force recompile, 2=fast (no verify files)
      * @return int
@@ -364,6 +380,34 @@ class BladeOne
     }
     //</editor-fold>
     //<editor-fold desc="compile">
+    public function compileSwitch($expression) {
+        $this->switchCount++;
+        return $this->phpTag."switch $expression { case 'RANDOM##VALUE!!!AAAA!!!###AAAA##AA': break;?>";
+    }
+    public function compileCase($expression) {
+        if ($this->switchFirst) {
+            $this->switchFirst=false;
+            return $this->phpTag."case ".$this->stripParentheses($expression).":?>";
+        }
+        return $this->phpTag."case $expression: ?>";
+        /*return $this->phpTag."break;\n case $expression: ?>"; */
+    }
+    public function compileDefault() {
+        if ($this->switchFirst) {
+            return $this->showError("@default","@switch without any @case",true);
+        }
+        return $this->phpTag."default: ?>";
+    }
+
+    public function compileEndSwitch() {
+        $this->switchCount=$this->switchCount-1;
+        if ($this->switchCount<0) {
+            return $this->showError("@endswitch","Missing @switch",true);
+        }
+        return $this->phpTag."} // end switch ?>";
+    }
+
+
     /**
      * Compile the given Blade template contents.
      *
@@ -581,6 +625,62 @@ class BladeOne
     {
         return $this->phpTag . '$this->appendSection(); ?>';
     }
+
+    /**
+     * Compile the auth statements into valid PHP.
+     *
+     * @param null $expression
+     * @return string
+     */
+    protected function compileAuth($expression=null)
+    {
+        if ($expression===null) {
+            return $this->phpTag . "if(isset(\$this->currentUser)): ?>";
+        } else {
+            $role=$this->stripParentheses($expression);
+            return $this->phpTag . "if(isset(\$this->currentUser) && \$this->currentRole=={$role}): ?>";
+        }
+    }
+
+    /**
+     * Compile the end-auth statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileEndAuth()
+    {
+        return $this->phpTag . 'endif; ?>';
+    }
+    /**
+     * Compile the guest statements into valid PHP.
+     *
+     * @param null $expression
+     * @return string
+     */
+    protected function compileGuest($expression=null)
+    {
+        if ($expression===null) {
+            return $this->phpTag . "if(!isset(\$this->currentUser)): ?>";
+        } else {
+            $role=$this->stripParentheses($expression);
+            return $this->phpTag . "if(!isset(\$this->currentUser) || \$this->currentRole!={$role}): ?>";
+
+        }
+    }
+
+    /**
+
+    /**
+     * Compile the end-auth statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileEndGuest()
+    {
+        return $this->phpTag . 'endif; ?>';
+    }
+
+
     /**
      * Compile the end-section statements into valid PHP.
      *
@@ -1401,6 +1501,25 @@ class BladeOne
      * @param  string $expression
      * @return string
      */
+    protected function compileInject($expression)
+    {
+        $ex=$this->stripParentheses($expression);
+        $p0=strpos($ex,',');
+        if ($p0==false) {
+            $var=$this->stripQuotes($ex);
+            $namespace='';
+        } else {
+            $var=$this->stripQuotes(substr($ex,0,$p0));
+            $namespace=$this->stripQuotes(substr($ex,$p0+1));
+        }
+        return $this->phpTag ."\$$var =new $namespace\\$var()". "; ?>";
+    }
+    /**
+     * Compile the while statements into valid PHP.
+     *
+     * @param  string $expression
+     * @return string
+     */
     protected function compileWhile($expression)
     {
         return $this->phpTag . "while{$expression}: ?>";
@@ -1417,6 +1536,17 @@ class BladeOne
             $expression = substr($expression, 1, -1);
         }
         return $expression;
+    }
+
+    /**
+     * Remove first and end quote from a quoted string of text
+     *
+     * @param mixed $text
+     * @return null|string|string[]
+     */
+    protected function stripQuotes($text) {
+        $unquoted = preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3',trim($text));
+        return $unquoted;
     }
     /**
      * Register a custom Blade compiler.

@@ -99,15 +99,17 @@ Checkboxes with multi selections:<br>
 @listboxes('idlistbox',$countries,'id','name',$multipleSelect)
 
 <hr>
-<h2>Test of class BladeOneLogic</h2>
+<h2>Test of class BladeOneLogic $countrySelected={!! $countrySelected !!}</h2>
 Code:<br>
 <pre>
 @@switch($countrySelected)
 @@case(1)
 first country selected<br>
+@break
 @@case(2)
 second country selected<br>
-@@defaultcase()
+@break
+@@default
 other country selected<br>
 @@endswitch()
 </pre>
@@ -115,9 +117,11 @@ other country selected<br>
 @switch($countrySelected)
 @case(1)
     first country selected<br>
+@break
 @case(2)
     second country selected<br>
-@defaultcase
+@break
+@default
     other country selected<br>
 @endswitch
 

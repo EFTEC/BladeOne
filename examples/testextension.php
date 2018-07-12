@@ -5,14 +5,14 @@
 include "../lib/BladeOne/BladeOne.php";
 
 include "../lib/BladeOne/BladeOneHtml.php";
-include "../lib/BladeOne/BladeOneLogic.php";
+
 use eftec\bladeone;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
 
 class myBlade extends  bladeone\BladeOne {
-    use bladeone\BladeOneLogic,bladeone\BladeOneHtml;
+    use bladeone\BladeOneHtml;
 }
 
 $blade=new myBlade($views,$compiledFolder);
