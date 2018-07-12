@@ -660,9 +660,27 @@ You are welcome to use it, share it, ask for changes and whatever you want to. J
 #Future
 I checked the code of BladeOne and I know that there is a lot of room for improvement.
 
+- @canany
+- @can
+- @cannot
+- @elseauth
+- @elseguest
+- @dump
+- @elsecan,- @elsecanany,- @elsecannot,- @endcat,- @endcanany,- @endcannot
+- @endunless
+- @csrf
+- @dd
+- @dump
+- @method
+
+
+
+
+
+
 
 #License
 MIT License.
 BladeOne (c) 2016-2018 Jorge Patricio Castro Castillo
-Blade (c) 2012 Laravel Team (This code is based and use  the work of the team of Laravel.)
+Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is mostly a original work)
 
