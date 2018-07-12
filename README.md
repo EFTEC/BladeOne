@@ -545,14 +545,12 @@ Security: Don't use the variables $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME']
 # Extensions Libraries (optional) 
 [BladeOneHtml Documentation](BladeOneHtml.md)
 
-[BladeOneLogic Documentation](BladeOneLogic.md)
-
 [BladeOneCache Documentation](BladeOneCache.md)
 
 [BladeOneLang Documentation](BladeOneLang.md)
 
 # Definition of Blade Template
-https://laravel.com/docs/5.2/blade
+https://laravel.com/docs/5.6/blade
 
 #Differences between Blade and BladeOne
 
