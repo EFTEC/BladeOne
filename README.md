@@ -497,7 +497,7 @@ _Example:(the indentation is not required)_
 
 ## Sub Views
 |Tag|Note|
-|---|---|---|
+|---|---|
 |@include('folder.template')|Include a template|
 |@include('folder.template',['some' => 'data'])|Include a template with new variables|
 |@each('view.name', $array, 'variable')|Includes a template for each element of the array|
@@ -505,12 +505,12 @@ Note: Templates called folder.template is equals to folder/template
 
 ## Comments
 |Tag|Note|
-|---|---|---|
+|---|---|
 |{{-- text --}}|Include a comment|
 
 ## Stacks
 |Tag|Note|
-|---|---|---|
+|---|---|
 |@push('elem')|Add the next block to the push stack|
 |@endpush|End the push block|
 |@stack('elem')|Show the stack|
@@ -523,7 +523,7 @@ Note: Templates called folder.template is equals to folder/template
 
 ## Service Inject
 |Tag|Note|
-|---|---|---|
+|---|---|
 |@inject('metrics', 'App\Services\MetricsService')|Used for insert a Laravel Service|NOT SUPPORTED|
 
 ## Extending Blade
