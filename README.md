@@ -1,7 +1,7 @@
 ![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)
 
 # BladeOne Blade Template Engine
-BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows to use use blade template outside laravel.
+BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside laravel.
 
 NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**.  It miss some commands (laravel's own commands, custom if, blade extension, and @php tag) but nothing more.
 
@@ -660,7 +660,7 @@ good:
 
 You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
 
-#Future
+# Future
 I checked the code of BladeOne and I know that there is a lot of room for improvement.
 
 - @canany
