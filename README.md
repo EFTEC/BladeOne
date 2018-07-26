@@ -3,7 +3,7 @@
 # BladeOne Blade Template Engine
 BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside laravel.
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**.  [link text](#abcd)It miss some commands [missing](#missing)  but nothing more.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**. It misses some commands [missing](#missing) but nothing more.
 
 
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)]()
@@ -668,7 +668,7 @@ I checked the code of BladeOne and I know that there is a lot of room for improv
 Some features are missing because they are new, or they lacks of documentation or they are specific for laravel (then, they are useless without it)
 
 - Laravel's own commands. Reason: This library is free of Laravel
-- Custom if. Reason: It is dangeours and odds.
+- Custom if. Reason: It is dangerous and odds.
 - blade extension Reason: Extensions (that is part of the code, not in the template) is managed differently on BladeOne.
 - @php. Pending. I'm not so sure to implement this one. If you are using this one, then you are doing it wrong.
 - @canany. Pending. :baby_chick:
@@ -680,7 +680,6 @@ Some features are missing because they are new, or they lacks of documentation o
 - @elsecan. Pending
 - @elsecanany. Pending :baby_chick:
 - @elsecannot. Pending
-- @endcat. Pending :cat:
 - @endcanany. Pending :baby_chick:
 - @endcannot. Pending
 - @endunless. Pending
