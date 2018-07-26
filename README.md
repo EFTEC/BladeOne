@@ -3,7 +3,7 @@
 # BladeOne Blade Template Engine
 BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside laravel.
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**.  It miss some commands (laravel's own commands, custom if, blade extension, and @php tag) but nothing more.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**.  [link text](#abcd)It miss some commands [missing](#missing)  but nothing more.
 
 
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)]()
@@ -660,21 +660,29 @@ good:
 
 You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
 
-# Future
+## Future
 I checked the code of BladeOne and I know that there is a lot of room for improvement.
 
-- @canany
-- @can ( https://laravel.com/docs/5.6/authorization )
-- @cannot
-- @elseauth
-- @elseguest
-- @dump
-- @elsecan,- @elsecanany,- @elsecannot,- @endcat,- @endcanany,- @endcannot
-- @endunless
-- @csrf
-- @dd
-- @dump
-- @method
+## Missing
+
+Some features are missing because they are new, or they lacks of documentation or they are specific for laravel (then, they are useless without it)
+
+- Laravel's own commands. Reason: This library is free of Laravel
+- Custom if. Reason: It is dangeours and odds.
+- blade extension Reason: Extensions (that is part of the code, not in the template) is managed differently on BladeOne.
+- @php. Pending
+- @canany. Pending.
+- @can ( https://laravel.com/docs/5.6/authorization ). Pending
+- @cannot. Pending
+- @elseauth. Pending
+- @elseguest. Pending
+- @dump. Pending
+- @elsecan,- @elsecanany,- @elsecannot,- @endcat,- @endcanany,- @endcannot. Pending
+- @endunless. Pending
+- @csrf. Pending
+- @dd. Pending
+- @dump. Pending
+- @method. Pending
 
 
 
