@@ -670,23 +670,22 @@ Some features are missing because they are new, or they lacks of documentation o
 - Laravel's own commands. Reason: This library is free of Laravel
 - Custom if. Reason: It is dangeours and odds.
 - blade extension Reason: Extensions (that is part of the code, not in the template) is managed differently on BladeOne.
-- @php. Pending
-- @canany. Pending.
+- @php. Pending. I'm not so sure to implement this one. If you are using this one, then you are doing it wrong.
+- @canany. Pending. :baby_chick:
 - @can ( https://laravel.com/docs/5.6/authorization ). Pending
 - @cannot. Pending
 - @elseauth. Pending
 - @elseguest. Pending
-~~- @dump. Done. Ugly but it is done~~
+- ~~@dump. Done. Ugly but it is done~~
 - @elsecan. Pending
-- @elsecanany. Pending
+- @elsecanany. Pending :baby_chick:
 - @elsecannot. Pending
-- @endcat. Pending
-- @endcanany. Pending
+- @endcat. Pending :cat:
+- @endcanany. Pending :baby_chick:
 - @endcannot. Pending
 - @endunless. Pending
 - @csrf. Pending
-~~- @dd. Done. Ugly but it is done too.~~
-- @dump. Pending
+- ~~@dd. Done. Ugly but it is done too.~~
 - @method. Pending
 
 
