@@ -676,11 +676,16 @@ Some features are missing because they are new, or they lacks of documentation o
 - @cannot. Pending
 - @elseauth. Pending
 - @elseguest. Pending
-- @dump. Pending
-- @elsecan,- @elsecanany,- @elsecannot,- @endcat,- @endcanany,- @endcannot. Pending
+~~- @dump. Done. Ugly but it is done~~
+- @elsecan. Pending
+- @elsecanany. Pending
+- @elsecannot. Pending
+- @endcat. Pending
+- @endcanany. Pending
+- @endcannot. Pending
 - @endunless. Pending
 - @csrf. Pending
-- @dd. Pending
+~~- @dd. Done. Ugly but it is done too.~~
 - @dump. Pending
 - @method. Pending
 

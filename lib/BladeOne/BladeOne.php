@@ -391,7 +391,11 @@ class BladeOne
     }
     protected function compileDump($expression)
     {
-        $this->switchCount++;
+        return $this->phpTag . " echo '<pre>'; var_dump$expression; echo '</pre>';?>";
+    }
+
+    protected function compileDd($expression)
+    {
         return $this->phpTag . " echo '<pre>'; var_dump$expression; echo '</pre>';?>";
     }
 
