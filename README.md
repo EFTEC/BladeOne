@@ -141,7 +141,16 @@ Alternatively, BladeOne allows to run arbitrary code from any class or method if
 ```php
 {{SomeClass::SomeMethod('param','param2'...)}}
 ```
+## Install
 
+1) Download the file manually then unzip (using winrar,7zip or any other program) https://github.com/EFTEC/BladeOne/archive/master.zip
+
+2) git git clone https://github.com/EFTEC/BladeOne
+
+3) Composer
+
+4) wget https://github.com/EFTEC/BladeOne/archive/master.zip
+unzip master.zip
 
 ## Usage
 example.php:
