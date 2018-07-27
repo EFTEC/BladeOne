@@ -279,6 +279,29 @@ echo $blade->runString('<p>{{$direccion}}</p>', array('direccion'=>'cra 20 #33-5
 -   expression = is the expression to evaluate
 -   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
 
+### directive
+It sets a new directive (command) that runs on compile time.
+```php
+$blade->directive('datetime', function ($expression) {
+    return "<?php echo ($expression)->format('m/d/Y H:i'); ?>";
+});
+```
+```html
+@datetime($now)
+```
+
+### directiveRT
+It sets a new directive (command) that runs on runtime time.
+```php
+$blade->directiveRT('datetimert', function ($expression) {
+    echo $expression->format('m/d/Y H:i');
+});
+```
+
+```html
+@datetimert($now)
+```
+
 
 ### BLADEONE_MODE (global constant) (optional)
 ```php
@@ -368,6 +391,8 @@ The current value is 9
     Monthly Revenue: {{ $metric->monthlyRevenue() }}.
 </div>
 ```
+
+
 
 #### @foreach($array as $alias) / @endforeach
 Generates a loop for each values of the variable.    
@@ -613,6 +638,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2018-06-12 2.3.3 Reorder folders.
 - 2018-07-11 2.4 Some fixes, new tags @json(var),@isset($records),@endisset,@includewhen,@includefirst,@prepend,@endprepend,@empty,@endempty,@append
 - 2018-07-12 3.0 BladeOneLogic now is fused with BladeOne. And a lot of new changes.
+- 2018-07-27 3.1 custom directive and directivert(runtime).
 
 ### Changes between 2.x and 3.0
 

@@ -12,44 +12,38 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3 2018-07-12
+ * @version 3.1 2018-07-27
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {    //<editor-fold desc="fields">
     /**
      * All of the registered extensions.
-     *
      * @var array
      */
     protected $extensions = array();
     /**
      * All of the finished, captured sections.
-     *
      * @var array
      */
     protected $sections = array();
     /**
      * The file currently being compiled.
-     *
      * @var string
      */
     protected $fileName;
     /**
      * File extension for the template files.
-     *
      * @var string
      */
     protected $fileExtension = '.blade.php';
     /**
      * The stack of in-progress sections.
-     *
      * @var array
      */
     protected $sectionStack = array();
     /**
      * The stack of in-progress loops.
-     *
      * @var array
      */
     protected $loopsStack = [];
@@ -59,7 +53,6 @@ class BladeOne
     protected $variables = array();
     /**
      * All of the available compiler functions.
-     *
      * @var array
      */
     protected $compilers = [
@@ -70,42 +63,44 @@ class BladeOne
     ];
     /**
      * The stack of in-progress push sections.
-     *
      * @var array
      */
     protected $pushStack = [];
     /**
      * All of the finished, captured push sections.
-     *
      * @var array
      */
     protected $pushes = [];
     /**
      * The number of active rendering operations.
-     *
      * @var int
      */
     protected $renderCount = 0;
     /**
      * Get the template path for the compiled views.
-     *
      * @var string
      */
     protected $templatePath;
     /**
      * Get the compiled path for the compiled views.
-     *
      * @var string
      */
     protected $compiledPath;
     /**
-     * All custom "directive" handlers.
-     *
-     * This was implemented as a more usable "extend" in 5.1.
-     *
+     * Custom "directive" dictionary. Those directives run at compile time.
      * @var array
      */
     protected $customDirectives = [];
+    /**
+     * Custom directive dictinary. Those directives run at runtime.
+     * @var bool[]
+     */
+    protected $customDirectivesRT = [];
+    /**
+     * Used for conditional if.
+     * @var array
+     */
+    protected $conditions=[];
 
     /**
      * The main url of the system. Don't use $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the server is protected
@@ -115,55 +110,46 @@ class BladeOne
 
     /**
      * The file currently being compiled.
-     *
      * @var string
      */
     protected $isRunFast = false;
     /**
      * Array of opening and closing tags for raw echos.
-     *
      * @var array
      */
     protected $rawTags = ['{!!', '!!}'];
     /**
      * Array of opening and closing tags for regular echos.
-     *
      * @var array
      */
     protected $contentTags = ['{{', '}}'];
     /**
      * Array of opening and closing tags for escaped echos.
-     *
      * @var array
      */
     protected $escapedTags = ['{{{', '}}}'];
     /**
      * The "regular" / legacy echo string format.
-     *
      * @var string
      */
     protected $echoFormat = 'static::e(%s)';
     /**
      * Array of footer lines to be added to template.
-     *
      * @var array
      */
     protected $footer = [];
     /**
      * Placeholder to temporary mark the position of verbatim blocks.
-     *
      * @var string
      */
     protected $verbatimPlaceholder = '$__verbatim__$';
     /**
      * Array to temporary store the verbatim blocks found in the template.
-     *
      * @var array
      */
     protected $verbatimBlocks = [];
     /**
      * Counter to keep track of nested forelse statements.
-     *
      * @var int
      */
     protected $forelseCounter = 0;
@@ -172,28 +158,24 @@ class BladeOne
 
     /**
      * The components being rendered.
-     *
      * @var array
      */
     protected $componentStack = [];
 
     /**
      * The original data passed to the component.
-     *
      * @var array
      */
     protected $componentData = [];
 
     /**
      * The slot contents for the component.
-     *
      * @var array
      */
     protected $slots = [];
 
     /**
      * The names of the slots being rendered.
-     *
      * @var array
      */
     protected $slotStack = [];
@@ -215,9 +197,7 @@ class BladeOne
     //<editor-fold desc="constructor">
     /**
      * Bob the constructor.
-     *
      * The folder at $compiledPath is created in case it doesn't exist.
-     *
      * @param string $templatePath
      * @param string $compiledPath
      */
@@ -350,7 +330,6 @@ class BladeOne
 
     /**
      * Compile the view at the given path.
-     *
      * @param  string $fileName
      * @param bool $forced
      * @throws Exception
@@ -416,7 +395,6 @@ class BladeOne
 
     /**
      * Compile the while statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -451,7 +429,6 @@ class BladeOne
 
     /**
      * Compile while statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -471,7 +448,6 @@ class BladeOne
 
     /**
      * Compile the given Blade template contents.
-     *
      * @param  string $value
      * @return string
      */
@@ -503,7 +479,6 @@ class BladeOne
 
     /**
      * Execute the user defined extensions.
-     *
      * @param  string $value
      * @return string
      */
@@ -518,7 +493,6 @@ class BladeOne
 
     /**
      * Compile Blade comments into valid PHP.
-     *
      * @param  string $value
      * @return string
      */
@@ -530,7 +504,6 @@ class BladeOne
 
     /**
      * Compile Blade echos into valid PHP.
-     *
      * @param  string $value
      * @return string
      */
@@ -544,7 +517,6 @@ class BladeOne
 
     /**
      * Compile Blade statements that start with "@".
-     *
      * @param  string $value
      * @return mixed
      */
@@ -553,8 +525,12 @@ class BladeOne
         $callback = function ($match) {
             if (static::contains($match[1], '@')) {
                 $match[0] = isset($match[3]) ? $match[1] . $match[3] : $match[1];
-            } elseif (isset($this->customDirectives[$match[1]])) {
-                $match[0] = call_user_func($this->customDirectives[$match[1]], static::get($match, 3));
+            } elseif (isset($this->customDirectivesRT[$match[1]])) {
+                if ($this->customDirectivesRT[$match[1]]==true) {
+                    $match[0]=$this->compileStatementCustom($match);
+                } else {
+                    $match[0] = call_user_func($this->customDirectives[$match[1]], static::get($match, 3));
+                }
             } elseif (method_exists($this, $method = 'compile' . ucfirst($match[1]))) {
                 $match[0] = $this->$method(static::get($match, 3));
             } else {
@@ -566,8 +542,19 @@ class BladeOne
     }
 
     /**
+     * For compile custom directive at runtime.
+     * @param $match
+     * @return string
+     */
+    protected function compileStatementCustom($match)
+    {
+        $v=self::stripParentheses(static::get($match, 3));
+        $v=($v=='')?'':','.$v;
+        return $this->phpTag.'call_user_func($this->customDirectives[\''.$match[1].'\']'.$v.'); ?>';
+    }
+
+    /**
      * Compile the "raw" echo statements.
-     *
      * @param  string $value
      * @return string
      */
@@ -583,7 +570,6 @@ class BladeOne
 
     /**
      * Compile the "regular" echo statements.
-     *
      * @param  string $value
      * @return string
      */
@@ -600,7 +586,6 @@ class BladeOne
 
     /**
      * Compile the escaped echo statements.
-     *
      * @param  string $value
      * @return string
      */
@@ -616,7 +601,6 @@ class BladeOne
 
     /**
      * Compile the default values for the echo statement.
-     *
      * @param  string $value
      * @return string
      */
@@ -627,7 +611,6 @@ class BladeOne
 
     /**
      * Compile the each statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -646,7 +629,6 @@ class BladeOne
 
     /**
      * Compile the yield statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -657,7 +639,6 @@ class BladeOne
 
     /**
      * Compile the show statements into valid PHP.
-     *
      * @return string
      */
     protected function compileShow()
@@ -667,7 +648,6 @@ class BladeOne
 
     /**
      * Compile the section statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -678,7 +658,6 @@ class BladeOne
 
     /**
      * Compile the append statements into valid PHP.
-     *
      * @return string
      */
     protected function compileAppend()
@@ -688,7 +667,6 @@ class BladeOne
 
     /**
      * Compile the auth statements into valid PHP.
-     *
      * @param null $expression
      * @return string
      */
@@ -704,7 +682,6 @@ class BladeOne
 
     /**
      * Compile the end-auth statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndAuth()
@@ -714,7 +691,6 @@ class BladeOne
 
     /**
      * Compile the guest statements into valid PHP.
-     *
      * @param null $expression
      * @return string
      */
@@ -730,10 +706,8 @@ class BladeOne
     }
 
     /**
-     *
      * /**
      * Compile the end-auth statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndGuest()
@@ -744,7 +718,6 @@ class BladeOne
 
     /**
      * Compile the end-section statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndsection()
@@ -754,7 +727,6 @@ class BladeOne
 
     /**
      * Compile the stop statements into valid PHP.
-     *
      * @return string
      */
     protected function compileStop()
@@ -764,7 +736,6 @@ class BladeOne
 
     /**
      * Compile the overwrite statements into valid PHP.
-     *
      * @return string
      */
     protected function compileOverwrite()
@@ -774,7 +745,6 @@ class BladeOne
 
     /**
      * Compile the unless statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -785,7 +755,6 @@ class BladeOne
 
     /**
      * Compile the end unless statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndunless()
@@ -795,7 +764,6 @@ class BladeOne
 
     /**
      * Compile the else statements into valid PHP.
-     *
      * @return string
      */
     protected function compileElse()
@@ -805,7 +773,6 @@ class BladeOne
 
     /**
      * Compile the for statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -816,7 +783,6 @@ class BladeOne
 
     /**
      * Compile the foreach statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -832,7 +798,6 @@ class BladeOne
 
     /**
      * Compile a split of a foreach cycle. Used for example when we want to separate limites each "n" elements.
-     *
      * @param  string $expression
      * @return string
      */
@@ -843,7 +808,6 @@ class BladeOne
 
     /**
      * Compile the break statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -854,7 +818,6 @@ class BladeOne
 
     /**
      * Compile the continue statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -865,7 +828,6 @@ class BladeOne
 
     /**
      * Compile the forelse statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -877,7 +839,6 @@ class BladeOne
 
     /**
      * Compile the if statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -888,7 +849,6 @@ class BladeOne
 
     /**
      * Compile the else-if statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -899,7 +859,6 @@ class BladeOne
 
     /**
      * Compile the forelse statements into valid PHP.
-     *
      * @param string $expression empty if it's inside a for loop.
      * @return string
      */
@@ -917,7 +876,6 @@ class BladeOne
 
     /**
      * Compile the has section statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -928,7 +886,6 @@ class BladeOne
 
     /**
      * Compile the end-while statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndwhile()
@@ -938,7 +895,6 @@ class BladeOne
 
     /**
      * Compile the end-for statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndfor()
@@ -948,7 +904,6 @@ class BladeOne
 
     /**
      * Compile the end-for-each statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndforeach()
@@ -958,7 +913,6 @@ class BladeOne
 
     /**
      * Compile the end-can statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndcan()
@@ -968,7 +922,6 @@ class BladeOne
 
     /**
      * Compile the end-cannot statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndcannot()
@@ -978,7 +931,6 @@ class BladeOne
 
     /**
      * Compile the end-if statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndif()
@@ -988,7 +940,6 @@ class BladeOne
 
     /**
      * Compile the end-for-else statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndforelse()
@@ -998,7 +949,6 @@ class BladeOne
 
     /**
      * Compile the raw PHP statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1009,7 +959,6 @@ class BladeOne
 
     /**
      * Compile end-php statement into valid PHP.
-     *
      * @return string
      */
     protected function compileEndphp()
@@ -1019,7 +968,6 @@ class BladeOne
 
     /**
      * Compile the unset statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1059,7 +1007,6 @@ class BladeOne
 
     /**
      * Compile the include statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1073,7 +1020,6 @@ class BladeOne
 
     /**
      * Compile the include statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1087,7 +1033,6 @@ class BladeOne
 
     /**
      * Compile the include statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1101,7 +1046,6 @@ class BladeOne
 
     /**
      * Compile the includefirst statement
-     *
      * @param  string $expression
      * @return string
      */
@@ -1116,7 +1060,6 @@ class BladeOne
 
     /**
      * Compile the stack statements into the content.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1127,7 +1070,6 @@ class BladeOne
 
     /**
      * Compile the push statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1138,7 +1080,6 @@ class BladeOne
 
     /**
      * Compile the push statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1149,7 +1090,6 @@ class BladeOne
 
     /**
      * Compile the endpush statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndpush()
@@ -1159,7 +1099,6 @@ class BladeOne
 
     /**
      * Compile the endpush statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndPrepend()
@@ -1169,7 +1108,6 @@ class BladeOne
 
     /**
      * Compile the component statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1180,7 +1118,6 @@ class BladeOne
 
     /**
      * Compile the end-component statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndComponent()
@@ -1190,7 +1127,6 @@ class BladeOne
 
     /**
      * Compile the slot statements into valid PHP.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1201,7 +1137,6 @@ class BladeOne
 
     /**
      * Compile the end-slot statements into valid PHP.
-     *
      * @return string
      */
     protected function compileEndSlot()
@@ -1239,7 +1174,6 @@ class BladeOne
     //<editor-fold desc="push">
     /**
      * Start injecting content into a push section.
-     *
      * @param  string $section
      * @param  string $content
      * @return void
@@ -1257,7 +1191,6 @@ class BladeOne
 
     /**
      * Start injecting content into a push section.
-     *
      * @param  string $section
      * @param  string $content
      * @return void
@@ -1275,7 +1208,6 @@ class BladeOne
 
     /**
      * Stop injecting content into a push section.
-     *
      * @return string
      */
     public function stopPush()
@@ -1290,7 +1222,6 @@ class BladeOne
 
     /**
      * Stop injecting content into a push section.
-     *
      * @return string
      */
     public function stopPrepend()
@@ -1305,7 +1236,6 @@ class BladeOne
 
     /**
      * Append content to a given push section.
-     *
      * @param  string $section
      * @param  string $content
      * @return void
@@ -1324,7 +1254,6 @@ class BladeOne
 
     /**
      * Append content to a given push section.
-     *
      * @param  string $section
      * @param  string $content
      * @return void
@@ -1343,7 +1272,6 @@ class BladeOne
 
     /**
      * Get the string contents of a push section.
-     *
      * @param  string $section
      * @param  string $default
      * @return string
@@ -1358,7 +1286,6 @@ class BladeOne
 
     /**
      * Get the string contents of a push section.
-     *
      * @param int $each
      * @param $splitText
      * @param string $splitEnd
@@ -1381,7 +1308,6 @@ class BladeOne
     //<editor-fold desc="compile extras">
     /**
      * Store the verbatim blocks and replace them with a temporary placeholder.
-     *
      * @param  string $value
      * @return string
      */
@@ -1447,7 +1373,6 @@ class BladeOne
 
     /**
      * Replace the raw placeholders with the original code stored in the raw blocks.
-     *
      * @param  string $result
      * @return string
      */
@@ -1462,7 +1387,6 @@ class BladeOne
 
     /**
      * Parse the tokens from the template.
-     *
      * @param  array $token
      * @return string
      */
@@ -1479,7 +1403,6 @@ class BladeOne
 
     /**
      * Get the echo methods in the proper order for compilation.
-     *
      * @return array
      */
     protected function getEchoMethods()
@@ -1517,7 +1440,6 @@ class BladeOne
 
     /**
      * Stop injecting content into a section and return its contents.
-     *
      * @return string
      */
     public function yieldSection()
@@ -1528,7 +1450,6 @@ class BladeOne
 
     /**
      * Start injecting content into a section.
-     *
      * @param  string $section
      * @param  string $content
      * @return void
@@ -1544,7 +1465,6 @@ class BladeOne
 
     /**
      * Append content to a given section.
-     *
      * @param  string $section
      * @param  string $content
      * @return void
@@ -1561,7 +1481,6 @@ class BladeOne
 
     /**
      * Stop injecting content into a section.
-     *
      * @param  bool $overwrite
      * @return string
      */
@@ -1581,7 +1500,6 @@ class BladeOne
 
     /**
      * Stop injecting content into a section and append it.
-     *
      * @return string
      * @throws \InvalidArgumentException
      */
@@ -1601,7 +1519,6 @@ class BladeOne
 
     /**
      * Get the string contents of a section.
-     *
      * @param  string $section
      * @param  string $default
      * @return string
@@ -1618,7 +1535,6 @@ class BladeOne
 
     /**
      * Register a custom Blade compiler.
-     *
      * @param  callable $compiler
      * @return void
      */
@@ -1629,7 +1545,6 @@ class BladeOne
 
     /**
      * Register a handler for custom directives.
-     *
      * @param  string $name
      * @param  callable $handler
      * @return void
@@ -1637,11 +1552,22 @@ class BladeOne
     public function directive($name, callable $handler)
     {
         $this->customDirectives[$name] = $handler;
+        $this->customDirectivesRT[$name]=false;
+    }
+    /**
+     * Register a handler for custom directives for run at runtime
+     * @param  string $name
+     * @param  callable $handler
+     * @return void
+     */
+    public function directiveRT($name, callable $handler)
+    {
+        $this->customDirectives[$name] = $handler;
+        $this->customDirectivesRT[$name]=true;
     }
 
     /**
      * Sets the content tags used for the compiler.
-     *
      * @param  string $openTag
      * @param  string $closeTag
      * @param  bool $escaped
@@ -1655,7 +1581,6 @@ class BladeOne
 
     /**
      * Sets the escaped content tags used for the compiler.
-     *
      * @param  string $openTag
      * @param  string $closeTag
      * @return void
@@ -1667,7 +1592,6 @@ class BladeOne
 
     /**
      * Gets the content tags used for the compiler.
-     *
      * @return array
      */
     public function getContentTags()
@@ -1677,7 +1601,6 @@ class BladeOne
 
     /**
      * Gets the escaped content tags used for the compiler.
-     *
      * @return array
      */
     public function getEscapedContentTags()
@@ -1687,7 +1610,6 @@ class BladeOne
 
     /**
      * Gets the tags used for the compiler.
-     *
      * @param  bool $escaped
      * @return array
      */
@@ -1731,7 +1653,6 @@ class BladeOne
 
     /**
      * Determine if the view  is expired.
-     *
      * @return bool
      */
     public function isExpired()
@@ -1758,7 +1679,6 @@ class BladeOne
 
     /**
      * Get the contents of a file.
-     *
      * @param $fileName
      * @return string
      */
@@ -1771,7 +1691,6 @@ class BladeOne
 
     /**
      * Get the file extension for template files.
-     *
      * @return string
      */
     public function getFileExtension()
@@ -1781,9 +1700,7 @@ class BladeOne
 
     /**
      * Set the file extension for the template files.
-     *
      * Including the leading dot for the extension is required, e.g. .blade.php
-     *
      * @param $fileExtension
      */
     public function setFileExtension($fileExtension)
@@ -1815,10 +1732,8 @@ class BladeOne
 
     /**
      * Handle a view exception.
-     *
      * @param  \Exception $e
      * @return void
-     *
      * @throws $e
      */
     protected function handleViewException($e)
@@ -1830,7 +1745,6 @@ class BladeOne
     //<editor-fold desc="Array Functions">
     /**
      * Get an item from an array using "dot" notation.
-     *
      * @param  \ArrayAccess|array $array
      * @param  string $key
      * @param  mixed $default
@@ -1860,7 +1774,6 @@ class BladeOne
 
     /**
      * Determine if the given key exists in the provided array.
-     *
      * @param  \ArrayAccess|array $array
      * @param  string|int $key
      * @return bool
@@ -1875,7 +1788,6 @@ class BladeOne
 
     /**
      * Return the first element in an array passing a given truth test.
-     *
      * @param  array $array
      * @param  callable|null $callback
      * @param  mixed $default
@@ -1896,7 +1808,6 @@ class BladeOne
 
     /**
      * Return the last element in an array passing a given truth test.
-     *
      * @param  array $array
      * @param  callable|null $callback
      * @param  mixed $default
@@ -1913,7 +1824,6 @@ class BladeOne
     //<editor-fold desc="string functions">
     /**
      * Determine if a given string contains a given substring.
-     *
      * @param  string $haystack
      * @param  string|array $needles
      * @return bool
@@ -1937,7 +1847,6 @@ class BladeOne
 
     /**
      * Strip the parentheses from the given expression.
-     *
      * @param  string $expression
      * @return string
      */
@@ -1951,7 +1860,6 @@ class BladeOne
 
     /**
      * Remove first and end quote from a quoted string of text
-     *
      * @param mixed $text
      * @return null|string|string[]
      */
@@ -1963,7 +1871,6 @@ class BladeOne
 
     /**
      * Determine if a given string starts with a given substring.
-     *
      * @param  string $haystack
      * @param  string|array $needles
      * @return bool
@@ -1988,7 +1895,6 @@ class BladeOne
 
     /**
      * Return the default value of the given value.
-     *
      * @param  mixed $value
      * @return mixed
      */
@@ -1999,7 +1905,6 @@ class BladeOne
 
     /**
      * Escape HTML entities in a string.
-     *
      * @param  string $value
      * @return string
      */
@@ -2011,7 +1916,6 @@ class BladeOne
     //<editor-fold desc="loop functions">
     /**
      * Add new loop to the stack.
-     *
      * @param  array|\Countable $data
      * @return void
      */
@@ -2032,7 +1936,6 @@ class BladeOne
 
     /**
      * Increment the top loop's indices.
-     *
      * @return void
      */
     public function incrementLoopIndices()
@@ -2048,7 +1951,6 @@ class BladeOne
 
     /**
      * Pop a loop from the top of the loop stack.
-     *
      * @return void
      */
     public function popLoop()
@@ -2058,7 +1960,6 @@ class BladeOne
 
     /**
      * Get an instance of the first loop in the stack.
-     *
      * @return array|object
      */
     public function getFirstLoop()
@@ -2068,7 +1969,6 @@ class BladeOne
 
     /**
      * Get the entire loop stack.
-     *
      * @return array
      */
     public function getLoopStack()
@@ -2078,7 +1978,6 @@ class BladeOne
 
     /**
      * Get the rendered contents of a partial from a loop.
-     *
      * @param  string $view
      * @param  array $data
      * @param  string $iterator
@@ -2133,7 +2032,6 @@ class BladeOne
 
     /**
      * Start a component rendering process.
-     *
      * @param  string $name
      * @param  array $data
      * @return void
@@ -2151,7 +2049,6 @@ class BladeOne
 
     /**
      * Render the current component.
-     *
      * @return string
      * @throws Exception
      */
@@ -2163,7 +2060,6 @@ class BladeOne
 
     /**
      * Get the data for the given component.
-     *
      * @return array
      */
     protected function componentData()
@@ -2177,7 +2073,6 @@ class BladeOne
 
     /**
      * Start the slot rendering process.
-     *
      * @param  string $name
      * @param  string|null $content
      * @return void
@@ -2197,7 +2092,6 @@ class BladeOne
 
     /**
      * Save the slot content for rendering.
-     *
      * @return void
      */
     public function endSlot()
@@ -2214,7 +2108,6 @@ class BladeOne
 
     /**
      * Get the index for the current component.
-     *
      * @return int
      */
     protected function currentComponent()
