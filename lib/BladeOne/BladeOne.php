@@ -795,8 +795,8 @@ class BladeOne
      * @return string
      */
     protected function compileCanAny($expression) {
-        $v=$this->stripParentheses($expression);
-        return $this->phpTag.'if (call_user_func($this->authAnyCallBack,'.$v.')): ?>';
+        $role=$this->stripParentheses($expression);
+        return $this->phpTag.'if (call_user_func($this->authAnyCallBack,'.$role.')): ?>';
     }
     /**
      * Compile the else statements into valid PHP.
@@ -809,7 +809,7 @@ class BladeOne
         if ($role =='') {
             return $this->phpTag . "else: ?>";
         } else {
-            return $this->phpTag.'elseif (call_user_func($this->authAnyCallBack,'.$v.')): ?>';
+            return $this->phpTag.'elseif (call_user_func($this->authAnyCallBack,'.$role.')): ?>';
         }
     }
 
