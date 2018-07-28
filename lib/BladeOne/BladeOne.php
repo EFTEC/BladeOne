@@ -182,18 +182,23 @@ class BladeOne
 
     protected $PARENTKEY = '@parentXYZABC';
 
-    /** @var string $currentUser Current user */
+    /** @var string $currentUser Current user. Example: john */
     public $currentUser = null;
-    /** @var string $currentRole Current role */
+    /** @var string $currentRole Current role. Example: admin */
     public $currentRole = null;
-
+    /** @var string[] $currentPermission Current permission. Example ['edit','add'] */
+    public $currentPermission = [];
     /** @var int Indicates the number of open switches */
     private $switchCount = 0;
 
     /** @var bool Indicates if the switch is recently open */
     private $switchFirst = true;
-
+    /** @var callable callback of validation. It is used for @can,@cannot */
+    public $authCallBack;
+    /** @var callable callback of validation. It is used for @canany */
+    public $authAnyCallBack;
     //</editor-fold>
+
     //<editor-fold desc="constructor">
     /**
      * Bob the constructor.
@@ -205,6 +210,15 @@ class BladeOne
     {
         $this->templatePath = $templatePath;
         $this->compiledPath = $compiledPath;
+        $this->authCallBack=function($action=null, $subject=null) {
+            return in_array($action,$this->currentPermission);
+        };
+        $this->authAnyCallBack=function($array=[]) {
+            foreach($array as $permission) {
+                if (in_array($permission,$this->currentPermission)) return true;
+            }
+            return false;
+        };
 
         if (!file_exists($this->compiledPath)) {
             $ok = @mkdir($this->compiledPath, 0777, true);
@@ -233,10 +247,32 @@ class BladeOne
         return $this->runInternal($view, $newVariables, false, false, $this->isRunFast);
     }
 
-    public function login($user = '', $role = null)
+    /**
+     * Authentication. Sets with a user,role and permission
+     * @param string $user
+     * @param null $role
+     * @param array $permission
+     */
+    public function setAuth($user = '', $role = null,$permission=[])
     {
         $this->currentUser = $user;
         $this->currentRole = $role;
+        $this->currentPermission = $permission;
+    }
+
+    /**
+     * It sets the callback function for authentication. It is used by @can and @cannot
+     * @param callable $fn
+     */
+    public function setCanFunction(callable $fn) {
+        $this->authCallBack=$fn;
+    }
+    /**
+     * It sets the callback function for authentication. It is used by @canany
+     * @param callable $fn
+     */
+    public function setAnyFunction(callable $fn) {
+        $this->authAnyCallBack=$fn;
     }
 
     /**
@@ -667,19 +703,32 @@ class BladeOne
 
     /**
      * Compile the auth statements into valid PHP.
-     * @param null $expression
+     * @param string $expression
      * @return string
      */
-    protected function compileAuth($expression = null)
+    protected function compileAuth($expression = '')
     {
-        if ($expression === null) {
+        $role = $this->stripParentheses($expression);
+        if ($role=='') {
             return $this->phpTag . "if(isset(\$this->currentUser)): ?>";
         } else {
-            $role = $this->stripParentheses($expression);
             return $this->phpTag . "if(isset(\$this->currentUser) && \$this->currentRole=={$role}): ?>";
         }
     }
-
+    /**
+     * Compile the elseauth statements into valid PHP.
+     * @param string $expression
+     * @return string
+     */
+    protected function compileElseAuth($expression='')
+    {
+        $role = $this->stripParentheses($expression);
+        if ($role=='') {
+            return $this->phpTag . "else: ?>";
+        } else {
+            return $this->phpTag . "elseif(isset(\$this->currentUser) && \$this->currentRole=={$role}): ?>";
+        }
+    }
     /**
      * Compile the end-auth statements into valid PHP.
      * @return string
@@ -688,6 +737,69 @@ class BladeOne
     {
         return $this->phpTag . 'endif; ?>';
     }
+
+    protected function compileCan($expression) {
+        $v=$this->stripParentheses($expression);
+        return $this->phpTag.'if (call_user_func($this->authCallBack,'.$v.')): ?>';
+    }
+    /**
+     * Compile the else statements into valid PHP.
+     * @param string $expression
+     * @return string
+     */
+    protected function compileElseCan($expression='')
+    {
+        $v=$this->stripParentheses($expression);
+        if ($v) {
+            return $this->phpTag . 'elseif (call_user_func($this->authCallBack,'.$v.')): ?>';
+        } else {
+            return $this->phpTag . 'else: ?>';
+        }
+    }
+
+
+    protected function compileCannot($expression) {
+        $v=$this->stripParentheses($expression);
+        return $this->phpTag.'if (!call_user_func($this->authCallBack,'.$v.')): ?>';
+    }
+    /**
+     * Compile the elsecannot statements into valid PHP.
+     * @param string $expression
+     * @return string
+     */
+    protected function compileElseCannot($expression='')
+    {
+        $v=$this->stripParentheses($expression);
+        if ($v) {
+            return $this->phpTag . 'elseif (!call_user_func($this->authCallBack,'.$v.')): ?>';
+        } else {
+            return $this->phpTag . 'else: ?>';
+        }
+    }
+    /**
+     * canany(['edit','write'])
+     * @param $expression
+     * @return string
+     */
+    protected function compileCanAny($expression) {
+        $v=$this->stripParentheses($expression);
+        return $this->phpTag.'if (call_user_func($this->authAnyCallBack,'.$v.')): ?>';
+    }
+    /**
+     * Compile the else statements into valid PHP.
+     * @param $expression
+     * @return string
+     */
+    protected function compileElseCanAny($expression)
+    {
+        $role=$this->stripParentheses($expression);
+        if ($role =='') {
+            return $this->phpTag . "else: ?>";
+        } else {
+            return $this->phpTag.'elseif (call_user_func($this->authAnyCallBack,'.$v.')): ?>';
+        }
+    }
+
 
     /**
      * Compile the guest statements into valid PHP.
@@ -700,10 +812,29 @@ class BladeOne
             return $this->phpTag . "if(!isset(\$this->currentUser)): ?>";
         } else {
             $role = $this->stripParentheses($expression);
-            return $this->phpTag . "if(!isset(\$this->currentUser) || \$this->currentRole!={$role}): ?>";
-
+            if ($role=="") {
+                return $this->phpTag . "if(!isset(\$this->currentUser)): ?>";
+            } else {
+                return $this->phpTag . "if(!isset(\$this->currentUser) || \$this->currentRole!={$role}): ?>";
+            }
         }
     }
+    /**
+     * Compile the else statements into valid PHP.
+     * @param $expression
+     * @return string
+     */
+    protected function compileElseGuest($expression)
+    {
+        $role=$this->stripParentheses($expression);
+        if ($role =='') {
+            return $this->phpTag . "else: ?>";
+        } else {
+            return $this->phpTag . "elseif(!isset(\$this->currentUser) || \$this->currentRole!={$role}): ?>";
+        }
+    }
+
+
 
     /**
      * /**
@@ -754,7 +885,17 @@ class BladeOne
     }
 
     /**
-     * Compile the end unless statements into valid PHP.
+     * Compile the User statements into valid PHP.
+     * @param  string $expression
+     * @return string
+     */
+    protected function compileUser($expression)
+    {
+        return $this->phpTag ."echo '".$this->currentUser."'; ?>";
+    }
+
+    /**
+     * Compile the endunless statements into valid PHP.
      * @return string
      */
     protected function compileEndunless()
@@ -770,6 +911,9 @@ class BladeOne
     {
         return $this->phpTag . 'else: ?>';
     }
+
+
+
 
     /**
      * Compile the for statements into valid PHP.
@@ -919,6 +1063,16 @@ class BladeOne
     {
         return $this->phpTag . 'endif; ?>';
     }
+
+    /**
+     * Compile the end-can statements into valid PHP.
+     * @return string
+     */
+    protected function compileEndcanany()
+    {
+        return $this->phpTag . 'endif; ?>';
+    }
+
 
     /**
      * Compile the end-cannot statements into valid PHP.

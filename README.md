@@ -703,18 +703,18 @@ Some features are missing because they are new, or they lacks of documentation o
 - Custom if. Reason: It is dangerous and odds.
 - blade extension Reason: Extensions (that is part of the code, not in the template) is managed differently on BladeOne.
 - @php. Pending. I'm not so sure to implement this one. If you are using this one, then you are doing it wrong.
-- @canany. Pending. :baby_chick:
-- @can ( https://laravel.com/docs/5.6/authorization ). Pending
-- @cannot. Pending
-- @elseauth. Pending
-- @elseguest. Pending
-- ~~@dump. Done. Ugly but it is done~~
-- @elsecan. Pending
-- @elsecanany. Pending :baby_chick:
-- @elsecannot. Pending
-- @endcanany. Pending :baby_chick:
-- @endcannot. Pending
-- @endunless. Pending
+- ~~@canany. Pending. :baby_chick:~~ DONE
+- ~~@can ( https://laravel.com/docs/5.6/authorization ). Pending~~ DONE
+- ~~@cannot. Pending~~ DONE
+- ~~@elseauth. Pending~~ DONE
+- ~~@elseguest. Pending~~ DONE
+- ~~@dump. Done. Ugly but it is done~~ DONE
+- ~~@elsecan. Pending~~ DONE
+- ~~@elsecanany. Pending :baby_chick:~~ DONE
+- ~~@elsecannot. Pending~~ DONE
+- ~~@endcanany. Pending :baby_chick:~~ DONE
+- ~~@endcannot. Pending~~ DONE
+- ~~@endunless. Pending~~ DONE
 - @csrf. Pending
 - ~~@dd. Done. Ugly but it is done too.~~
 - @method. Pending
