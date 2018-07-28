@@ -715,9 +715,9 @@ Some features are missing because they are new, or they lacks of documentation o
 - ~~@endcanany. Pending :baby_chick:~~ DONE
 - ~~@endcannot. Pending~~ DONE
 - ~~@endunless. Pending~~ DONE
-- @csrf. Pending
-- ~~@dd. Done. Ugly but it is done too.~~
-- @method. Pending
+- ~~@csrf. Pending~~ DONE
+- ~~@dd. Done. Ugly but it is done too.~~ DONE
+- ~~@method. Pending~~ DONE
 
 
 
