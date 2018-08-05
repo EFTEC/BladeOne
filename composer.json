@@ -11,9 +11,6 @@
       "name": "Jorge Patricio Castro Castillo",
       "email": "jcastro@eftec.cl"
     }],
-  "require": {
-    "php": ">=5.4"
-  },
   "extra": {
     "branch-alias": {
       "dev-master": "3.2-dev"
