@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../lib/BladeOne/BladeOne.php";
+include "../lib/BladeOne.php";
 
 include "../lib/BladeOne/BladeOneHtml.php";
 

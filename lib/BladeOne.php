@@ -902,7 +902,7 @@ class BladeOne
      * @param  string $expression
      * @return string
      */
-    protected function compileUser($expression)
+    protected function compileUser()
     {
         return $this->phpTag ."echo '".$this->currentUser."'; ?>";
     }

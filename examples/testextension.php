@@ -2,17 +2,19 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
-include "../lib/BladeOne/BladeOne.php";
+include "../lib/BladeOne.php";
 
 include "../lib/BladeOne/BladeOneHtml.php";
 
-use eftec\bladeone;
+
+use eftec\bladeone\BladeOne;
+use eftec\bladeone\BladeOneHtml;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
 
-class myBlade extends  bladeone\BladeOne {
-    use bladeone\BladeOneHtml;
+class myBlade extends  BladeOne {
+    use BladeOneHtml;
 }
 
 $blade=new myBlade($views,$compiledFolder);

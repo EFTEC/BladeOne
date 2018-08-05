@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-include "../lib/BladeOne/BladeOne.php";
+include "../lib/BladeOne.php";
 
 use eftec\bladeone;
 
