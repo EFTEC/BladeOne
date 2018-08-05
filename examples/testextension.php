@@ -4,7 +4,7 @@
  */
 include "../lib/BladeOne.php";
 
-include "../lib/BladeOne/BladeOneHtml.php";
+include "../lib/BladeOneHtml.php";
 
 
 use eftec\bladeone\BladeOne;

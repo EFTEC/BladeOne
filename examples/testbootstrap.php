@@ -2,16 +2,20 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License..s
  */
+
+use eftec\bladeone\BladeOne;
+use eftec\bladeone\BladeOneHtmlBootstrap;
+
 include "../lib/BladeOne.php";
 
-include "../lib/BladeOne/BladeOneHtml.php";
-include "../lib/BladeOne/BladeOneHtmlBootstrap.php";
-use eftec\bladeone;
+include "../lib/BladeOneHtml.php";
+include "../lib/BladeOneHtmlBootstrap.php";
+
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
 
-class myBlade extends  bladeone\BladeOne {
-    use bladeone\BladeOneHtmlBootstrap;
+class myBlade extends  BladeOne {
+    use BladeOneHtmlBootstrap;
 }
 define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
 $blade=new myBlade($views,$compiledFolder);

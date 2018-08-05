@@ -189,7 +189,7 @@ or
 ```
 {
     "require": {
-        "eftec/bladeone": "^2.0"
+        "eftec/bladeone": "^3.2"
     }
 }
 
@@ -639,6 +639,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2018-07-11 2.4 Some fixes, new tags @json(var),@isset($records),@endisset,@includewhen,@includefirst,@prepend,@endprepend,@empty,@endempty,@append
 - 2018-07-12 3.0 BladeOneLogic now is fused with BladeOne. And a lot of new changes.
 - 2018-07-27 3.1 custom directive and directivert(runtime).
+- 2018-08-05 3.2 Fixed composer's problem
 
 ### Changes between 2.x and 3.0
 

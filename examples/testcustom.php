@@ -4,9 +4,9 @@
  */
 include "../lib/BladeOne.php";
 
-include "../lib/BladeOne/BladeOneHtml.php";
+include "../lib/BladeOneHtml.php";
 
-include "../lib/BladeOne/BladeOneCustom.php";
+include "../lib/BladeOneCustom.php";
 use eftec\bladeone;
 
 $views = __DIR__ . '/views';
