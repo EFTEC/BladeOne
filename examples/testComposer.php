@@ -8,7 +8,7 @@ use eftec\bladeone\BladeOne;
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
 
-$blade=new BladeOne($views,$compiledFolder);
+$blade=new BladeOne($views,$compiledFolder,BladeOne::MODE_SLOW);
 
 
 echo "ok<br>";

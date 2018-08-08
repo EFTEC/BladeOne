@@ -6,7 +6,7 @@ include "../lib/BladeOne.php";
 
 include "../lib/BladeOneCache.php";
 
-use eftec\bladeone;
+use eftec\bladeone\BladeOne;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';

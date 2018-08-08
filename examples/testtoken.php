@@ -5,16 +5,16 @@
 @session_start();
 
 include "../lib/BladeOne.php";
-use eftec\bladeone;
+use eftec\bladeone\BladeOne;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
-$blade=new bladeone\BladeOne($views,$compiledFolder);
+$blade=new BladeOne($views,$compiledFolder,BladeOne::MODE_SLOW);
 
 $isvalid=$blade->csrfIsValid(); // a) for get= it generates a new token, b) for post, it validates the token.
 session_write_close();// we close the session for writes.
 
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+
 
 
 //<editor-fold desc="Authentication example">

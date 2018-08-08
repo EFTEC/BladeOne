@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.1 2018-07-27
+ * @version 3.3 2018-08-08
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -86,6 +86,10 @@ class BladeOne
      * @var string
      */
     protected $compiledPath;
+
+    /** @var string the extension of the compiled file */
+    protected $compileExtension='.bladec';
+
     /**
      * Custom "directive" dictionary. Those directives run at compile time.
      * @var array
@@ -153,6 +157,23 @@ class BladeOne
      * @var int
      */
     protected $forelseCounter = 0;
+
+    /**
+     * Indicates the compile mode.
+     * if the constant BLADEONE_MODE is define, then it is used instead of this field.
+     * @var int MODE_*
+     */
+    protected $mode;
+
+    /** @var int BladeOne reads if the compiled file has changed. If has changed,then the file is replaced. */
+    const MODE_AUTO=0;
+    /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
+    const MODE_SLOW=1;
+    /** @var int The compiled file is never replaced. It's fast and it's useful for production. */
+    const MODE_FAST=2;
+    /** @var int DEBUG MODE, the file is always compiled and the filename is identifiable. */
+    const MODE_DEBUG=5;
+
     public $phpTag = '<?php ';
 
 
@@ -208,11 +229,13 @@ class BladeOne
      * The folder at $compiledPath is created in case it doesn't exist.
      * @param string $templatePath
      * @param string $compiledPath
+     * @param $mode (see setMode)
      */
-    public function __construct($templatePath, $compiledPath)
+    public function __construct($templatePath, $compiledPath,$mode=0)
     {
         $this->templatePath = $templatePath;
         $this->compiledPath = $compiledPath;
+        $this->setMode($mode);
         $this->authCallBack=function($action=null, $subject=null) {
             return in_array($action,$this->currentPermission);
         };
@@ -279,16 +302,25 @@ class BladeOne
     }
 
     /**
-     * Mode of the engine. 1= force recompile, 2=fast (no verify files)
+     * Get the mode of the engine.See BladeOne::MODE_* constants
      * @return int
      */
     public function getMode()
     {
-        $mode = 0;
         if (defined('BLADEONE_MODE')) {
-            $mode = BLADEONE_MODE;
+            $this->mode = BLADEONE_MODE;
         }
-        return $mode;
+        return $this->mode;
+    }
+
+    /**
+     * Set the compile mode
+     * @param $mode int See BladeOne::MODE_* constants
+     * @return void
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
     }
 
     /**
@@ -1851,7 +1883,11 @@ class BladeOne
     public function getCompiledFile($fileName = '')
     {
         $fileName = ($fileName == '') ? $this->fileName : $fileName;
-        return $this->compiledPath . '/' . $fileName . ' _' . sha1($fileName);
+        if ($this->getMode() == self::MODE_DEBUG) {
+            return $this->compiledPath.'/'.$fileName.$this->compileExtension;
+        } else {
+            return $this->compiledPath.'/'.sha1($fileName).$this->compileExtension;
+        }
     }
 
     /**
@@ -1913,9 +1949,9 @@ class BladeOne
     }
 
     /**
-     * Get the file extension for template files.
-     * @return string
-     */
+ * Get the file extension for template files.
+ * @return string
+ */
     public function getFileExtension()
     {
         return $this->fileExtension;
@@ -1929,6 +1965,25 @@ class BladeOne
     public function setFileExtension($fileExtension)
     {
         $this->fileExtension = $fileExtension;
+    }
+
+    /**
+     * Get the file extension for template files.
+     * @return string
+     */
+    public function getCompiledExtension()
+    {
+        return $this->compileExtension;
+    }
+
+    /**
+     * Set the file extension for the compiled files.
+     * Including the leading dot for the extension is required, e.g. .bladec
+     * @param $fileExtension
+     */
+    public function setCompiledExtension($fileExtension)
+    {
+        $this->compileExtension = $fileExtension;
     }
 
     /**

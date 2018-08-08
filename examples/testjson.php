@@ -3,12 +3,12 @@
  * Copyright (c) 2016-2017 Jorge Patricio Castro Castillo MIT License.
  */
 include "../lib/BladeOne.php";
-use eftec\bladeone;
+use eftec\bladeone\BladeOne;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
-$blade=new bladeone\BladeOne($views,$compiledFolder);
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+$blade=new BladeOne($views,$compiledFolder,BladeOne::MODE_SLOW);
+
 
 $drinks= array('Cocacola','Pepsi','Fanta','Sprite','7up');
 $json=json_encode($drinks);

@@ -158,8 +158,7 @@ Use eftec\bladeone;
 
 $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
-$blade=new bladeone\BladeOne($views,$cache);
+$blade=new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO));
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
 
@@ -172,8 +171,7 @@ Use eftec\bladeone;
 
 $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
-$blade=new bladeone\BladeOne($views,$cache);
+$blade=new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO);
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
 _(modify composer.json as follow) and run "composer update"_
@@ -216,8 +214,7 @@ Use eftec\bladeone;
 
 $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
-$blade=new bladeone\BladeOne($views,$cache);
+$blade=new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO);
 
 $blade->login('johndoe','admin'); // where johndoe is an user and admin is the role. The role is optional
 
@@ -255,12 +252,12 @@ or
 
 ### constructor
 ```php
-$blade=new bladeone\BladeOne($views,$cache);
+$blade=new bladeone\BladeOne($views,$cache,$mode);
 ```
-- BladeOne(templatefolder,compiledfolder) Creates the instance of BladeOne.
+- BladeOne(templatefolder,compiledfolder,$mode) Creates the instance of BladeOne.
 -   templatefolders indicates the folder (without ending backslash) of where the template files (*.blade.php) are located.
 -   compiledfolder indicates the folder where the result of files will be saves. This folder should has write permission. Also, this folder could be located outside of the Web Root.
-
+-   mode (optional).  It sets the mode of the compile. See [setMode(mode)](#setMode(mode)) .  By default it's automatic
 
 
 ### run
@@ -270,6 +267,40 @@ echo $blade->run("hello",array("variable1"=>"value1"));
 - run([template],[array])  Runs the template and generates a compiled version (if its required), then it shows the result.
 -   template is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder\example.blade.php"
 -   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
+
+### setMode(mode)
+
+It sets the mode of compilation.
+
+> It the constant BLADEONE_MODE is define, then it has priority over setMode()
+
+|mode|behaviour|
+|---|---|
+|BladeOne::MODE_AUTO|Automatic, BladeOne checks the compiled version, if it is obsolete, then a new version is compiled and it replaces the old one|
+|BladeOne::MODE_SLOW|Slow, BladeOne always compile and replace with a new version.  It is useful for development|
+|BladeOne::MODE_FAST|Fast, Bladeone never compile or replace the compiled version, even if it doesn't exist|
+|BladeOne::MODE_DEBUG| It's similar to MODE_SLOW but also generates a compile file with the same name than the template.
+
+### setMode(mode)
+
+It sets the mode of compilation.
+
+> It the constant BLADEONE_MODE is define, then it has priority over setMode()
+
+### setFileExtension($ext), getFileExtension
+
+It sets or gets the extension of the template file. By default, it's .blade.php
+
+> The extension includes the leading dot.
+
+### setCompiledExtension($ext), getCompiledExtension
+
+It sets or gets the extension of the template file. By default, it's .bladec
+
+> The extension includes the leading dot.
+
+
+
 
 ### runString
 ```php
@@ -305,11 +336,17 @@ $blade->directiveRT('datetimert', function ($expression) {
 
 ### BLADEONE_MODE (global constant) (optional)
 ```php
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
-```
+define("BLADEONE_MODE",BladeOne::MODE_AUTO);
+
 - BLADEONE_MODE Is a global constant that defines the behaviour of the engine.
--   1=forced. Indicates that the engine always will compile the template.
--   2=fast. Indicates that the engine always will use the compiled version
+- Optionally, you could use $blade->setMode(BladeOne::MODE_AUTO);
+
+|mode|behaviour|
+|---|---|
+|BladeOne::MODE_AUTO|Automatic, BladeOne checks the compiled version, if it is obsolete, then a new version is compiled and it replaces the old one|
+|BladeOne::MODE_SLOW|Slow, BladeOne always compile and replace with a new version.  It is useful for development|
+|BladeOne::MODE_FAST|Fast, Bladeone never compile or replace the compiled version, even if it doesn't exist|
+|BladeOne::MODE_DEBUG| It's similar to MODE_SLOW but also generates a compile file with the same name than the template.
 
 
 ## Template tags
@@ -640,6 +677,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2018-07-12 3.0 BladeOneLogic now is fused with BladeOne. And a lot of new changes.
 - 2018-07-27 3.1 custom directive and directivert(runtime).
 - 2018-08-05 3.2 Fixed composer's problem
+- 2018-08-08 3.3 Set extensions, constants and blade mode.
 
 ### Changes between 2.x and 3.0
 

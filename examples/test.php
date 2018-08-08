@@ -2,13 +2,15 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
+
+use eftec\bladeone\BladeOne;
+
 include "../lib/BladeOne.php";
-use eftec\bladeone;
+
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
-$blade=new bladeone\BladeOne($views,$compiledFolder);
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+$blade=new BladeOne($views,$compiledFolder,BladeOne::MODE_DEBUG);
 
 
 //<editor-fold desc="Example data">

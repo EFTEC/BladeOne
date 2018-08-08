@@ -4,7 +4,7 @@
  */
 include "../lib/BladeOne.php";
 include "../lib/BladeOneLang.php";
-use eftec\bladeone;
+use eftec\bladeone\BladeOne;
 use eftec\bladeone\BladeOneLang;
 
 $views = __DIR__ . '/views';
@@ -15,7 +15,7 @@ class myBlade extends  bladeone\BladeOne {
 }
 
 $blade=new myBlade($views,$compiledFolder);
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+
 
 
 $blade->missingLog='c:\temp\missingkey.txt'; // if a traduction is missing the it will be saved here.

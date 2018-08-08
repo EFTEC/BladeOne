@@ -17,7 +17,7 @@ $compiledFolder = __DIR__ . '/compiled';
 class myBlade extends  BladeOne {
     use BladeOneHtmlBootstrap;
 }
-define("BLADEONE_MODE",1); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.
+
 $blade=new myBlade($views,$compiledFolder);
 
 //<editor-fold desc="Example data">
