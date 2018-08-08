@@ -335,6 +335,7 @@ It defines the mode of compilation (via global constant) See [setMode(mode)](#se
 
 ```php
 define("BLADEONE_MODE",BladeOne::MODE_AUTO);
+```
 
 - BLADEONE_MODE Is a global constant that defines the behaviour of the engine.
 - Optionally, you could use $blade->setMode(BladeOne::MODE_AUTO);
