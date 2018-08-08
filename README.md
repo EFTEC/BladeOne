@@ -257,7 +257,7 @@ $blade=new bladeone\BladeOne($views,$cache,$mode);
 - BladeOne(templatefolder,compiledfolder,$mode) Creates the instance of BladeOne.
 -   templatefolders indicates the folder (without ending backslash) of where the template files (*.blade.php) are located.
 -   compiledfolder indicates the folder where the result of files will be saves. This folder should has write permission. Also, this folder could be located outside of the Web Root.
--   mode (optional).  It sets the mode of the compile. See [setMode(mode)](#setMode(mode)) .  By default it's automatic
+-   mode (optional).  It sets the mode of the compile. See [setMode(mode)](#setmodemode) .  By default it's automatic
 
 
 ### run
