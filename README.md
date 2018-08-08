@@ -281,11 +281,6 @@ It sets the mode of compilation.
 |BladeOne::MODE_FAST|Fast, Bladeone never compile or replace the compiled version, even if it doesn't exist|
 |BladeOne::MODE_DEBUG| It's similar to MODE_SLOW but also generates a compile file with the same name than the template.
 
-### setMode(mode)
-
-It sets the mode of compilation.
-
-> It the constant BLADEONE_MODE is define, then it has priority over setMode()
 
 ### setFileExtension($ext), getFileExtension
 
@@ -335,19 +330,14 @@ $blade->directiveRT('datetimert', function ($expression) {
 
 
 ### BLADEONE_MODE (global constant) (optional)
+
+It defines the mode of compilation (via global constant) See [setMode(mode)](#setmodemode) for more information.
+
 ```php
 define("BLADEONE_MODE",BladeOne::MODE_AUTO);
 
 - BLADEONE_MODE Is a global constant that defines the behaviour of the engine.
 - Optionally, you could use $blade->setMode(BladeOne::MODE_AUTO);
-
-|mode|behaviour|
-|---|---|
-|BladeOne::MODE_AUTO|Automatic, BladeOne checks the compiled version, if it is obsolete, then a new version is compiled and it replaces the old one|
-|BladeOne::MODE_SLOW|Slow, BladeOne always compile and replace with a new version.  It is useful for development|
-|BladeOne::MODE_FAST|Fast, Bladeone never compile or replace the compiled version, even if it doesn't exist|
-|BladeOne::MODE_DEBUG| It's similar to MODE_SLOW but also generates a compile file with the same name than the template.
-
 
 ## Template tags
 
