@@ -11,10 +11,11 @@ $records=array(1,2,3);
 
 
 try {
-    echo $blade->run("test.switch"
+    echo $blade->run("Test.switch"
         , ["name" => "hello"
             , 'records' => $records
-            , 'i' => 44
+            , 'i' => 0
+            , 'j' => 1
         ]);
 
 
