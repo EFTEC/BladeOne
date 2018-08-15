@@ -213,7 +213,7 @@ class BladeOne
     private $switchCount = 0;
 
     /** @var bool Indicates if the switch is recently open */
-    private $switchFirst = true;
+    private $firstCaseInSwitch = true;
     /** @var callable callback of validation. It is used for @can,@cannot */
     public $authCallBack;
     /** @var callable callback of validation. It is used for @canany */
@@ -437,7 +437,8 @@ class BladeOne
     protected function compileSwitch($expression)
     {
         $this->switchCount++;
-        return $this->phpTag . "switch $expression { case 'RANDOM##VALUE!!!AAAA!!!###AAAA##AA': break;?>";
+        $this->firstCaseInSwitch = true;
+        return $this->phpTag . "switch $expression {";
     }
     protected function compileDump($expression)
     {
@@ -466,12 +467,11 @@ class BladeOne
      */
     protected function compileCase($expression)
     {
-        if ($this->switchFirst) {
-            $this->switchFirst = false;
-            return $this->phpTag . "case " . $this->stripParentheses($expression) . ":?>";
+        if ($this->firstCaseInSwitch) {
+            $this->firstCaseInSwitch = false;
+            return "case " . $expression . ": ?>";
         }
         return $this->phpTag . "case $expression: ?>";
-        /*return $this->phpTag."break;\n case $expression: ?>"; */
     }
 
     /**
@@ -490,7 +490,7 @@ class BladeOne
      */
     protected function compileDefault()
     {
-        if ($this->switchFirst) {
+        if ($this->firstCaseInSwitch) {
             return $this->showError("@default", "@switch without any @case", true);
         }
         return $this->phpTag . "default: ?>";
