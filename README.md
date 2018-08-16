@@ -669,6 +669,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2018-07-27 3.1 custom directive and directivert(runtime).
 - 2018-08-05 3.2 Fixed composer's problem
 - 2018-08-08 3.3 Set extensions, constants and blade mode.
+- 2018-08-16 3.4 Custom if,@php tag and some fixes with @switch
 
 ### Changes between 2.x and 3.0
 
@@ -730,9 +731,9 @@ I checked the code of BladeOne and I know that there is a lot of room for improv
 Some features are missing because they are new, or they lacks of documentation or they are specific for laravel (then, they are useless without it)
 
 - Laravel's own commands. Reason: This library is free of Laravel
-- Custom if. Reason: It is dangerous and odds.
+- ~~Custom if. Reason: It is dangerous and odds.~~ DONE
 - blade extension Reason: Extensions (that is part of the code, not in the template) is managed differently on BladeOne.
-- @php. Pending. I'm not so sure to implement this one. If you are using this one, then you are doing it wrong.
+- ~~@php. Pending. I'm not so sure to implement this one. If you are using this one, then you are doing it wrong.~~ DONE
 - ~~@canany. Pending. :baby_chick:~~ DONE
 - ~~@can ( https://laravel.com/docs/5.6/authorization ). Pending~~ DONE
 - ~~@cannot. Pending~~ DONE

@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.3 2018-08-08
+ * @version 3.4 2018-08-16
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -1518,7 +1518,45 @@ class BladeOne
         }, $value);
     }
 
+    /**
+     * Register an "if" statement directive.
+     * @param  string  $name
+     * @param  callable  $callback
+     * @return void
+     */
+    public function if($name, callable $callback)
+    {
+        $this->conditions[$name] = $callback;
 
+        $this->directive($name, function ($expression) use ($name) {
+            $tmp=$this->stripParentheses($expression);
+            return $expression !== ''
+                ? "<?php if (\$this->check('{$name}', {$tmp})): ?>"
+                : "<?php if (\$this->check('{$name}')): ?>";
+        });
+
+        $this->directive('else'.$name, function ($expression) use ($name) {
+            $tmp=$this->stripParentheses($expression);
+            return $expression !== ''
+                ? "<?php elseif (\$this->check('{$name}', {$tmp})): ?>"
+                : "<?php elseif (\$this->check('{$name}')): ?>";
+        });
+
+        $this->directive('end'.$name, function () {
+            return '<?php endif; ?>';
+        });
+    }
+    /**
+     * Check the result of a condition.
+     *
+     * @param  string  $name
+     * @param  array  $parameters
+     * @return bool
+     */
+    public function check($name, ...$parameters)
+    {
+        return call_user_func($this->conditions[$name], ...$parameters);
+    }
 
     /**
      * @param bool $bool
