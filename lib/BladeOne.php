@@ -17,6 +17,7 @@ use InvalidArgumentException;
  */
 class BladeOne
 {    //<editor-fold desc="fields">
+
     /**
      * All of the registered extensions.
      * @var array
@@ -251,6 +252,9 @@ class BladeOne
             if (!$ok) {
                 $this->showError("Constructing", "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.", true);
             }
+        }
+        if (class_exists('\eftec\bladeone\Blade')) {
+            Blade::$_instance=$this;
         }
     }
     //</editor-fold>
@@ -629,7 +633,7 @@ class BladeOne
      */
     protected function compileStatementCustom($match)
     {
-        $v=self::stripParentheses(static::get($match, 3));
+        $v=$this->stripParentheses(static::get($match, 3));
         $v=($v=='')?'':','.$v;
         return $this->phpTag.'call_user_func($this->customDirectives[\''.$match[1].'\']'.$v.'); ?>';
     }
@@ -2433,11 +2437,11 @@ class BladeOne
 
 
     //</editor-fold>
+
+
 }
 /**
  * BladeOne - A Blade Template implementation in a single file
- * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
+ * Copyright (c) 2016-2018 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
  * Part of this code is based in the work of Laravel PHP Components.
- *
- *
  */

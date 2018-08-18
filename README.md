@@ -679,7 +679,6 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - New tags of security (optional).
 - New tags for injection
 
-
 ## todo
 
 - @section / @show versus @endsection
