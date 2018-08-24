@@ -1,7 +1,7 @@
 <?php
 
-namespace eftec\bladeone;
-use Exception;
+use eftec\bladeone\BladeOne;
+
 
 /**
  * It's a static wrapper/container for Bladeone.<br>

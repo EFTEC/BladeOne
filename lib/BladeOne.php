@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.4 2018-08-16
+ * @version 3.5 2018-08-24
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -253,7 +253,7 @@ class BladeOne
                 $this->showError("Constructing", "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.", true);
             }
         }
-        if (class_exists('\eftec\bladeone\Blade')) {
+        if (class_exists('Blade')) {
             Blade::$_instance=$this;
         }
     }
@@ -1522,34 +1522,51 @@ class BladeOne
         }, $value);
     }
 
+
     /**
      * Register an "if" statement directive.
-     * @param  string  $name
-     * @param  callable  $callback
-     * @return void
+     * @param  string $name
+     * @param  callable $callback
+     * @return string
      */
-    public function if($name, callable $callback)
+    public function _if($name, callable $callback)
     {
         $this->conditions[$name] = $callback;
 
         $this->directive($name, function ($expression) use ($name) {
-            $tmp=$this->stripParentheses($expression);
+            $tmp = $this->stripParentheses($expression);
             return $expression !== ''
                 ? "<?php if (\$this->check('{$name}', {$tmp})): ?>"
                 : "<?php if (\$this->check('{$name}')): ?>";
         });
 
-        $this->directive('else'.$name, function ($expression) use ($name) {
-            $tmp=$this->stripParentheses($expression);
+        $this->directive('else' . $name, function ($expression) use ($name) {
+            $tmp = $this->stripParentheses($expression);
             return $expression !== ''
                 ? "<?php elseif (\$this->check('{$name}', {$tmp})): ?>"
                 : "<?php elseif (\$this->check('{$name}')): ?>";
         });
 
-        $this->directive('end'.$name, function () {
+        $this->directive('end' . $name, function () {
             return '<?php endif; ?>';
         });
+        return "";
     }
+
+    /**
+     * @param string $name
+     * @param $args[]
+     * @return mixed
+     * @throws Exception
+     */
+    public function __call($name, $args)
+    {
+        if ($name=='if') {
+            return $this->_if(@$args[0], @$args[1]);
+        }
+        throw new Exception("function $name is not defined<br>");
+    }
+
     /**
      * Check the result of a condition.
      *

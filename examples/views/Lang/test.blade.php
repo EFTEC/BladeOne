@@ -26,3 +26,7 @@ Test methods with missing fields
 
 @@_ef('%s is a nice cat') : (if a field is missing the it returns the expression)<br>
 @_ef('%s is a nice cat')<br>
+
+@if(1==1)
+    {!! ($var == 1) ? $this->_e('Hat') : '' !!}
+@endif

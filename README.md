@@ -3,15 +3,21 @@
 # BladeOne Blade Template Engine
 BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside laravel.
 
+Бладеоне-это отдельная версия ядра Blade-шаблонов, которая использует один PHP-файл и может быть портирована и использована в различных проектах. Он позволяет использовать шаблон Blade за пределами laravel.    
+
+
 NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**. It misses some commands [missing](#missing) but nothing more.
+
+Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,6 (Июль 2018) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
+
 
 
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)]()
 [![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
-[![npm](https://img.shields.io/badge/npm-%3E4.1-blue.svg)]()
-[![php](https://img.shields.io/badge/php->5.4-green.svg)]()
+[![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
+[![php](https://img.shields.io/badge/php->5.6-green.svg)]()
 [![php](https://img.shields.io/badge/php-7.x-green.svg)]()
-[![CocoaPods](https://img.shields.io/badge/docs-40%25-yellow.svg)]()
+[![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 ## laravel blade tutorial
 
@@ -670,6 +676,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2018-08-05 3.2 Fixed composer's problem
 - 2018-08-08 3.3 Set extensions, constants and blade mode.
 - 2018-08-16 3.4 Custom if,@php tag and some fixes with @switch
+- 2018-08-24 3.5 Some fixes.
 
 ### Changes between 2.x and 3.0
 
@@ -687,6 +694,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 - extends bug. If you use extends then, every content after the last @endsetion will be rendered at the top of the page.  
   Solution: avoid to add any content after the last @endsection,including spaces and empty lines.
+
+- Some functionalities are not available for php lower than 7.0.
 
 bad example:
 ```html
@@ -716,6 +725,24 @@ good:
 ```html
 @endsection
 ```
+## SourceGuardian
+
+This library is compatible with [SourceGuardian](https://www.sourceguardian.com).   
+ 
+>SourceGuardian provides full PHP 4, PHP 5 and PHP 7 support including the latest PHP 7.2 along with many other protection and encryption features.
+ 
+However:  
+ 
+* You must avoid to encode the template folder (copy unencoded the views folder).
+* Optionally, you must avoid to encode the compiled folder because the files could be replaced by Bladeone. Also, you could runs BladeOne in mode BladeOne::MODE_FAST and to encode the compile folder)      
+
+So,   
+* **\view** folder = copy unencoded.
+* **\compiled** folder (BladeOne::MODE_FAST)= php/html script (encode)
+* **\compiled folder** (anything but BladeOne::MODE_FAST)= skip files (because it will be replaced)
+* **(everything else)** = php/html script (encode)
+
+I don't know about the compatibility of [Ioncube](http://www.ioncube.com/) or [Zend Guard](http://www.zend.com/en/products/zend-guard) I don't own a license of it.  
 
 
 ## Collaboration
@@ -723,7 +750,7 @@ good:
 You are welcome to use it, share it, ask for changes and whatever you want to. Just keeps the copyright notice in the file.
 
 ## Future
-I checked the code of BladeOne and I know that there is a lot of room for improvement.
+* Blade locator/container
 
 ## Missing
 

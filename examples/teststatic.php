@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Jorge Patricio Castro Castillo MIT License.
  */
 
-use eftec\bladeone\Blade;
+
 use eftec\bladeone\BladeOne;
 include "../lib/Blade.php";
 include "../lib/BladeOne.php";
