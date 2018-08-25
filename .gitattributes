@@ -1,4 +1,4 @@
-/examples           export-ignore
+/lib                export-ignore
 /vendor             export-ignore
 /docs               export-ignore
 /tests              export-ignore
@@ -6,3 +6,5 @@
 /.gitignore         export-ignore
 /.travis.yml        export-ignore
 /phpunit.xml        export-ignore
+/BladeOneCache.md   export-ignore
+/Readme.md          export-ignore
