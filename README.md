@@ -405,13 +405,29 @@ The current value is 8
 The current value is 9
 ```
 
-#### @inject('class',['namespace'])
+#### @inject('variable name', 'namespace')
 
 ```html
 @inject('metric', 'App\Services\MetricsService')
 <div>
     Monthly Revenue: {{ $metric->monthlyRevenue() }}.
 </div>
+```
+
+By default BladeOne creates a new instance of the class `'variable name'` inside `'namespace'` with the parameterless contructor.
+
+To override the logic used to resolve injected classes, pass a function to `setInjectResolver`.
+
+
+Example with Symphony Dependency Injection.
+```php
+$containerBuilder = new ContainerBuilder();
+$loader = new XmlFileLoader($containerBuilder, new FileLocator(__DIR__));
+$loader->load('services.xml');
+
+$blade->setInjectResolver(function ($namespace, $variableName) use ($loader) {
+    return $loader->get($namespace);
+});
 ```
 
 
