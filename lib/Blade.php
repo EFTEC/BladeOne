@@ -23,6 +23,7 @@ class Blade
 
     /**
      * Converts a static call into a dynamic call.
+     * Example Blade::run()
      * @param  string $function
      * @param  array $parameters
      * @return mixed

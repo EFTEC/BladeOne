@@ -1,4 +1,4 @@
-![Logo](https://github.com/EFTEC/BladeOne/blob/gh-pages/images/bladelogo.png)
+![Logo](https://raw.githubusercontent.com/EFTEC/BladeOne/gh-pages/images/bladelogo.png)
 
 # BladeOne Blade Template Engine
 BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside laravel.
@@ -43,47 +43,38 @@ This project uses a single file called BladeOne.php and a single class (called B
 Let’s say that we have the next code
 
 ```php
-<?php
 //some php code
 // some html code
 // more php code
 // more html code.
-?>
 ```
 It leads to a mess of a code.  For example, let’s say that we oversee changing the visual layout of the page. In this case, we should change all the code and we could even break part of the programming.   
 Instead, using a template system works in the next way:
 ```php
-<?php
 // some php code
 ShowTemplate();
-?>
 ```
 We are separating the visual layer from the code layer.  As a plus, we could assign a non-php-programmer in charge to edit the template, and he/she doesn’t need to touch or know our php code.
 ## Security
 Let’s say that we have the next exercise (it’s a dummy example)
 ```php
-<?php
 $name=@$_GET[‘name’];
 Echo “my name is “.$name;
-?>
 ```
 It could be separates as two files:
-```php
-<?php // index.php
+```php // index.php
 $name=@$_GET[‘name’];
 Include “template.php”
-?>
 ```
 ```php 
-<?php // template.php
+// template.php
 Echo “my name is “.$name;
-?>
 ```
 Even for this simple example, there is a risk of hacking.   How?  A user could sends malicious code by using the GET variable, such as html or even javascript. The second file should be written as follow:
 ```php 
-<?php // template.php
+ // template.php
 Echo “my name is “.html_entities($name);
-?>
+
 ```
 html_entities should be used in every single part of the visual layer (html) where the user could injects malicious code, and it’s a real tedious work.   BladeOne does it automatically.
 ```php 
@@ -158,7 +149,6 @@ Alternatively, BladeOne allows to run arbitrary code from any class or method if
 ## Usage
 example.php:
 ```php
-<?php
 include "lib/BladeOne.php";
 Use eftec\bladeone;
 
@@ -170,7 +160,6 @@ echo $blade->run("hello",array("variable1"=>"value1"));
 
 _Or using composer's autoload.php_
 ```php
-<?php
 require "vendor/autoload.php";
 
 Use eftec\bladeone;
@@ -213,7 +202,6 @@ views/hello.blade.php:
 ## Security (optional)
 
 ```php
-<?php
 require "vendor/autoload.php";
 
 Use eftec\bladeone;
@@ -263,7 +251,7 @@ $blade=new bladeone\BladeOne($views,$cache,$mode);
 - BladeOne(templatefolder,compiledfolder,$mode) Creates the instance of BladeOne.
 -   templatefolders indicates the folder (without ending backslash) of where the template files (*.blade.php) are located.
 -   compiledfolder indicates the folder where the result of files will be saves. This folder should has write permission. Also, this folder could be located outside of the Web Root.
--   mode (optional).  It sets the mode of the compile. See [setMode(mode)](#setmodemode) .  By default it's automatic
+-   mode (optional).  It sets the mode of the compile. See [setMode(mode)](#setmode) .  By default it's automatic
 
 
 ### run
@@ -274,7 +262,7 @@ echo $blade->run("hello",array("variable1"=>"value1"));
 -   template is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder\example.blade.php"
 -   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
 
-### setMode(mode)
+### setMode
 
 It sets the mode of compilation.
 
@@ -337,7 +325,7 @@ $blade->directiveRT('datetimert', function ($expression) {
 
 ### BLADEONE_MODE (global constant) (optional)
 
-It defines the mode of compilation (via global constant) See [setMode(mode)](#setmodemode) for more information.
+It defines the mode of compilation (via global constant) See [setMode(mode)](#setmode) for more information.
 
 ```php
 define("BLADEONE_MODE",BladeOne::MODE_AUTO);
