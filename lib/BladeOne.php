@@ -102,6 +102,11 @@ class BladeOne
      */
     protected $customDirectivesRT = [];
     /**
+     * Function used for resolving injected classes.
+     * @var callable
+     */
+    protected $injectResolver;
+    /**
      * Used for conditional if.
      * @var array
      */
@@ -528,7 +533,7 @@ class BladeOne
             $var = $this->stripQuotes(substr($ex, 0, $p0));
             $namespace = $this->stripQuotes(substr($ex, $p0 + 1));
         }
-        return $this->phpTag . "\$$var =new $namespace\\$var()" . "; ?>";
+        return $this->phpTag . "\$$var = \$this->injectClass('$namespace', '$var'); ?>";
     }
 
     /**
@@ -1931,6 +1936,31 @@ class BladeOne
     {
         $tags = $escaped ? $this->escapedTags : $this->contentTags;
         return array_map('stripcslashes', $tags);
+    }
+
+    /**
+     * Sets the function used for resolving classes with inject.
+     * @param callable $function
+     */
+    public function setInjectResolver(callable $function)
+    {
+        $this->injectResolver = $function;
+    }
+
+    /**
+     * Resolve a given class using the injectResolver callable.
+     * @param string $className
+     * @param string|null $variableName
+     * @return mixed
+     */
+    protected function injectClass($className, $variableName = null)
+    {
+        if (isset($this->injectResolver)) {
+            return call_user_func_array($this->injectResolver, [$className, $variableName]);
+        } else {
+            $fullClassName = $className . "\\" . $variableName;
+            return new $fullClassName();
+        }
     }
     //</editor-fold>
     //<editor-fold desc="file members">
