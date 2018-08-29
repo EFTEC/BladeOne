@@ -263,7 +263,7 @@ class BladeOne
         extract($data, EXTR_SKIP);
 
         try {
-            eval('?' . '>' . $php);
+            eval('?'.'>'.$php);
         } catch (Exception $e) {
             while (ob_get_level() > $obLevel) ob_end_clean();
             throw $e;
@@ -375,7 +375,7 @@ class BladeOne
     {
         if ($this->firstCaseInSwitch) {
             $this->firstCaseInSwitch = false;
-            return "case " . $expression . ": ?>";
+            return "case ".$expression.": ?>";
         }
         return $this->phpTag."case $expression: ?>";
     }
@@ -459,7 +459,7 @@ class BladeOne
         // template inheritance via the extends keyword that should be appended.
         if (count($this->footer) > 0) {
             $result = ltrim($result, PHP_EOL)
-                . PHP_EOL . implode(PHP_EOL, array_reverse($this->footer));
+               .PHP_EOL.implode(PHP_EOL, array_reverse($this->footer));
         }
         return $result;
     }
@@ -486,7 +486,7 @@ class BladeOne
     protected function compileComments($value)
     {
         $pattern = sprintf('/%s--(.*?)--%s/s', $this->contentTags[0], $this->contentTags[1]);
-        return preg_replace($pattern, $this->phpTag . '/*$1*/ ?>', $value);
+        return preg_replace($pattern, $this->phpTag.'/*$1*/ ?>', $value);
     }
 
     /**
@@ -511,19 +511,19 @@ class BladeOne
     {
         $callback = function ($match) {
             if (static::contains($match[1], '@')) {
-                $match[0] = isset($match[3]) ? $match[1] . $match[3] : $match[1];
+                $match[0] = isset($match[3]) ? $match[1].$match[3] : $match[1];
             } elseif (isset($this->customDirectivesRT[$match[1]])) {
                 if ($this->customDirectivesRT[$match[1]]==true) {
                     $match[0]=$this->compileStatementCustom($match);
                 } else {
                     $match[0] = call_user_func($this->customDirectives[$match[1]], static::get($match, 3));
                 }
-            } elseif (method_exists($this, $method = 'compile' . ucfirst($match[1]))) {
+            } elseif (method_exists($this, $method = 'compile'.ucfirst($match[1]))) {
                 $match[0] = $this->$method(static::get($match, 3));
             } else {
-                $this->showError("@compile", "Operation not defined:@" . $match[1], true);
+                $this->showError("@compile", "Operation not defined:@".$match[1], true);
             }
-            return isset($match[3]) ? $match[0] : $match[0] . $match[2];
+            return isset($match[3]) ? $match[0] : $match[0].$match[2];
         };
         return preg_replace_callback('/\B@(@?\w+)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value);
     }
@@ -549,8 +549,8 @@ class BladeOne
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->rawTags[0], $this->rawTags[1]);
         $callback = function ($matches) {
-            $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
-            return $matches[1] ? substr($matches[0], 1) : $this->phpTag . 'echo ' . $this->compileEchoDefaults($matches[2]) . '; ?>' . $whitespace;
+            $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
+            return $matches[1] ? substr($matches[0], 1) : $this->phpTag.'echo '.$this->compileEchoDefaults($matches[2]).'; ?>'.$whitespace;
         };
         return preg_replace_callback($pattern, $callback, $value);
     }
@@ -564,9 +564,9 @@ class BladeOne
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->contentTags[0], $this->contentTags[1]);
         $callback = function ($matches) {
-            $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
+            $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
             $wrapped = sprintf($this->echoFormat, $this->compileEchoDefaults($matches[2]));
-            return $matches[1] ? substr($matches[0], 1) : $this->phpTag . 'echo ' . $wrapped . '; ?>' . $whitespace;
+            return $matches[1] ? substr($matches[0], 1) : $this->phpTag.'echo '.$wrapped.'; ?>'.$whitespace;
         };
         return preg_replace_callback($pattern, $callback, $value);
     }
@@ -580,8 +580,8 @@ class BladeOne
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
         $callback = function ($matches) {
-            $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
-            return $matches[1] ? $matches[0] : $this->phpTag . 'echo static::e(' . $this->compileEchoDefaults($matches[2]) . '); ?>' . $whitespace;
+            $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
+            return $matches[1] ? $matches[0] : $this->phpTag.'echo static::e('.$this->compileEchoDefaults($matches[2]).'); ?>'.$whitespace;
         };
         return preg_replace_callback($pattern, $callback, $value);
     }
@@ -610,8 +610,8 @@ class BladeOne
     {
         //$segments = explode('=', preg_replace("/[\(\)\\\"\']/", '', $expression));
         $segments = explode('=', preg_replace("/[\(\)\\\']/", '', $expression));
-        $value = (count($segments) >= 2) ? ' =@' . $segments[1] : '++';
-        return $this->phpTag . trim($segments[0]) . $value . "; ?>";
+        $value = (count($segments) >= 2) ? ' =@'.$segments[1] : '++';
+        return $this->phpTag.trim($segments[0]).$value."; ?>";
     }
 
     /**
@@ -630,7 +630,7 @@ class BladeOne
      */
     protected function compileShow()
     {
-        return $this->phpTag . 'echo $this->yieldSection(); ?>';
+        return $this->phpTag.'echo $this->yieldSection(); ?>';
     }
 
     /**
@@ -649,7 +649,7 @@ class BladeOne
      */
     protected function compileAppend()
     {
-        return $this->phpTag . '$this->appendSection(); ?>';
+        return $this->phpTag.'$this->appendSection(); ?>';
     }
 
     /**
@@ -686,7 +686,7 @@ class BladeOne
      */
     protected function compileEndAuth()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     protected function compileCan($expression) {
@@ -702,9 +702,9 @@ class BladeOne
     {
         $v=$this->stripParentheses($expression);
         if ($v) {
-            return $this->phpTag . 'elseif (call_user_func($this->authCallBack,'.$v.')): ?>';
+            return $this->phpTag.'elseif (call_user_func($this->authCallBack,'.$v.')): ?>';
         } else {
-            return $this->phpTag . 'else: ?>';
+            return $this->phpTag.'else: ?>';
         }
     }
 
@@ -722,9 +722,9 @@ class BladeOne
     {
         $v=$this->stripParentheses($expression);
         if ($v) {
-            return $this->phpTag . 'elseif (!call_user_func($this->authCallBack,'.$v.')): ?>';
+            return $this->phpTag.'elseif (!call_user_func($this->authCallBack,'.$v.')): ?>';
         } else {
-            return $this->phpTag . 'else: ?>';
+            return $this->phpTag.'else: ?>';
         }
     }
     /**
@@ -794,7 +794,7 @@ class BladeOne
      */
     protected function compileEndGuest()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
 
@@ -804,7 +804,7 @@ class BladeOne
      */
     protected function compileEndsection()
     {
-        return $this->phpTag . '$this->stopSection(); ?>';
+        return $this->phpTag.'$this->stopSection(); ?>';
     }
 
     /**
@@ -813,7 +813,7 @@ class BladeOne
      */
     protected function compileStop()
     {
-        return $this->phpTag . '$this->stopSection(); ?>';
+        return $this->phpTag.'$this->stopSection(); ?>';
     }
 
     /**
@@ -822,7 +822,7 @@ class BladeOne
      */
     protected function compileOverwrite()
     {
-        return $this->phpTag . '$this->stopSection(true); ?>';
+        return $this->phpTag.'$this->stopSection(true); ?>';
     }
 
     /**
@@ -851,7 +851,7 @@ class BladeOne
      */
     protected function compileEndunless()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -860,7 +860,7 @@ class BladeOne
      */
     protected function compileElse()
     {
-        return $this->phpTag . 'else: ?>';
+        return $this->phpTag.'else: ?>';
     }
 
 
@@ -898,7 +898,7 @@ class BladeOne
      */
     protected function compileSplitForeach($expression)
     {
-        return $this->phpTag . 'echo $this::splitForeach' . $expression . '; ?>';
+        return $this->phpTag.'echo $this::splitForeach'.$expression.'; ?>';
     }
 
     /**
@@ -908,7 +908,7 @@ class BladeOne
      */
     protected function compileBreak($expression)
     {
-        return $expression ? $this->phpTag."if{$expression} break; ?>" : $this->phpTag . 'break; ?>';
+        return $expression ? $this->phpTag."if{$expression} break; ?>" : $this->phpTag.'break; ?>';
     }
 
     /**
@@ -918,7 +918,7 @@ class BladeOne
      */
     protected function compileContinue($expression)
     {
-        return $expression ? $this->phpTag."if{$expression} continue; ?>" : $this->phpTag . 'continue; ?>';
+        return $expression ? $this->phpTag."if{$expression} continue; ?>" : $this->phpTag.'continue; ?>';
     }
 
     /**
@@ -928,7 +928,7 @@ class BladeOne
      */
     protected function compileForelse($expression)
     {
-        $empty = '$__empty_' . ++$this->forelseCounter;
+        $empty = '$__empty_'.++$this->forelseCounter;
         return $this->phpTag."{$empty} = true; foreach{$expression}: {$empty} = false; ?>";
     }
 
@@ -961,7 +961,7 @@ class BladeOne
     {
 
         if (($expression == '')) {
-            $empty = '$__empty_' . $this->forelseCounter--;
+            $empty = '$__empty_'.$this->forelseCounter--;
             return $this->phpTag."endforeach; if ({$empty}): ?>";
         } else {
             return $this->phpTag."if (empty{$expression}): ?>";
@@ -985,7 +985,7 @@ class BladeOne
      */
     protected function compileEndwhile()
     {
-        return $this->phpTag . 'endwhile; ?>';
+        return $this->phpTag.'endwhile; ?>';
     }
 
     /**
@@ -994,7 +994,7 @@ class BladeOne
      */
     protected function compileEndfor()
     {
-        return $this->phpTag . 'endfor; ?>';
+        return $this->phpTag.'endfor; ?>';
     }
 
     /**
@@ -1003,7 +1003,7 @@ class BladeOne
      */
     protected function compileEndforeach()
     {
-        return $this->phpTag . 'endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>';
+        return $this->phpTag.'endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>';
     }
 
     /**
@@ -1012,7 +1012,7 @@ class BladeOne
      */
     protected function compileEndcan()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -1021,7 +1021,7 @@ class BladeOne
      */
     protected function compileEndcanany()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
 
@@ -1031,7 +1031,7 @@ class BladeOne
      */
     protected function compileEndcannot()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -1040,7 +1040,7 @@ class BladeOne
      */
     protected function compileEndif()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -1049,7 +1049,7 @@ class BladeOne
      */
     protected function compileEndforelse()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     /**
@@ -1059,7 +1059,7 @@ class BladeOne
      */
     protected function compilePhp($expression)
     {
-        return $expression ? $this->phpTag."{$expression}; ?>" : $this->phpTag . '';
+        return $expression ? $this->phpTag."{$expression}; ?>" : $this->phpTag.'';
     }
 
     /**
@@ -1093,9 +1093,9 @@ class BladeOne
         // For example @if(something) @extends('aaa.bb') @endif()
         // If something is false then it's not rendered at the end (footer) of the script.
         $this->uidCounter++;
-        $data = $this->phpTag . 'if (@$_shouldextend[{$this->uidCounter}]) { echo $this->runChild(' . $expression . '); } ?>';
+        $data = $this->phpTag.'if (@$_shouldextend['.$this->uidCounter.']) { echo $this->runChild('.$expression.'); } ?>';
         $this->footer[] = $data;
-        return $this->phpTag . '$_shouldextend[{$this->uidCounter}]=1; ?>';
+        return $this->phpTag.'$_shouldextend['.$this->uidCounter.']=1; ?>';
     }
 
     /**
@@ -1116,7 +1116,7 @@ class BladeOne
     protected function compileInclude($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $replace = $this->phpTag . 'echo $this->runChild(' . $expression . '); ?>';
+        return $replace = $this->phpTag.'echo $this->runChild('.$expression.'); ?>';
     }
 
     /**
@@ -1127,7 +1127,7 @@ class BladeOne
     protected function compileIncludeIf($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $replace = $this->phpTag . 'if (\$this->exists($expression)) echo $this->runChild(' . $expression . '); ?>';
+        return $replace = $this->phpTag.'if (\$this->exists($expression)) echo $this->runChild('.$expression.'); ?>';
     }
 
     /**
@@ -1138,7 +1138,7 @@ class BladeOne
     protected function compileIncludeWhen($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $replace = $this->phpTag . 'echo $this->includeWhen(' . $expression . '); ?>';
+        return $replace = $this->phpTag.'echo $this->includeWhen('.$expression.'); ?>';
     }
 
     /**
@@ -1149,7 +1149,7 @@ class BladeOne
     protected function compileIncludeFirst($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $replace = $this->phpTag . 'echo $this->includeFirst(' . $expression . '); ?>';
+        return $replace = $this->phpTag.'echo $this->includeFirst('.$expression.'); ?>';
     }
 
 
@@ -1189,7 +1189,7 @@ class BladeOne
      */
     protected function compileEndpush()
     {
-        return $this->phpTag . '$this->stopPush(); ?>';
+        return $this->phpTag.'$this->stopPush(); ?>';
     }
 
     /**
@@ -1198,7 +1198,7 @@ class BladeOne
      */
     protected function compileEndPrepend()
     {
-        return $this->phpTag . '$this->stopPrepend(); ?>';
+        return $this->phpTag.'$this->stopPrepend(); ?>';
     }
 
     /**
@@ -1257,12 +1257,12 @@ class BladeOne
 
     protected function compileEndIsset()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     protected function compileEndEmpty()
     {
-        return $this->phpTag . 'endif; ?>';
+        return $this->phpTag.'endif; ?>';
     }
 
     //</editor-fold>
@@ -1361,7 +1361,7 @@ class BladeOne
         if (!isset($this->pushes[$section][$this->renderCount])) {
             $this->pushes[$section][$this->renderCount] = $content;
         } else {
-            $this->pushes[$section][$this->renderCount] = $content . $this->pushes[$section][$this->renderCount];
+            $this->pushes[$section][$this->renderCount] = $content.$this->pushes[$section][$this->renderCount];
         }
     }
 
@@ -1432,14 +1432,14 @@ class BladeOne
                 : $this->phpTag." if (\$this->check('{$name}')): ?>";
         });
 
-        $this->directive('else' . $name, function ($expression) use ($name) {
+        $this->directive('else'.$name, function ($expression) use ($name) {
             $tmp = $this->stripParentheses($expression);
             return $expression !== ''
                 ? $this->phpTag." elseif (\$this->check('{$name}', {$tmp})): ?>"
                 : $this->phpTag." elseif (\$this->check('{$name}')): ?>";
         });
 
-        $this->directive('end' . $name, function () {
+        $this->directive('end'.$name, function () {
             return $this->phpTag.' endif; ?>';
         });
         return "";
@@ -1518,7 +1518,7 @@ class BladeOne
 
     function convertArgCallBack($k, $v)
     {
-        return $k . "='{$v}' ";
+        return $k."='{$v}' ";
     }
 
     /**
@@ -1528,7 +1528,7 @@ class BladeOne
      */
     protected function restoreVerbatimBlocks($result)
     {
-        $result = preg_replace_callback('/' . preg_quote($this->verbatimPlaceholder) . '/', function () {
+        $result = preg_replace_callback('/'.preg_quote($this->verbatimPlaceholder).'/', function () {
             return array_shift($this->verbatimBlocks);
         }, $result);
         $this->verbatimBlocks = [];
@@ -1855,7 +1855,7 @@ class BladeOne
         if (isset($this->injectResolver)) {
             return call_user_func_array($this->injectResolver, [$className, $variableName]);
         } else {
-            $fullClassName = $className . "\\" . $variableName;
+            $fullClassName = $className."\\".$variableName;
             return new $fullClassName();
         }
     }
@@ -1887,12 +1887,12 @@ class BladeOne
         $arr = explode('.', $template);
         $c = count($arr);
         if ($c == 1) {
-            return $this->templatePath . '/' . $template . $this->fileExtension;
+            return $this->templatePath.'/'.$template.$this->fileExtension;
         } else {
             $file = $arr[$c - 1];
             array_splice($arr, $c - 1, $c - 1); // delete the last element
             $path = implode('/', $arr);
-            return $this->templatePath . '/' . $path . '/' . $file . $this->fileExtension;
+            return $this->templatePath.'/'.$path.'/'.$file.$this->fileExtension;
         }
     }
 
@@ -1905,7 +1905,7 @@ class BladeOne
         $compiled = $this->getCompiledFile();
         $template = $this->getTemplateFile();
         if (!file_exists($template)) {
-            $this->showError("Read file", "Template not found :" . $this->fileName, true);
+            $this->showError("Read file", "Template not found :".$this->fileName, true);
         }
         // If the compiled file doesn't exist we will indicate that the view is expired
         // so that it can be re-compiled. Else, we will verify the last modification
