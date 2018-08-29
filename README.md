@@ -652,7 +652,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
-- 2018-08-25 3.6 phpdoc block reduced. To do deleted.  Fixed issue (#44)[https://github.com/EFTEC/BladeOne/issues/44]
+- 2018-08-29 3.7 phpdoc block reduced. To do deleted.  Fixed issue (#44)[https://github.com/EFTEC/BladeOne/issues/44]
 - 2018-08-24 3.5 Some fixes.
 - 2018-08-16 3.4 Custom if,@php tag and some fixes with @switch
 - 2018-08-08 3.3 Set extensions, constants and blade mode.
