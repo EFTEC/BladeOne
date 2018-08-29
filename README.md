@@ -652,35 +652,37 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
-- 2016-06-08 0.2. Beta First publish launch.
-- 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag are not defined.
-- 2016-06-09 1.1 Some fine tune.
-- 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with Composer)
-- 2016-06-12 1.3 Lots of clean up. I removed some unused parameters.  I fixed a problem with forced in BladeOne.  I separate the doc per extension.
-- 2016-06-24 1.4 Updates extensions.  Now it uses strut instead of classes. Added a new extension BladeOneCache.
-- 2016-07-03 1.5 New features such as **@set** command
-- 2016-08-14 1.6 Some cleanups. Add new documentation   
-- 2017-02-20 1.6 More cleanups. Refactored file, image, and other tags.
-- 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature **@splitforeach**.    
-- 2017-05-24 1.8 Maintenance.  Now, it runs with or without mb_string module
-- 2017-07-21 1.9 Components and Slots.  Note: I'm not really convinced in its usability.
-- 2017-09-28 2.0 Some fixes there and here.  
-    Fixed foreach bug when the name of the variable contains the letters 'as' for example @foreach($list**As**Fast as $v)      
-    Fixed @item (BladeOneHtml). Now, it considers null and 0 as different.
-- 2017-10-20 2.1 Fixed with @parent
-- 2017-12-14 2.2 Added @asset
-- 2017-12-18 Added BladeOneLang
-- 2018-04-13 2.3 The end result clean spaces.   PHPDoc cleaned (checked with PHPStorm 2018.1). Fixed some typos (sorry about that).     
-- 2018-05-06 2.3.1 Fixed a problem with @verbatim. Add the method runString for evaluating a function
-- 2018-06-11 2.3.2 Fixed bladeonehtml to allows readonly value.
-- 2018-06-12 2.3.3 Reorder folders.
-- 2018-07-11 2.4 Some fixes, new tags @json(var),@isset($records),@endisset,@includewhen,@includefirst,@prepend,@endprepend,@empty,@endempty,@append
-- 2018-07-12 3.0 BladeOneLogic now is fused with BladeOne. And a lot of new changes.
-- 2018-07-27 3.1 custom directive and directivert(runtime).
-- 2018-08-05 3.2 Fixed composer's problem
-- 2018-08-08 3.3 Set extensions, constants and blade mode.
-- 2018-08-16 3.4 Custom if,@php tag and some fixes with @switch
+- 2018-08-25 3.6 phpdoc block reduced. To do deleted.  Fixed issue (#44)[https://github.com/EFTEC/BladeOne/issues/44]
 - 2018-08-24 3.5 Some fixes.
+- 2018-08-16 3.4 Custom if,@php tag and some fixes with @switch
+- 2018-08-08 3.3 Set extensions, constants and blade mode.
+- 2018-08-05 3.2 Fixed composer's problem
+- 2018-07-27 3.1 custom directive and directivert(runtime).
+- 2018-07-12 3.0 BladeOneLogic now is fused with BladeOne. And a lot of new changes.
+- 2018-07-11 2.4 Some fixes, new tags @json(var),@isset($records),@endisset,@includewhen,@includefirst,@prepend,@endprepend,@empty,@endempty,@append
+- 2018-06-12 2.3.3 Reorder folders.
+- 2018-06-11 2.3.2 Fixed bladeonehtml to allows readonly value.
+- 2018-05-06 2.3.1 Fixed a problem with @verbatim. Add the method runString for evaluating a function
+- 2018-04-13 2.3 The end result clean spaces.   PHPDoc cleaned (checked with PHPStorm 2018.1). Fixed some typos (sorry about that).     
+- 2017-12-18 Added BladeOneLang
+- 2017-12-14 2.2 Added @asset
+- 2017-10-20 2.1 Fixed with @parent
+    Fixed @item (BladeOneHtml). Now, it considers null and 0 as different.
+    Fixed foreach bug when the name of the variable contains the letters 'as' for example @foreach($list**As**Fast as $v)      
+- 2017-09-28 2.0 Some fixes there and here.  
+- 2017-07-21 1.9 Components and Slots.  Note: I'm not really convinced in its usability.
+- 2017-05-24 1.8 Maintenance.  Now, it runs with or without mb_string module
+- 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature **@splitforeach**.    
+- 2017-02-20 1.6 More cleanups. Refactored file, image, and other tags.
+- 2016-08-14 1.6 Some cleanups. Add new documentation   
+- 2016-07-03 1.5 New features such as **@set** command
+- 2016-06-24 1.4 Updates extensions.  Now it uses strut instead of classes. Added a new extension BladeOneCache.
+- 2016-06-12 1.3 Lots of clean up. I removed some unused parameters.  I fixed a problem with forced in BladeOne.  I separate the doc per extension.
+- 2016-06-10 1.2 New changes.  Added namespaces (for autocomplete and compatibility with Composer)
+- 2016-06-09 1.1 Some fine tune.
+- 2016-06-09 1.0 Version. Most works. Added extensions and error control with a tag are not defined.
+- 2016-06-08 0.2. Beta First publish launch.
+
 
 ### Changes between 2.x and 3.0
 

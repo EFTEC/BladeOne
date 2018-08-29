@@ -15,7 +15,7 @@ $records=array(1
 
 
 try {
-    echo $blade->run("Test.test3v"
+    echo $blade->run("Test.testdump"
         , ["name" => "hello"
             , 'records' => $records
             , 'emptyArray' => array()
