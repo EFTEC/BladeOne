@@ -1093,9 +1093,9 @@ class BladeOne
         // For example @if(something) @extends('aaa.bb') @endif()
         // If something is false then it's not rendered at the end (footer) of the script.
         $this->uidCounter++;
-        $data = $this->phpTag . 'if (@$_shouldextend[{$this->uidCounter}]) { echo $this->runChild(' . $expression . '); } ?>';
+        $data = $this->phpTag . "if (@\$_shouldextend[{$this->uidCounter}]) { echo \$this->runChild($expression); } ?>";
         $this->footer[] = $data;
-        return $this->phpTag . '$_shouldextend[{$this->uidCounter}]=1; ?>';
+        return $this->phpTag . "\$_shouldextend[{$this->uidCounter}]=1; ?>";
     }
 
     /**
