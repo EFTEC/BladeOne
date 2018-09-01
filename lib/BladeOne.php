@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.7 2018-08-29
+ * @version 3.8 2018-08-29
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -154,9 +154,6 @@ class BladeOne
             if (!$ok) {
                 $this->showError("Constructing", "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.", true);
             }
-        }
-        if (class_exists('\Blade')) {
-            \Blade::$_instance=$this;
         }
     }
     //</editor-fold>
