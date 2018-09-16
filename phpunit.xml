@@ -7,7 +7,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         bootstrap="vendor/autoload.php">
+         bootstrap="tests/bootstrap.php">
     <testsuites>
         <testsuite name="BladeOne Test Suite">
             <directory suffix="Test.php">./tests</directory>
