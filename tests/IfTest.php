@@ -95,6 +95,7 @@ BLADE;
     }
 
     /**
+     * @requires PHP 7
      * @throws \Exception
      */
     public function testInvalidIf() {
