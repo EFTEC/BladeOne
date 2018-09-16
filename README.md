@@ -12,7 +12,7 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
 
 
 
-[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)]()
+[![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
 [![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
 [![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
 [![php](https://img.shields.io/badge/php->5.6-green.svg)]()
