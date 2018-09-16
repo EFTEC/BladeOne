@@ -58,23 +58,22 @@ We are separating the visual layer from the code layer.  As a plus, we could ass
 ## Security
 Let’s say that we have the next exercise (it’s a dummy example)
 ```php
-$name=@$_GET[‘name’];
-Echo “my name is “.$name;
+$name=@$_GET['name'];
+echo "my name is ".$name;
 ```
 It could be separates as two files:
 ```php // index.php
-$name=@$_GET[‘name’];
-Include “template.php”
+$name=@$_GET['name'];
+include "template.php";
 ```
 ```php 
 // template.php
-Echo “my name is “.$name;
+echo "my name is ".$name;
 ```
 Even for this simple example, there is a risk of hacking.   How?  A user could sends malicious code by using the GET variable, such as html or even javascript. The second file should be written as follow:
 ```php 
  // template.php
-Echo “my name is “.html_entities($name);
-
+echo "my name is ".html_entities($name);
 ```
 html_entities should be used in every single part of the visual layer (html) where the user could injects malicious code, and it’s a real tedious work.   BladeOne does it automatically.
 ```php 
