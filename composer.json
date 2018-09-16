@@ -2,7 +2,7 @@
   "name": "eftec/bladeone",
   "description": "The standalone version Blade Template Engine from Laravel in a single php file",
   "type": "library",
-  "keywords": ["blade","template","view","php"],
+  "keywords": ["blade","template","view","php","templating"],
   "homepage": "https://github.com/EFTEC/BladeOne",
   "license": "MIT",
   "authors": [
@@ -12,7 +12,7 @@
     }],
   "extra": {
     "branch-alias": {
-      "dev-master": "3.8-dev"
+      "dev-master": "3.9-dev"
     }
   },
   "config": {
