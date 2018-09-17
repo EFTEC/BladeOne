@@ -11,7 +11,8 @@ class IfTest extends AbstractBladeTestCase {
      * @throws \Exception
      */
     public function testIf() {
-        $bladeSource = <<<'BLADE'
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
 @if($a == 4)
     First case...
 @endif
@@ -25,7 +26,8 @@ BLADE;
      * @throws \Exception
      */
     public function testElse() {
-        $bladeSource = <<<'BLADE'
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
 @if($a == 4)
     True case...
 @else
@@ -40,7 +42,8 @@ BLADE;
      * @throws \Exception
      */
     public function testElseIf() {
-        $bladeSource = <<<'BLADE'
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
 @if($a == 4)
     First true case...
 @elseif($a == 5)
@@ -58,7 +61,8 @@ BLADE;
      * @throws \Exception
      */
     public function testUnless() {
-        $bladeSource = <<<'BLADE'
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
 @unless($a == 4)
     False case...
 @endunless
@@ -71,7 +75,8 @@ BLADE;
      * @throws \Exception
      */
     public function testIsset() {
-        $bladeSource = <<<'BLADE'
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
 @isset($a)
     A is set...
 @endisset
@@ -84,7 +89,8 @@ BLADE;
      * @throws \Exception
      */
     public function testEmpty() {
-        $bladeSource = <<<'BLADE'
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
 @empty($a)
     A is empty...
 @endempty
@@ -101,7 +107,9 @@ BLADE;
     public function testInvalidIf() {
         $this->expectException(\ParseError::class);
 
-        $bladeSource = <<<'BLADE'
+        /** @noinspection BladeControlDirectives */
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
 @if($a == 4)
 BLADE;
         $this->blade->runString($bladeSource, ['a' => 4]);
