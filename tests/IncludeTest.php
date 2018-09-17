@@ -11,7 +11,7 @@ class IncludeTest extends AbstractBladeTestCase {
      * @throws \Exception
      */
     public function testInclude() {
-        $this->assertEqualsIgnoringWhitespace("First... Included... Second...", $this->blade->run("include", []));
+        $this->assertEqualsIgnoringWhitespace("First... Included... Second...", $this->blade->run("include.base", []));
     }
 
     /**
@@ -20,15 +20,15 @@ class IncludeTest extends AbstractBladeTestCase {
     public function testIncludeIf() {
         $this->markTestIncomplete("Broken, see #54");
 
-        $this->assertEqualsIgnoringWhitespace("First... Included... Second...", $this->blade->run("include_if", ["some_var" => false]));
-        $this->assertEqualsIgnoringWhitespace("First... Second...", $this->blade->run("include_if", []));
+        $this->assertEqualsIgnoringWhitespace("First... Included... Second...", $this->blade->run("include.if", ["some_var" => false]));
+        $this->assertEqualsIgnoringWhitespace("First... Second...", $this->blade->run("include.if", []));
     }
 
     /**
      * @throws \Exception
      */
     public function testIncludeWhen() {
-        $this->assertEqualsIgnoringWhitespace("First... Included... Second...", $this->blade->run("include_when", ["should_include" => true]));
-        $this->assertEqualsIgnoringWhitespace("First... Second...", $this->blade->run("include_when", ["should_include" => false]));
+        $this->assertEqualsIgnoringWhitespace("First... Included... Second...", $this->blade->run("include.when", ["should_include" => true]));
+        $this->assertEqualsIgnoringWhitespace("First... Second...", $this->blade->run("include.when", ["should_include" => false]));
     }
 }

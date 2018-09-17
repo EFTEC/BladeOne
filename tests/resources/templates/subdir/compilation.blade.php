@@ -1,1 +1,0 @@
-Compilation test template in subdir
