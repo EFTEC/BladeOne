@@ -1,4 +1,4 @@
-@extends('extends_base')
+@extends('extends.base')
 
 @section('from_child')
     From Child...

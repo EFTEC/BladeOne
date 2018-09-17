@@ -1,3 +1,0 @@
-@extends('extends_base')
-
-Child...
