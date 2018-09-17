@@ -33,4 +33,28 @@ BLADE;
         $this->assertEqualsIgnoringWhitespace("content", $this->blade->runString($bladeString, ["var1" => "content"]));
         $this->assertEqualsIgnoringWhitespace("<a href=\"/\">My Link</a>", $this->blade->runString($bladeString, ["var1" => "<a href=\"/\">My Link</a>"]));
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function testDontPrintVariable() {
+        $bladeString = /** @lang Blade */
+            <<<'BLADE'
+@{{ $var }}
+BLADE;
+        $this->assertEqualsIgnoringWhitespace("{{ \$var }}", $this->blade->runString($bladeString, ["var" => "my_var"]));
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function testVerbatim() {
+        $bladeString = /** @lang Blade */
+            <<<'BLADE'
+@verbatim
+{{ $var }}
+@endverbatim
+BLADE;
+        $this->assertEqualsIgnoringWhitespace("{{ \$var }}", $this->blade->runString($bladeString, ["var" => "my_var"]));
+    }
 }
