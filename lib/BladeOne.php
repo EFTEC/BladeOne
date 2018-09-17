@@ -260,14 +260,21 @@ class BladeOne
         extract($data, EXTR_SKIP);
 
         try {
-            eval('?'.'>'.$php);
+            @eval('?'.'>'.$php);
         } catch (Exception $e) {
             while (ob_get_level() > $obLevel) ob_end_clean();
             throw $e;
-        }/* catch (Throwable $e) {
+        } catch (\ParseError $e) { // PHP 7
             while (ob_get_level() > $obLevel) ob_end_clean();
             throw new Exception($e->getMessage(),$e->getCode());
-        }*/
+        }
+
+        $lastError = error_get_last(); // PHP 5.6
+        if ($lastError && $lastError["type"] == E_PARSE) {
+            while (ob_get_level() > $obLevel) ob_end_clean();
+            throw new Exception($lastError["message"], $lastError["type"]);
+        }
+
         return ob_get_clean();
     }
 

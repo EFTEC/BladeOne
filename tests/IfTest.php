@@ -95,11 +95,10 @@ BLADE;
     }
 
     /**
-     * @requires PHP 7
      * @throws \Exception
      */
     public function testInvalidIf() {
-        $this->expectException(\ParseError::class);
+        $this->expectException(\Exception::class);
 
         $bladeSource = <<<'BLADE'
 @if($a == 4)
