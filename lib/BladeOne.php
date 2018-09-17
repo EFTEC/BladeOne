@@ -259,6 +259,8 @@ class BladeOne
         ob_start();
         extract($data, EXTR_SKIP);
 
+        $previousError = error_get_last();
+
         try {
             @eval('?'.'>'.$php);
         } catch (Exception $e) {
@@ -270,7 +272,7 @@ class BladeOne
         }
 
         $lastError = error_get_last(); // PHP 5.6
-        if ($lastError && $lastError["type"] == E_PARSE) {
+        if ($previousError != $lastError && $lastError["type"] == E_PARSE) {
             while (ob_get_level() > $obLevel) ob_end_clean();
             throw new Exception($lastError["message"], $lastError["type"]);
         }
