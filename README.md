@@ -6,6 +6,16 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 Бладеоне-это отдельная версия ядра Blade-шаблонов, которая использует один PHP-файл и может быть портирована и использована в различных проектах. Он позволяет использовать шаблон Blade за пределами laravel.    
 
 
+
+[![Build Status](https://travis-ci.org/EFTEC/BladeOne.svg?branch=master)](https://travis-ci.org/EFTEC/BladeOne)
+[![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
+[![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
+[![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
+[![php](https://img.shields.io/badge/php->5.6-green.svg)]()
+[![php](https://img.shields.io/badge/php-7.x-green.svg)]()
+[![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
+
+
 NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (September 2018)**. It misses some commands [missing](#missing) but nothing more.
 
 Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,6 (Июль 2018) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
@@ -69,15 +79,6 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
   * [License](#license)
 
 
-
-
-[![Build Status](https://travis-ci.org/eftec/BladeOne.svg?branch=master)](https://travis-ci.org/eftec/BladeOne)
-[![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
-[![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
-[![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
-[![php](https://img.shields.io/badge/php->5.6-green.svg)]()
-[![php](https://img.shields.io/badge/php-7.x-green.svg)]()
-[![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 ## laravel blade tutorial
 
