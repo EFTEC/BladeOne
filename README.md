@@ -6,9 +6,69 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 Бладеоне-это отдельная версия ядра Blade-шаблонов, которая использует один PHP-файл и может быть портирована и использована в различных проектах. Он позволяет использовать шаблон Blade за пределами laravel.    
 
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (July 2018)**. It misses some commands [missing](#missing) but nothing more.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (September 2018)**. It misses some commands [missing](#missing) but nothing more.
 
 Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,6 (Июль 2018) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
+
+- [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
+  * [laravel blade tutorial](#laravel-blade-tutorial)
+  * [About this version](#about-this-version)
+  * [Why to use it instead of native PHP?](#why-to-use-it-instead-of-native-php-)
+    + [Separation of concerns](#separation-of-concerns)
+  * [Security](#security)
+  * [Easy to use](#easy-to-use)
+    + [Performance](#performance)
+    + [Scalable](#scalable)
+  * [Install (pick one of the next one)](#install--pick-one-of-the-next-one-)
+  * [Usage](#usage)
+  * [Security (optional)](#security--optional-)
+  * [Business Logic/Controller methods](#business-logic-controller-methods)
+    + [constructor](#constructor)
+    + [run](#run)
+    + [setMode](#setmode)
+    + [setFileExtension($ext), getFileExtension](#setfileextension--ext---getfileextension)
+    + [setCompiledExtension($ext), getCompiledExtension](#setcompiledextension--ext---getcompiledextension)
+    + [runString](#runstring)
+    + [directive](#directive)
+    + [directiveRT](#directivert)
+    + [BLADEONE_MODE (global constant) (optional)](#bladeone-mode--global-constant---optional-)
+  * [Template tags](#template-tags)
+    + [Template Inheritance](#template-inheritance)
+    + [In the master page (layout)](#in-the-master-page--layout-)
+    + [Using the master page (using the layout)](#using-the-master-page--using-the-layout-)
+    + [variables](#variables)
+    + [logic](#logic)
+    + [loop](#loop)
+      - [@for($variable;$condition;$increment) / @endfor](#-for--variable--condition--increment-----endfor)
+      - [@inject('variable name', 'namespace')](#-inject--variable-name----namespace--)
+      - [@foreach($array as $alias) / @endforeach](#-foreach--array-as--alias-----endforeach)
+      - [@forelse($array as $alias) / @empty / @endforelse](#-forelse--array-as--alias-----empty----endforelse)
+      - [@while($condition) / @endwhile](#-while--condition-----endwhile)
+      - [@splitforeach($nElem,$textbetween,$textend="")  inside @foreach](#-splitforeach--nelem--textbetween--textend------inside--foreach)
+      - [@continue / @break](#-continue----break)
+    + [switch / case](#switch---case)
+    + [Sub Views](#sub-views)
+  * [Comments](#comments)
+    + [Stacks](#stacks)
+  * [@set (new for 1.5)](#-set--new-for-15-)
+    + [Service Inject](#service-inject)
+  * [Extending Blade](#extending-blade)
+    + [component / slots](#component---slots)
+    + [@asset (new for 2.2)](#-asset--new-for-22-)
+  * [Extensions Libraries (optional)](#extensions-libraries--optional-)
+  * [Definition of Blade Template](#definition-of-blade-template)
+  * [Differences between Blade and BladeOne](#differences-between-blade-and-bladeone)
+  * [Differences between Blade+Laravel and BladeOne+BladeOneHTML](#differences-between-blade-laravel-and-bladeone-bladeonehtml)
+  * [Version](#version)
+    + [Changes between 2.x and 3.0](#changes-between-2x-and-30)
+  * [todo](#todo)
+  * [SourceGuardian](#sourceguardian)
+  * [Collaboration](#collaboration)
+  * [Future](#future)
+  * [Missing](#missing)
+  * [License](#license)
+
+
 
 
 [![Build Status](https://travis-ci.org/eftec/BladeOne.svg?branch=master)](https://travis-ci.org/eftec/BladeOne)
@@ -651,6 +711,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-09-21 3.10 Testing travis.
 - 2018-09-16 3.9 Added unit test (gamification) and travis :rocket:
 - 2018-09-01 3.8 Sorry Blade class,but you must go.  \eftec\bladeone\BladeOneBlade.php is no-more so the static call and the instance. (#47)[https://github.com/EFTEC/BladeOne/issues/47] it was the last straw.
 - 2018-08-29 3.7 phpdoc block reduced. "To do" comments deleted.  Fixed issue (#44)[https://github.com/EFTEC/BladeOne/issues/44]
