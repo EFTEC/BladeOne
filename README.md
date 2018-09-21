@@ -11,7 +11,7 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
 Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,6 (Июль 2018) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
 
 
-
+[![Build Status](https://travis-ci.org/eftec/BladeOne.svg?branch=master)](https://travis-ci.org/eftec/BladeOne)
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
 [![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
 [![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
