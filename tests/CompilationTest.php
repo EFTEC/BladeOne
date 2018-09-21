@@ -12,23 +12,16 @@ class CompilationTest extends AbstractBladeTestCase {
      * @throws \Exception
      */
     public function testCompilation() {
-        $this->assertEqualsIgnoringWhitespace("Compilation test template", $this->blade->run('compilation', []));
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function testCompilationInSubdir() {
-        $this->assertEqualsIgnoringWhitespace("Compilation test template in subdir", $this->blade->run('subdir.compilation', []));
+        $this->assertEqualsIgnoringWhitespace("Compilation test template", $this->blade->run('compilation.base', []));
     }
 
     /**
      * @throws \Exception
      */
     public function testCompilationCreatesCompiledFile() {
-        $this->blade->run('compilation', []);
+        $this->blade->run('compilation.base', []);
 
-        $this->assertFileExists(__DIR__ . '/resources/compiled/' . sha1('compilation') . '.bladec');
+        $this->assertFileExists(__DIR__ . '/resources/compiled/' . sha1('compilation.base') . '.bladec');
     }
 
     /**
@@ -36,9 +29,9 @@ class CompilationTest extends AbstractBladeTestCase {
      */
     public function testCompilationDebugCreatesCompiledFile() {
         $this->blade->setMode(BladeOne::MODE_DEBUG);
-        $this->blade->run('compilation', []);
+        $this->blade->run('compilation.base', []);
 
-        $this->assertFileExists(__DIR__ . '/resources/compiled/compilation.bladec');
+        $this->assertFileExists(__DIR__ . '/resources/compiled/compilation.base.bladec');
 
         $this->blade->setMode(BladeOne::MODE_SLOW);
     }
@@ -49,7 +42,7 @@ class CompilationTest extends AbstractBladeTestCase {
     public function testCompilationCustomFileExtension() {
         $this->blade->setFileExtension('.blade');
 
-        $this->assertEqualsIgnoringWhitespace("Custom extension blade file", $this->blade->run('compilation', []));
+        $this->assertEqualsIgnoringWhitespace("Custom extension blade file", $this->blade->run('compilation.base', []));
 
         $this->blade->setFileExtension('.blade.php');
     }
@@ -59,9 +52,9 @@ class CompilationTest extends AbstractBladeTestCase {
      */
     public function testCompilationCustomCompileExtension() {
         $this->blade->setCompiledExtension('.bladeD');
-        $this->blade->run('compilation', []);
+        $this->blade->run('compilation.base', []);
 
-        $this->assertFileExists(__DIR__ . '/resources/compiled/' . sha1('compilation') . '.bladeD');
+        $this->assertFileExists(__DIR__ . '/resources/compiled/' . sha1('compilation.base') . '.bladeD');
 
         $this->blade->setCompiledExtension('.bladec');
     }
