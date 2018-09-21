@@ -712,6 +712,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-09-21 3.11 @includeif fixed.
 - 2018-09-21 3.10 Testing travis.
 - 2018-09-16 3.9 Added unit test (gamification) and travis :rocket:
 - 2018-09-01 3.8 Sorry Blade class,but you must go.  \eftec\bladeone\BladeOneBlade.php is no-more so the static call and the instance. (#47)[https://github.com/EFTEC/BladeOne/issues/47] it was the last straw.

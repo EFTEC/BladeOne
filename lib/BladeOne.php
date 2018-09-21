@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.10 2018-21-09
+ * @version 3.11 2018-21-09
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -1132,8 +1132,7 @@ class BladeOne
      */
     protected function compileIncludeIf($expression)
     {
-        $expression = $this->stripParentheses($expression);
-        return $replace = $this->phpTag.'if (\$this->exists($expression)) echo $this->runChild('.$expression.'); ?>';
+        return $replace = $this->phpTag.'if ($this->templateExist'.$expression.') echo $this->runChild'.$expression.'; ?>';
     }
 
     /**
@@ -1922,9 +1921,14 @@ class BladeOne
         return filemtime($compiled) < filemtime($template);
     }
 
-    private function templateExist($template)
+    /**
+     * Returns true if the template exists. Otherwise it returns false
+     * @param $templateName
+     * @return bool
+     */
+    private function templateExist($templateName)
     {
-        $file = $this->getTemplateFile($template);
+        $file = $this->getTemplateFile($templateName);
         return file_exists($file);
     }
 
