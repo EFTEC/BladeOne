@@ -712,6 +712,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-09-29 3.12 Added the function setPath so we can change the path of the templates/compile files at runtime.
 - 2018-09-21 3.11 @includeif fixed.
 - 2018-09-21 3.10 Testing travis.
 - 2018-09-16 3.9 Added unit test (gamification) and travis :rocket:

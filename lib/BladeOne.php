@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.11 2018-21-09
+ * @version 3.12 2018-29-09
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -174,6 +174,15 @@ class BladeOne
             return "";
         }
         return $this->runInternal($view, $newVariables, false, false, $this->isRunFast);
+    }
+
+    /**
+     * @param $view
+     * @param $compile
+     */
+    public function setPath($view,$compile) {
+        $this->templatePath=$view;
+        $this->compiledPath=$compile;
     }
 
     /**
@@ -465,7 +474,7 @@ class BladeOne
         // template inheritance via the extends keyword that should be appended.
         if (count($this->footer) > 0) {
             $result = ltrim($result, PHP_EOL)
-               .PHP_EOL.implode(PHP_EOL, array_reverse($this->footer));
+                .PHP_EOL.implode(PHP_EOL, array_reverse($this->footer));
         }
         return $result;
     }
@@ -1910,7 +1919,12 @@ class BladeOne
         $compiled = $this->getCompiledFile();
         $template = $this->getTemplateFile();
         if (!file_exists($template)) {
-            $this->showError("Read file", "Template not found :".$this->fileName, true);
+            if ($this->mode==self::MODE_DEBUG) {
+                $this->showError("Read file", "Template not found :".$this->fileName." on file: $template", true);
+            } else {
+                $this->showError("Read file", "Template not found :".$this->fileName, true);
+            }
+
         }
         // If the compiled file doesn't exist we will indicate that the view is expired
         // so that it can be re-compiled. Else, we will verify the last modification
@@ -1945,9 +1959,9 @@ class BladeOne
     }
 
     /**
- * Get the file extension for template files.
- * @return string
- */
+     * Get the file extension for template files.
+     * @return string
+     */
     public function getFileExtension()
     {
         return $this->fileExtension;
