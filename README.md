@@ -62,9 +62,12 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
     + [Stacks](#stacks)
   * [@set (new for 1.5)](#-set--new-for-15-)
     + [Service Inject](#service-inject)
-  * [Extending Blade](#extending-blade)
-    + [component / slots](#component---slots)
-    + [@asset (new for 2.2)](#-asset--new-for-22-)
+  * [Asset Management](#asset-management)
+    + [@asset](#asset)
+    + [@resource](#resource)
+    + [setBaseUrl($url)](#setbaseurlurl)
+    + [getBaseUrl()](#getbaseurl)
+    + [addAssetDict()](#addassetdictnameurl)
   * [Extensions Libraries (optional)](#extensions-libraries--optional-)
   * [Definition of Blade Template](#definition-of-blade-template)
   * [Differences between Blade and BladeOne](#differences-between-blade-and-bladeone)
@@ -77,7 +80,6 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
   * [Future](#future)
   * [Missing](#missing)
   * [License](#license)
-
 
 
 ## laravel blade tutorial
@@ -656,20 +658,118 @@ Note: Templates called folder.template is equals to folder/template
 |---|---|
 |@inject('metrics', 'App\Services\MetricsService')|Used for insert a Laravel Service|NOT SUPPORTED|
 
-## Extending Blade
-Not compatible with the extension of Laravel's Blade.
+## Asset Management
 
-### component / slots
+The next libraries are designed to work with assets (css, javascript, images and so on). While it's possible to show a asset without a special library but it's a challenge if you want to work with relative path using a MVC route.
 
-### @asset (new for 2.2)
+For example, let's say the next example:
+http://localhost/img/resource.jpg
+
+you could use the full path.
+```html
+<img src='http://localhost/img/resource.jpg' />
+```
+However, it will fail if the server changes.
+So, you could use a relative path.
+```html
+<img src='img/resource.jpg' />
+```
+However, it fails if you are calling the web
+http://localhost/controller/action/
+
+because the browser will try to find the image at
+http://localhost/controller/action/img/resource.jpg
+instead of
+http://localhost/img/resource.jpg
+
+So, the solution is to set a base url and to use an absolute or relative path
+
+Absolute using @asset
+```html
+<img src='asset("img/resource.jpg")' />
+```
+is converted to
+```html
+<img src='http://localhost/img/resource.jpg' />
+```
+
+Relative using @relative
+```html
+<img src='relative("img/resource.jpg")' />
+```
+is converted to (it depends on the current url)
+```html
+<img src='../../img/resource.jpg' />
+```
+
+It is even possible to add an alias to resources. It is useful for switching from local to CDN.
+
+```php
+$blade->addAssetDict('js/jquery.min.js','https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js');
+```
+so then
+```html
+@asset('js/jquery.min.js')
+```
+
+returns
+```html
+https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
+```
+
+:file_folder: Example: BladeOne/examples/relative1/relative2/callrelative.php
+
+
+### @asset
+It returns an absolute path of the resource. 
+
+```html
 @asset('js/jquery.js')
+```
+Note: it requires to set the base address as 
+```php
+$obj=new BladeOne();
+$obj->setBaseUrl("https://www.example.com/urlbase/"); // with or without trail slash
+```
+> Security: Don't use the variables $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the url is protected or the address is sanitized.
+
+### @resource
+
+It's similar to **@asset**. However, it uses a relative path.
+
+@resource('js/jquery.js')
+
 
 Note: it requires to set the base address as 
 ```php
 $obj=new BladeOne();
-$obj->baseUrl="https://www.example.com/urlbase/";
+$obj->setBaseUrl("https://www.example.com/urlbase/"); // with or without trail slash
 ```
-Security: Don't use the variables $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the server is protected or the address is sanitized.
+
+### setBaseUrl($url)
+It sets the base url.
+
+```php
+$obj=new BladeOne();
+$obj->setBaseUrl("https://www.example.com/urlbase/"); // with or without trail slash
+```
+
+
+### getBaseUrl()
+It gets the current base url.
+
+```php
+$obj=new BladeOne();
+$url=$obj->getBaseUrl(); 
+```
+
+### addAssetDict($name,$url)
+It adds an alias to an asset. It is used for @asset and @relative. If the name exists then $url is used.
+
+```php
+$obj=new BladeOne();
+$url=$obj->addAssetDict('css/style.css','http://....'); 
+```
 
 
 ## Extensions Libraries (optional)
@@ -712,6 +812,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-10-06 3.13 Added @relative, setBaseUrl(),getBaseUrl() and addAssetDict().  @asset is changed, now it allows dictionary. $baseUrl is not public anymore
 - 2018-09-29 3.12 Added the function setPath so we can change the path of the templates/compile files at runtime.
 - 2018-09-21 3.11 @includeif fixed.
 - 2018-09-21 3.10 Testing travis.

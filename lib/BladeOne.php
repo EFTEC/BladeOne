@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.12 2018-29-09
+ * @version 3.13 2018-10-06
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -62,7 +62,13 @@ class BladeOne
     /** @var int Unique counter. It's usued for extends */
     protected $uidCounter=0;
     /** @var string The main url of the system. Don't use $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the value is sanitized is protected */
-    var $baseUrl = './';
+    protected $baseUrl = '.';
+    /** @var string it is a relative path calculated betweeen baseUrl and the current url. Example ../../ */
+    protected $relativePath="";
+    /** @var string[] Dictionary of assets */
+    protected $assetDict;
+
+
     /** @var bool  */
     protected $isRunFast = false;
     /** @var array Array of opening and closing tags for raw echos. */
@@ -174,6 +180,34 @@ class BladeOne
             return "";
         }
         return $this->runInternal($view, $newVariables, false, false, $this->isRunFast);
+    }
+
+    /**
+     * It sets the base url and it also calculates the relative path.<br>
+     * The base url is calculated to determine the relativity of the resources.<br>
+     * The trailing slash is removed automatically if it's present.
+     * @param string $baseUrl Example http://www.web.com/folder  https://www.web.com/folder/anotherfolder
+     */
+    public function setBaseUrl($baseUrl) {
+        $this->baseUrl=rtrim($baseUrl,'/'); // base with the url trimmed
+        $currentUrl=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $base=str_replace(['https://','http://'],'',$this->baseUrl);
+        if (strpos($currentUrl,$base)===0) {
+            $part=str_replace($base,'',$currentUrl);
+            $numf=substr_count($part,'/')-1;
+            $numf=($numf>10)?10:$numf; // avoid overflow
+            $this->relativePath=($numf<0)?"":str_repeat('../',$numf);
+        } else {
+            $this->relativePath='';
+        }
+    }
+
+    /**
+     * Returns the current base url
+     * @return string
+     */
+    public function getBaseUrl() {
+        return $this->baseUrl;
     }
 
     /**
@@ -364,6 +398,32 @@ class BladeOne
     protected function compileDump($expression)
     {
         return $this->phpTag." echo \$this->dump{$expression};?>";
+    }
+
+    protected  function compileRelative($expression) {
+        return $this->phpTag." echo \$this->relative{$expression};?>";
+    }
+
+    /**
+     * it calculates the relative path of a web.<br>
+     * This function uses the current url and the baseurl
+     *
+     * @param string $relativeWeb . Example img/images.jpg
+     * @return string  Example ../../img/images.jpg
+     */
+    public function relative($relativeWeb) {
+        if (isset($this->assetDict[$relativeWeb])) return $this->assetDict[$relativeWeb];
+        // relativepath is calculated when
+        return $this->relativePath.$relativeWeb;
+    }
+
+    /**
+     * It add an alias to the link of the resources.
+     * @param string $name example 'css/style.css'
+     * @param string $url example https://www.web.com/style.css'
+     */
+    public function addAssetDict($name,$url) {
+        $this->assetDict[$name]=$url;
     }
 
     protected function compileMethod($expression)
@@ -1256,7 +1316,7 @@ class BladeOne
 
     protected function compileAsset($expression)
     {
-        return $this->phpTag." echo \$this->baseUrl.{$expression}; ?>";
+        return $this->phpTag." echo (isset(\$this->assetDict[$expression]))?\$this->assetDict[$expression]:\$this->baseUrl.'/'.{$expression}; ?>";
     }
 
     protected function compileJSon($expression)
