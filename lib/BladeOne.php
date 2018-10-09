@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.13 2018-10-06
+ * @version 3.14 2018-10-09
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -343,6 +343,9 @@ class BladeOne
             // a) if the compile is forced then we compile the original file, then save the file.
             // b) if the compile is not forced then we read the datetime of both file and we compared.
             // c) in both cases, if the compiled doesn't exist then we compile.
+            if ($view) {
+                $this->fileName = $view;
+            }
             $this->compile($view, $forced);
         } else {
             // running fast, we don't compile neither we check or read the original template.
@@ -358,15 +361,14 @@ class BladeOne
      * Compile the view at the given path.
      * @param  string $fileName
      * @param bool $forced
+     * @return null|string|string[]
      * @throws Exception
      */
     public function compile($fileName = null, $forced = false)
     {
-        if ($fileName) {
-            $this->fileName = $fileName;
-        }
-        $compiled = $this->getCompiledFile();
-        $template = $this->getTemplateFile();
+
+        $compiled = $this->getCompiledFile($fileName);
+        $template = $this->getTemplateFile($fileName);
         if ($this->isExpired() || $forced) {
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
@@ -418,12 +420,18 @@ class BladeOne
     }
 
     /**
-     * It add an alias to the link of the resources.
-     * @param string $name example 'css/style.css'
+     * It add an alias to the link of the resources.<br>
+     * addAssetDict('name','url/res.jpg')<br>
+     * addAssetDict(['name'=>'url/res.jpg','name2'=>'url/res2.jpg');
+     * @param string|array $name example 'css/style.css', you could also add an array
      * @param string $url example https://www.web.com/style.css'
      */
-    public function addAssetDict($name,$url) {
-        $this->assetDict[$name]=$url;
+    public function addAssetDict($name,$url="") {
+        if (is_array($name)) {
+            $this->assetDict=array_merge($this->assetDict,$name);
+        } else {
+            $this->assetDict[$name]=$url;
+        }
     }
 
     protected function compileMethod($expression)
@@ -1195,6 +1203,31 @@ class BladeOne
     }
 
     /**
+     * It loads an compiled template and paste inside the code.<br>
+     * It uses more disk space but it decreases the number of includes<br>
+     * @param $expression
+     * @return string
+     * @throws Exception
+     */
+    protected function compileIncludeFast($expression)
+    {
+        $expression = $this->stripParentheses($expression);
+        $ex=$this->stripParentheses($expression);
+        $exp=explode(',',$ex);
+        $file=$this->stripQuotes(@$exp[0]);
+        $fileC=$this->getCompiledFile($file);
+        if (!@file_exists($fileC)) {
+            // if the file doesn't exist then it's created
+            $this->compile($file,true);
+        }
+        $txt=$this->getFile($fileC);
+
+        //eval("\$x=\$this->run($expression);")."123";
+        return $txt;
+    }
+
+
+    /**
      * Compile the include statements into valid PHP.
      * @param  string $expression
      * @return string
@@ -1456,13 +1489,12 @@ class BladeOne
     /**
      * Get the string contents of a push section.
      * @param int $each
-     * @param $splitText
+     * @param string $splitText
      * @param string $splitEnd
      * @return string
      */
-    public function splitForeach($each = 1, $splitText, $splitEnd = '')
+    public function splitForeach($each = 1, $splitText=',', $splitEnd = '')
     {
-
         $loopStack = static::last($this->loopsStack); // array(7) { ["index"]=> int(0) ["remaining"]=> int(6) ["count"]=> int(5) ["first"]=> bool(true) ["last"]=> bool(false) ["depth"]=> int(1) ["parent"]=> NULL }
         if ($loopStack['index'] == $loopStack['count']) {
             return $splitEnd;

@@ -635,6 +635,37 @@ _Example:(the indentation is not required)_
 |@each('view.name', $array, 'variable')|Includes a template for each element of the array|
 Note: Templates called folder.template is equals to folder/template
 
+## @include
+It includes a template
+
+You could include a template as follow:
+```html
+<div>
+    @include('shared.errors')
+    <form>
+        <!-- Form Contents -->
+    </form>
+</div>
+```
+
+You could also pass parameters to the template
+```html
+@include('view.name', ['some' => 'data'])
+```
+### @includeif
+
+Additionally, if the template doesn't exist then it will fail. You could avoid it by using includeif
+```html
+@includeIf('view.name', ['some' => 'data'])
+```
+### @includefast
+
+@Includefast is similar to @include. However, it doesn't allows parameters. It also cut and paste code, so it must be fast at runtime by using more space on the hard disk.
+
+```html
+@includefast('view.name')
+```
+
 ## Comments
 |Tag|Note|
 |---|---|
@@ -686,7 +717,7 @@ So, the solution is to set a base url and to use an absolute or relative path
 
 Absolute using @asset
 ```html
-<img src='asset("img/resource.jpg")' />
+<img src='@asset("img/resource.jpg")' />
 ```
 is converted to
 ```html
@@ -695,7 +726,7 @@ is converted to
 
 Relative using @relative
 ```html
-<img src='relative("img/resource.jpg")' />
+<img src='@relative("img/resource.jpg")' />
 ```
 is converted to (it depends on the current url)
 ```html
@@ -717,7 +748,7 @@ returns
 https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
 ```
 
-:file_folder: Example: BladeOne/examples/relative1/relative2/callrelative.php
+:file_folder: Example: [BladeOne/examples/relative1/relative2/callrelative.php](https://github.com/EFTEC/BladeOne/blob/master/examples/examplerelative.php)
 
 
 ### @asset
@@ -812,6 +843,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-10-09 3.14 Added @includefast
 - 2018-10-06 3.13 Added @relative, setBaseUrl(),getBaseUrl() and addAssetDict().  @asset is changed, now it allows dictionary. $baseUrl is not public anymore
 - 2018-09-29 3.12 Added the function setPath so we can change the path of the templates/compile files at runtime.
 - 2018-09-21 3.11 @includeif fixed.
