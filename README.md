@@ -231,24 +231,11 @@ $cache = __DIR__ . '/cache';
 $blade=new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO);
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
-_(modify composer.json as follow) and run "composer update"_
-```json
-"autoload": {
-  "psr-4": {
-    "eftec\\": "vendor/eftec/"
-  }
-}
-```  
 
-or
-```
-{
-    "require": {
-        "eftec/bladeone": "^3.2"
-    }
-}
+Run the next composer command:  
 
-```  
+> composer require eftec/bladeone
+
 
 Where $views is the folder where the views (templates not compiled) will be stored. 
 $cache is the folder where the compiled files will be stored.
@@ -660,11 +647,14 @@ Additionally, if the template doesn't exist then it will fail. You could avoid i
 ```
 ### @includefast
 
-@Includefast is similar to @include. However, it doesn't allows parameters. It also cut and paste code, so it must be fast at runtime by using more space on the hard disk.
+@Includefast is similar to @include. However, it doesn't allows parameters because it merge the template in a big file (instead of rely on different files), so it must be fast at runtime by using more space on the hard disk versus less call to read a file.
+
 
 ```html
 @includefast('view.name')
 ```
+
+>This template runs at compile time, so it doesn't work with runtime features such as @if() @includefast() @endif()
 
 ## Comments
 |Tag|Note|
@@ -843,6 +833,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-10-22 3.15 Fixed an error if _e() is called by an array or object.
 - 2018-10-09 3.14 Added @includefast
 - 2018-10-06 3.13 Added @relative, setBaseUrl(),getBaseUrl() and addAssetDict().  @asset is changed, now it allows dictionary. $baseUrl is not public anymore
 - 2018-09-29 3.12 Added the function setPath so we can change the path of the templates/compile files at runtime.

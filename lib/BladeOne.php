@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.14 2018-10-09
+ * @version 3.15 2018-10-22
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -2290,6 +2290,9 @@ class BladeOne
      */
     public static function e($value)
     {
+        if (is_array($value) || is_object($value)) {
+            return htmlentities(print_r($value,true), ENT_QUOTES, 'UTF-8', false);
+        }
         return htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
     //</editor-fold>
