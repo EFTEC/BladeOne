@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.15 2018-10-22
+ * @version 3.16 2018-10-25
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -22,7 +22,7 @@ class BladeOne
     protected $extensions = array();
     /** @var array All of the finished, captured sections. */
     protected $sections = array();
-    /** @var string The file currently being compiled. */
+    /** @var string The template currently being compiled. For example "folder.template" */
     protected $fileName;
     /** @var string File extension for the template files. */
     protected $fileExtension = '.blade.php';
@@ -359,17 +359,16 @@ class BladeOne
 
     /**
      * Compile the view at the given path.
-     * @param  string $fileName
-     * @param bool $forced
-     * @return null|string|string[]
+     * @param string $templateName The name of the template. Example folder.template
+     * @param bool $forced If the compilation will be forced (always compile) or not.
+     * @return boolean True if the operation was correct, or false (if not exception) if it fails.
      * @throws Exception
      */
-    public function compile($fileName = null, $forced = false)
+    public function compile($templateName = null, $forced = false)
     {
-
-        $compiled = $this->getCompiledFile($fileName);
-        $template = $this->getTemplateFile($fileName);
-        if ($this->isExpired() || $forced) {
+        $compiled = $this->getCompiledFile($templateName);
+        $template = $this->getTemplateFile($templateName);
+        if ($forced || $this->isExpired($templateName)) {
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
             if (!is_null($this->compiledPath)) {
@@ -378,16 +377,19 @@ class BladeOne
                     $ok = @mkdir($dir, 0777, true);
                     if (!$ok) {
                         $this->showError("Compiling", "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
+                        return false;
                     }
                 }
                 $optimizedContent = preg_replace('/^ {2,}/m', ' ', $contents);
                 $optimizedContent = preg_replace('/^\t{2,}/m', ' ', $optimizedContent);
                 $ok = @file_put_contents($compiled, $optimizedContent);
                 if (!$ok) {
-                    $this->showError("Compiling", "Unable to save the file [{$fileName}]. Check the compile folder is defined and has the right permission");
+                    $this->showError("Compiling", "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission");
+                    return false;
                 }
             }
         }
+        return true;
     }
     //</editor-fold>
     //<editor-fold desc="compile">
@@ -1969,31 +1971,31 @@ class BladeOne
     //<editor-fold desc="file members">
     /**
      * Get the full path of the compiled file.
-     * @param string $fileName
+     * @param string $templateName
      * @return string
      */
-    public function getCompiledFile($fileName = '')
+    public function getCompiledFile($templateName = '')
     {
-        $fileName = ($fileName == '') ? $this->fileName : $fileName;
+        $templateName = (empty($templateName)) ? $this->fileName : $templateName;
         if ($this->getMode() == self::MODE_DEBUG) {
-            return $this->compiledPath.'/'.$fileName.$this->compileExtension;
+            return $this->compiledPath.'/'.$templateName.$this->compileExtension;
         } else {
-            return $this->compiledPath.'/'.sha1($fileName).$this->compileExtension;
+            return $this->compiledPath.'/'.sha1($templateName).$this->compileExtension;
         }
     }
 
     /**
      * Get the full path of the compiled file.
-     * @param string $template template name. If not template is set then it uses the base template.
+     * @param string $templateName template name. If not template is set then it uses the base template.
      * @return string
      */
-    public function getTemplateFile($template = '')
+    public function getTemplateFile($templateName = '')
     {
-        $template = ($template == '') ? $this->fileName : $template;
-        $arr = explode('.', $template);
+        $templateName = (empty($templateName)) ? $this->fileName : $templateName;
+        $arr = explode('.', $templateName);
         $c = count($arr);
         if ($c == 1) {
-            return $this->templatePath.'/'.$template.$this->fileExtension;
+            return $this->templatePath.'/'.$templateName.$this->fileExtension;
         } else {
             $file = $arr[$c - 1];
             array_splice($arr, $c - 1, $c - 1); // delete the last element
@@ -2004,19 +2006,19 @@ class BladeOne
 
     /**
      * Determine if the view  is expired.
+     * @param string|null $fileName
      * @return bool
      */
-    public function isExpired()
+    public function isExpired($fileName)
     {
-        $compiled = $this->getCompiledFile();
-        $template = $this->getTemplateFile();
+        $compiled = $this->getCompiledFile($fileName);
+        $template = $this->getTemplateFile($fileName);
         if (!file_exists($template)) {
             if ($this->mode==self::MODE_DEBUG) {
                 $this->showError("Read file", "Template not found :".$this->fileName." on file: $template", true);
             } else {
                 $this->showError("Read file", "Template not found :".$this->fileName, true);
             }
-
         }
         // If the compiled file doesn't exist we will indicate that the view is expired
         // so that it can be re-compiled. Else, we will verify the last modification

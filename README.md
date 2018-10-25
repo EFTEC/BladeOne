@@ -833,6 +833,11 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-10-25 3.16 Fixed an error with compile() when it's called with information.   
+- - Now compile() returns true or false
+- - isExpected() has an optional argument. 
+- - getCompiledFile() and getTemplateFile() now uses the default template ($this->fileName) if the arg is empty (null or '')
+- - arguments $fileName are now called $templateName because $filename is not a filename (temp/file.blade.php) but the name of the template (temp.file)
 - 2018-10-22 3.15 Fixed an error if _e() is called by an array or object.
 - 2018-10-09 3.14 Added @includefast
 - 2018-10-06 3.13 Added @relative, setBaseUrl(),getBaseUrl() and addAssetDict().  @asset is changed, now it allows dictionary. $baseUrl is not public anymore

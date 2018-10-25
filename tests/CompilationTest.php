@@ -48,6 +48,18 @@ class CompilationTest extends AbstractBladeTestCase {
     }
 
     /**
+     * For the issue #57. Version 3.16
+     * @throws \Exception
+     */
+    public function testCompilationTemplateExist() {
+        $this->blade->setFileExtension('.blade');
+
+        $this->assertEquals(true, $this->blade->compile('compilation.base'),"Running compile method");
+
+        $this->blade->setFileExtension('.blade.php');
+    }
+
+    /**
      * @throws \Exception
      */
     public function testCompilationCustomCompileExtension() {
