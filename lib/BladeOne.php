@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.16 2018-10-25
+ * @version 3.17 2018-11-01
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -136,12 +136,14 @@ class BladeOne
     /**
      * Bob the constructor.
      * The folder at $compiledPath is created in case it doesn't exist.
-     * @param string $templatePath
-     * @param string $compiledPath
+     * @param string $templatePath .If null then it uses (caller_folder)/views
+     * @param string $compiledPath .If null then it uses (caller_folder)/compiles
      * @param $mode (see setMode)
      */
-    public function __construct($templatePath, $compiledPath,$mode=0)
+    public function __construct($templatePath=null, $compiledPath=null,$mode=0)
     {
+        if ($templatePath===null) $templatePath=getcwd(). '/views';
+        if ($compiledPath===null) $compiledPath=getcwd() . '/compiles';
         $this->templatePath = $templatePath;
         $this->compiledPath = $compiledPath;
         $this->setMode($mode);
@@ -606,7 +608,8 @@ class BladeOne
             } elseif (method_exists($this, $method = 'compile'.ucfirst($match[1]))) {
                 $match[0] = $this->$method(static::get($match, 3));
             } else {
-                $this->showError("@compile", "Operation not defined:@".$match[1], true);
+                return $match[0];
+                //$this->showError("@compile", "Operation not defined:@".$match[1], true);
             }
             return isset($match[3]) ? $match[0] : $match[0].$match[2];
         };

@@ -209,18 +209,34 @@ Alternatively, BladeOne allows to run arbitrary code from any class or method if
    unzip master.zip
 
 ## Usage
+
+### Without composer's autoload.php
 example.php:
 ```php
-include "lib/BladeOne.php";
+include "lib/BladeOne.php"; // you should change it and indicates the correct route.
 Use eftec\bladeone;
 
-$views = __DIR__ . '/views';
-$cache = __DIR__ . '/cache';
+$views = __DIR__ . '/views'; // it uses the folder /views to read the templates
+$cache = __DIR__ . '/cache'; // it uses the folder /cache to compile the result. 
 $blade=new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO));
-echo $blade->run("hello",array("variable1"=>"value1"));
+echo $blade->run("hello",array("variable1"=>"value1")); // /views/hello.blade.php must exist
 ```
 
-_Or using composer's autoload.php_
+### Without namespace nor composer
+
+```php
+include "../lib/BladeOne.php";
+
+// The nulls indicates the default folders. By drfault it's /views and /compiles
+// \eftec\bladeone\BladeOne::MODE_DEBUG is useful because it indicates the correct file if the template fails to load.  
+//  You must disable it in production. 
+$blade=new \eftec\bladeone\BladeOne(null,null,\eftec\bladeone\BladeOne::MODE_DEBUG);
+
+echo $blade->run("Test.hello", []); // the template must be in /views/Test/hello.blade.php
+```
+
+### Without composer's autoload.php_
+
 ```php
 require "vendor/autoload.php";
 
@@ -833,6 +849,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-10-25 3.17 Halloween version.  Now if the command doesn´t exist,for example @media @font-face and such, 
+ it doesn't show the error but returns the same text as verbatim.  
 - 2018-10-25 3.16 Fixed an error with compile() when it's called with information.   
 - - Now compile() returns true or false
 - - isExpected() has an optional argument. 

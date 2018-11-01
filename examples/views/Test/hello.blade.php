@@ -1,5 +1,7 @@
 
+@itsnotanoperation
 
+@itsnotanoperation(aaa,bbb)
 
 @include('Test.master', ['some' => 'data'])
 
@@ -107,7 +109,7 @@ after the stack<br>
 @endpush
 
 
-
+{{'kevinbacon@email.com'}}
 
 kevinbacon @@gmail.com
 Show all the stack:<br>
