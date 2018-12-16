@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.17 2018-11-01
+ * @version 3.18 2018-12-16
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -923,11 +923,10 @@ class BladeOne
         return $this->phpTag."if ( ! $expression): ?>";
     }
 
-    /**
-     * Compile the User statements into valid PHP.
-     * @param  string $expression
-     * @return string
-     */
+	/**
+	 * Compile the User statements into valid PHP.
+	 * @return string
+	 */
     protected function compileUser()
     {
         return $this->phpTag ."echo '".$this->currentUser."'; ?>";

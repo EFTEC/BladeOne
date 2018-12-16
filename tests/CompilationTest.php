@@ -20,8 +20,8 @@ class CompilationTest extends AbstractBladeTestCase {
      */
     public function testCompilationCreatesCompiledFile() {
         $this->blade->run('compilation.base', []);
-
-        $this->assertFileExists(__DIR__ . '/resources/compiled/' . sha1('compilation.base') . '.bladec');
+        // we don't need to re-create the name manually, the function already exists.
+        $this->assertFileExists($this->blade->getCompiledFile('compilation.base'));
     }
 
     /**

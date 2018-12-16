@@ -9,6 +9,7 @@ include "../lib/BladeOne.php";
 $blade=new \eftec\bladeone\BladeOne(null,null,\eftec\bladeone\BladeOne::MODE_DEBUG);
 
 
+
 //<editor-fold desc="Example data">
 $name="New User";
 $records=array(1,2,3);

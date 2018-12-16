@@ -16,7 +16,6 @@ abstract class AbstractBladeTestCase extends TestCase {
     protected $blade;
     public function __construct($name = null, array $data = [], $dataName = '') {
         parent::__construct($name, $data, $dataName);
-
         $this->blade = new BladeOne(self::TEMPLATE_PATH, self::COMPILED_PATH, BladeOne::MODE_SLOW);
     }
 

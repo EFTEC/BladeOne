@@ -18,10 +18,12 @@ class IncludeTest extends AbstractBladeTestCase {
      * @throws \Exception
      */
     public function testIncludeIf() {
-        $this->markTestIncomplete("Broken, see #54");
+        //$this->markTestIncomplete("Broken, see #54");
+	    // Note, includeif only includes if the template exists. The If is not a conditional include
+	    // (via variable) but to include if the template exists.
 
         $this->assertEqualsIgnoringWhitespace("First... Included... Second...", $this->blade->run("include.if", ["some_var" => false]));
-        $this->assertEqualsIgnoringWhitespace("First... Second...", $this->blade->run("include.if", []));
+        $this->assertEqualsIgnoringWhitespace("First... Second...", $this->blade->run("include.ifcorrupt", []));
     }
 
     /**

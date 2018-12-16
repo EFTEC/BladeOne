@@ -9,6 +9,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 
 [![Build Status](https://travis-ci.org/EFTEC/BladeOne.svg?branch=master)](https://travis-ci.org/EFTEC/BladeOne)
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
+[![Total Downloads](https://poser.pugx.org/eftec/bladeone/downloads)](https://packagist.org/packages/eftec/bladeone)
 [![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
 [![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
 [![php](https://img.shields.io/badge/php->5.6-green.svg)]()
@@ -16,9 +17,9 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 [![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.6 (September 2018)**. It misses some commands [missing](#missing) but nothing more.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.7 (December 2018)**. It misses some commands [missing](#missing) but nothing more.
 
-Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,6 (Июль 2018) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
+Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,7 (декабря 2018) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
 
 - [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
   * [laravel blade tutorial](#laravel-blade-tutorial)
@@ -84,12 +85,13 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
 
 ## laravel blade tutorial
 
-You can find some tutorials and example on the folder examples.
+You can find some tutorials and example on the folder [Examples](examples).
 
 ## About this version
-By standard, Blade is part of Laravel (Illuminate components) and for to use it, you require to install Laravel and Illuminate-view components.
-Blade as a template engine is pretty nice and clear. Also, it generates a (some that) clean code. And its starting to be considered a de-facto template system for PHP (Smarty has been riding off the sunset since years ago). So, if we are able to use it without Laravel then its a big plus for many projects. In fact, in theory, it is even possible to use with Laravel.
-Exists different version of Blade Template that runs without Laravel but most requires 50 or more files and those templates add a new level of complexity:
+By standard, The original Blade library is part of Laravel (Illuminate components) and to use this template library, you require to install Laravel and Illuminate-view components.
+The syntax of Blade is pretty nice and bright. It's based in C# Razor (another template library for C#). It's starting to be considered a de-facto standard template system for many PHP (Smarty has been riding off the sunset since years ago) so, if we can use it without Laravel then its a big plus for many projects. 
+In fact, in theory, it is even possible to use with Laravel.
+Exists different version of Blade Template that runs without Laravel but most requires 50 or more files and those templates add a new level of complexity, so they are not removing Laravel but hiding:
 
 - More files to manages.
 - Changes to the current project (if you want to integrate the template into an existent one)
@@ -98,7 +100,8 @@ Exists different version of Blade Template that runs without Laravel but most re
 - Most of the code in the original Blade is used for future use, including the chance to use a different template engine.
 - Some Laravel legacy code.
 
-This project uses a single file called BladeOne.php and a single class (called BladeOne). If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]: 
+This project uses a single file called BladeOne.php and a single class (called BladeOne). 
+If you want to use it then include it, creates the folders and that's it!. Nothing more (not even namespaces)*[]:  It is also possible to use Blade even with Laravel or any other framework. After all, BladeOne is native, so it's possible to integrate into almost any project.
 
 ## Why to use it instead of native PHP?
 
@@ -145,7 +148,7 @@ My name is {{$name}}
 ```
 ## Easy to use
 
-BladeOne is focused on templates and the syntax of the code is aiming to be clean.
+BladeOne is focused on a easy syntax that it's fast to learn and to write, while it could keep the power of PHP.  
 
 Let's consider the next template:
 
@@ -164,7 +167,7 @@ With BladeOne, we could do the same with
     @nextforeach
 </select>
 ```
-And with html extension we could even reduce to
+And if we use thehtml extension we could even reduce to
 
 ```php // template.blade.php
 @select('id1')
@@ -849,6 +852,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2018-12-16 3.18 Maintenance version. I checked and BladeOne already support the new features of 5.7 (@method and @csrf)  
 - 2018-10-25 3.17 Halloween version.  Now if the command doesn´t exist,for example @media @font-face and such, 
  it doesn't show the error but returns the same text as verbatim.  
 - 2018-10-25 3.16 Fixed an error with compile() when it's called with information.   
