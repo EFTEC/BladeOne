@@ -7,12 +7,13 @@ include "../lib/BladeOne.php";
 include "../lib/BladeOneCache.php";
 
 use eftec\bladeone\BladeOne;
+use eftec\bladeone\BladeOneCache;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
 
-class myBlade extends  bladeone\BladeOne {
-    use bladeone\BladeOneCache;
+class myBlade extends  BladeOne {
+    use BladeOneCache;
 }
 
 $blade=new myBlade($views,$compiledFolder);
