@@ -5,8 +5,6 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 
 Бладеоне-это отдельная версия ядра Blade-шаблонов, которая использует один PHP-файл и может быть портирована и использована в различных проектах. Он позволяет использовать шаблон Blade за пределами laravel.    
 
-
-
 [![Build Status](https://travis-ci.org/EFTEC/BladeOne.svg?branch=master)](https://travis-ci.org/EFTEC/BladeOne)
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
 [![Total Downloads](https://poser.pugx.org/eftec/bladeone/downloads)](https://packagist.org/packages/eftec/bladeone)
