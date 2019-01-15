@@ -1,7 +1,7 @@
 ![Logo](https://raw.githubusercontent.com/EFTEC/BladeOne/gh-pages/images/bladelogo.png)
 
 # BladeOne Blade Template Engine
-BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside laravel.
+BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside Laravel.
 
 Бладеоне-это отдельная версия ядра Blade-шаблонов, которая использует один PHP-файл и может быть портирована и использована в различных проектах. Он позволяет использовать шаблон Blade за пределами laravel.    
 
@@ -81,7 +81,7 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
   * [License](#license)
 
 
-## laravel blade tutorial
+## Laravel blade tutorial
 
 You can find some tutorials and example on the folder [Examples](examples).
 
@@ -107,10 +107,10 @@ If you want to use it then include it, creates the folders and that's it!. Nothi
 Let’s say that we have the next code
 
 ```php
-//some php code
-// some html code
-// more php code
-// more html code.
+//some PHP code
+// some HTML code
+// more PHP code
+// more HTML code.
 ```
 It leads to a mess of a code.  For example, let’s say that we oversee changing the visual layout of the page. In this case, we should change all the code and we could even break part of the programming.   
 Instead, using a template system works in the next way:
@@ -146,7 +146,7 @@ My name is {{$name}}
 ```
 ## Easy to use
 
-BladeOne is focused on a easy syntax that it's fast to learn and to write, while it could keep the power of PHP.  
+BladeOne is focused on an easy syntax that it's fast to learn and to write, while it could keep the power of PHP.  
 
 Let's consider the next template:
 
@@ -185,7 +185,7 @@ The second time the template is called then, it uses the compiled file.   The co
 
 ### Scalable
 
-You could add and use your own function by adding a new method (or extending) to the BladeOne class. NOTE: The function should starts with the name "compile"
+You could add and use your own function by adding a new method (or extending) to the BladeOne class. NOTE: The function should start with the name "compile"
 ```php
 protected function compileMyFunction($expression)
 {
@@ -203,8 +203,8 @@ Alternatively, BladeOne allows to run arbitrary code from any class or method if
 ```
 ## Install (pick one of the next one)
 
-1) Download the file manually then unzip (using winrar,7zip or any other program) https://github.com/EFTEC/BladeOne/archive/master.zip
-2) git git clone https://github.com/EFTEC/BladeOne
+1) Download the file manually then unzip (using WinRAR,7zip or any other program) https://github.com/EFTEC/BladeOne/archive/master.zip
+2) git clone https://github.com/EFTEC/BladeOne
 3) Composer. See [usage](#usage)
 4) wget https://github.com/EFTEC/BladeOne/archive/master.zip
    unzip master.zip
@@ -236,7 +236,7 @@ $blade=new \eftec\bladeone\BladeOne(null,null,\eftec\bladeone\BladeOne::MODE_DEB
 echo $blade->run("Test.hello", []); // the template must be in /views/Test/hello.blade.php
 ```
 
-### Without composer's autoload.php_
+### With composer's autoload.php
 
 ```php
 require "vendor/autoload.php";
@@ -254,10 +254,10 @@ Run the next composer command:
 > composer require eftec/bladeone
 
 
-Where $views is the folder where the views (templates not compiled) will be stored. 
-$cache is the folder where the compiled files will be stored.
+Where `$views` is the folder where the views (templates not compiled) will be stored. 
+`$cache` is the folder where the compiled files will be stored.
 
-In this example, the BladeOne opens the template **hello**. So in the views folders it should exists a file called **hello.blade.php**
+In this example, the BladeOne opens the template **hello**. So in the views folder it should exist a file called **hello.blade.php**
 
 views/hello.blade.php:
 ```html
@@ -281,7 +281,7 @@ $blade->login('johndoe','admin'); // where johndoe is an user and admin is the r
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
 
-If you login using blade then you could use the tags @auth/@endauth/@guest/@endguest
+If you log in using blade then you could use the tags @auth/@endauth/@guest/@endguest
 
 
 ```html
@@ -314,9 +314,9 @@ or
 ```php
 $blade=new bladeone\BladeOne($views,$cache,$mode);
 ```
-- BladeOne(templatefolder,compiledfolder,$mode) Creates the instance of BladeOne.
+- `BladeOne(templatefolder,compiledfolder,$mode)` Creates the instance of BladeOne.
 -   templatefolders indicates the folder (without ending backslash) of where the template files (*.blade.php) are located.
--   compiledfolder indicates the folder where the result of files will be saves. This folder should has write permission. Also, this folder could be located outside of the Web Root.
+-   compiledfolder indicates the folder where the result of files will be saved. This folder should have write permission. Also, this folder could be located outside of the Web Root.
 -   mode (optional).  It sets the mode of the compile. See [setMode(mode)](#setmode) .  By default it's automatic
 
 
@@ -332,14 +332,14 @@ echo $blade->run("hello",array("variable1"=>"value1"));
 
 It sets the mode of compilation.
 
-> It the constant BLADEONE_MODE is define, then it has priority over setMode()
+> If the constant BLADEONE_MODE is defined, then it has priority over setMode()
 
 |mode|behaviour|
 |---|---|
 |BladeOne::MODE_AUTO|Automatic, BladeOne checks the compiled version, if it is obsolete, then a new version is compiled and it replaces the old one|
 |BladeOne::MODE_SLOW|Slow, BladeOne always compile and replace with a new version.  It is useful for development|
 |BladeOne::MODE_FAST|Fast, Bladeone never compile or replace the compiled version, even if it doesn't exist|
-|BladeOne::MODE_DEBUG| It's similar to MODE_SLOW but also generates a compile file with the same name than the template.
+|BladeOne::MODE_DEBUG| It's similar to MODE_SLOW but also generates a compiled file with the same name than the template.
 
 
 ### setFileExtension($ext), getFileExtension
@@ -397,8 +397,8 @@ It defines the mode of compilation (via global constant) See [setMode(mode)](#se
 define("BLADEONE_MODE",BladeOne::MODE_AUTO);
 ```
 
-- BLADEONE_MODE Is a global constant that defines the behaviour of the engine.
-- Optionally, you could use $blade->setMode(BladeOne::MODE_AUTO);
+- `BLADEONE_MODE` Is a global constant that defines the behaviour of the engine.
+- Optionally, you could use `$blade->setMode(BladeOne::MODE_AUTO);`
 
 ## Template tags
 
@@ -420,7 +420,7 @@ define("BLADEONE_MODE",BladeOne::MODE_AUTO);
 |@endsection|End a block of code|
 
 
-Note :(*) This feature is in the original documentation but its not implemented neither its required. May be its an obsolete feature.
+Note :(*) This feature is in the original documentation but it's not implemented either is it required. Maybe it's an obsolete feature.
 
 ### variables
 |Tag|Note|
@@ -480,7 +480,7 @@ The current value is 9
 </div>
 ```
 
-By default BladeOne creates a new instance of the class `'variable name'` inside `'namespace'` with the parameterless contructor.
+By default, BladeOne creates a new instance of the class `'variable name'` inside `'namespace'` with the parameterless constructor.
 
 To override the logic used to resolve injected classes, pass a function to `setInjectResolver`.
 
@@ -519,7 +519,7 @@ This is user 2
 ```
 
 #### @forelse($array as $alias) / @empty / @endforelse
-Its the same than foreach but jumps to the @empty tag if the array is null or empty   
+Its the same as foreach but jumps to the `@empty` tag if the array is null or empty   
 
 |Tag|Note|Example|
 |---|---|---|
@@ -565,14 +565,14 @@ I'm looping forever.
 ```
 
 #### @splitforeach($nElem,$textbetween,$textend="")  inside @foreach
-This functions show a text inside a @foreach cycle every "n" of elements.  This function could be used when you want to add columns to a list of elements.   
-NOTE: The $textbetween is not displayed if its the last element of the last.  With the last element, it shows the variable $textend
+This functions show a text inside a `@foreach` cycle every "n" of elements.  This function could be used when you want to add columns to a list of elements.   
+NOTE: The `$textbetween` is not displayed if its the last element of the last.  With the last element, it shows the variable `$textend`
 
 |Tag|Note|Example|
 |---|---|---|
 |$nElem|Number of elements|2, for every 2 element the text is displayed|  
-|$textbetween|Text to show|'</tr><tr>'| 
-|$textend|Text to show|'</tr>'| 
+|$textbetween|Text to show|`</tr><tr>`| 
+|$textend|Text to show|`</tr>`| 
 
 Example: ($users is an array of objects)
 ```html
@@ -587,7 +587,7 @@ Example: ($users is an array of objects)
 Returns a table with 2 columns.
 
 #### @continue / @break
-Continue jump to the next iteration of a cycle.  @Break jump out of a cycle.
+Continue jump to the next iteration of a cycle.  `@break` jump out of a cycle.
 
 |Tag|Note|Example|
 |---|---|---|
@@ -625,11 +625,11 @@ _Example:(the indentation is not required)_
 @endswitch()
 ```
 
-- @switch. The first value is the variable to evaluate.
-- @case. Indicates the value to compare.  It should be runs inside a @switch/@endswitch
-- @default. (optional) If not case is the correct then the block of @defaultcase is evaluated.
-- @break Break the case
-- @endswitch. End the switch.
+- `@switch` The first value is the variable to evaluate.
+- `@case` Indicates the value to compare.  It should be run inside a @switch/@endswitch
+- `@default` (optional) If not case is the correct then the block of @defaultcase is evaluated.
+- `@break` Break the case
+- `@endswitch` End the switch.
 
 ### Sub Views
 |Tag|Note|
@@ -664,7 +664,7 @@ Additionally, if the template doesn't exist then it will fail. You could avoid i
 ```
 ### @includefast
 
-@Includefast is similar to @include. However, it doesn't allows parameters because it merge the template in a big file (instead of rely on different files), so it must be fast at runtime by using more space on the hard disk versus less call to read a file.
+`@Includefast` is similar to `@include`. However, it doesn't allow parameters because it merges the template in a big file (instead of relying on different files), so it must be fast at runtime by using more space on the hard disk versus less call to read a file.
 
 
 ```html
@@ -686,9 +686,11 @@ Additionally, if the template doesn't exist then it will fail. You could avoid i
 |@stack('elem')|Show the stack|
 
 ## @set (new for 1.5)
+```
 @set($variable=[value])
-@set($variable) is equals to @set($variable=$variable+1)
-- $variable define the variable to add. If not value is defined the it adds +1 to a variable.
+```
+`@set($variable)` is equals to `@set($variable=$variable+1)`
+- `$variable` defines the variable to add. If not value is defined and it adds +1 to a variable.
 - value (option) define the value to use.
 
 ### Service Inject
@@ -698,7 +700,7 @@ Additionally, if the template doesn't exist then it will fail. You could avoid i
 
 ## Asset Management
 
-The next libraries are designed to work with assets (css, javascript, images and so on). While it's possible to show a asset without a special library but it's a challenge if you want to work with relative path using a MVC route.
+The next libraries are designed to work with assets (CSS, JavaScript, images and so on). While it's possible to show an asset without a special library but it's a challenge if you want to work with relative path using an MVC route.
 
 For example, let's say the next example:
 http://localhost/img/resource.jpg
@@ -720,9 +722,9 @@ http://localhost/controller/action/img/resource.jpg
 instead of
 http://localhost/img/resource.jpg
 
-So, the solution is to set a base url and to use an absolute or relative path
+So, the solution is to set a base URL and to use an absolute or relative path
 
-Absolute using @asset
+Absolute using `@asset`
 ```html
 <img src='@asset("img/resource.jpg")' />
 ```
@@ -773,9 +775,10 @@ $obj->setBaseUrl("https://www.example.com/urlbase/"); // with or without trail s
 
 ### @resource
 
-It's similar to **@asset**. However, it uses a relative path.
-
+It's similar to `@asset`. However, it uses a relative path.
+```
 @resource('js/jquery.js')
+```
 
 
 Note: it requires to set the base address as 
@@ -802,7 +805,7 @@ $url=$obj->getBaseUrl();
 ```
 
 ### addAssetDict($name,$url)
-It adds an alias to an asset. It is used for @asset and @relative. If the name exists then $url is used.
+It adds an alias to an asset. It is used for `@asset` and `@relative`. If the name exists then `$url` is used.
 
 ```php
 $obj=new BladeOne();
@@ -843,7 +846,7 @@ We have native tags as @select,@item,@items and @endselect
 @endselect()
 ```
 
-This new syntaxis add an (optionally) a non-selected row.
+This new syntax adds an (optionally) non-selected row.
 Also, BladeOneHTML adds multiple select, fixed values (without array), grouped select and many more.
 
 
@@ -886,7 +889,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - 2017-09-28 2.0 Some fixes there and here.  
 - 2017-07-21 1.9 Components and Slots.  Note: I'm not really convinced in its usability.
 - 2017-05-24 1.8 Maintenance.  Now, it runs with or without mb_string module
-- 2017-04-09 1.8 Creates directory automatically. Some fixes. Add new feature **@splitforeach**.    
+- 2017-04-09 1.8 Creates a directory automatically. Some fixes. Add new feature **@splitforeach**.    
 - 2017-02-20 1.6 More cleanups. Refactored file, image, and other tags.
 - 2016-08-14 1.6 Some cleanups. Add new documentation   
 - 2016-07-03 1.5 New features such as **@set** command
@@ -913,9 +916,9 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 - hello@@world fails to render hello@world.  However, hello @@world render hello@world.  
 
 - extends bug. If you use extends then, every content after the last @endsetion will be rendered at the top of the page.  
-  Solution: avoid to add any content after the last @endsection,including spaces and empty lines.
+  Solution: avoid to add any content after the last @endsection, including spaces and empty lines.
 
-- Some functionalities are not available for php lower than 7.0.
+- Some functionalities are not available for PHP lower than 7.0.
 
 bad example:
 ```html
@@ -935,7 +938,7 @@ this is a bug
 </html>
 ```
 
-bad too: (check the empty line at the bottom).  This is not as bad but a small annoying.
+bad too: (check the empty line at the bottom).  This is not as bad but a small annoyance.
 ```html
 @endsection(line carriage)
 (empty line)
@@ -953,8 +956,8 @@ This library is compatible with [SourceGuardian](https://www.sourceguardian.com)
  
 However:  
  
-* You must avoid to encode the template folder (copy unencoded the views folder).
-* Optionally, you must avoid to encode the compiled folder because the files could be replaced by Bladeone. Also, you could runs BladeOne in mode BladeOne::MODE_FAST and to encode the compile folder)      
+* You must avoid encoding the template folder (copy unencoded the views folder).
+* Optionally, you must avoid encoding the compiled folder because the files could be replaced by Bladeone. Also, you could run BladeOne in mode `BladeOne::MODE_FAST` and encode the compile folder)      
 
 So,   
 * **\view** folder = copy unencoded.
@@ -974,7 +977,7 @@ You are welcome to use it, share it, ask for changes and whatever you want to. J
 
 ## Missing
 
-Some features are missing because they are new, or they lacks of documentation or they are specific for laravel (then, they are useless without it)
+Some features are missing because they are new, or they lack documentation or they are specific to Laravel (then, they are useless without it)
 
 - Laravel's own commands. Reason: This library is free of Laravel
 - ~~Custom if. Reason: It is dangerous and odds.~~ DONE
