@@ -1,4 +1,4 @@
-#BladeOneLang extension library (optional)
+# BladeOneLang extension library (optional)
 
 Requires: BladeOne
 
@@ -51,26 +51,26 @@ Cheshire es un buen gato.
 
 
 
-##Template methods
+## Template methods
 
-###@_e('Word or phrase')
+### @_e('Word or phrase')
 
-it tries to translate the word if its in the array defined by BladeOneLang::$dictionary.
+it tries to translate the word if its in the array defined by `BladeOneLang::$dictionary`.
 If there is not a entry with the word 'Hat' (case sensitive) then it returns 'Hat'. Also, if the log file is define, the it also saves an entry with the missing word.
 
-For the previous example. @_e('Hat') returns Sombrero.
+For the previous example. `@_e('Hat')` returns Sombrero.
 
-###@_ef('some phrase %s another words %s %i','word1','word2',20)
+### @_ef('some phrase %s another words %s %i','word1','word2',20)
 
-Its the same than @_e, however it parses the text (using sprintf).   
+Its the same than `@_e`, however it parses the text (using `sprintf`).   
 If the operation fails then, it returns the original expression without translation.
 
-For the previous example. @_ef('%s is a nice cat','Cheshire') : returns Cheshire es un buen gato.
+For the previous example.` @_ef('%s is a nice cat','Cheshire')`  returns Cheshire es un buen gato.
 
-###@_n('Singular','Plural',number)
+### @_n('Singular','Plural',number)
 
 If number is plural (more than 1) then it translates (if any) the second word, otherwise it translates the first word.
 If not number is used then it always translates the singular expression.
 
-For the previous example. @_n('Cat','Cats',100) : returns Cheshire es un buen gato.
+For the previous example.` @_n('Cat','Cats',100)`  returns Cheshire es un buen gato.
 

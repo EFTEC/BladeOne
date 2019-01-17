@@ -1,4 +1,4 @@
-#BladeOneCache extension library (optional)
+# BladeOneCache extension library (optional)
 
 Requires: BladeOne
 
@@ -15,7 +15,7 @@ $blade=new MyBlade($views,$compiledFolder);
 
 
 
-##New Tags (template file)
+## New Tags (template file)
 
 ### cache
 
@@ -35,7 +35,7 @@ $blade=new MyBlade($views,$compiledFolder);
 - @endcache
 -   End of the cache block.  It shouldn't be stacked.
 
-##New Business Logic / Controller function
+## New Business Logic / Controller function
 
 ### function cacheExpired
 ```php
