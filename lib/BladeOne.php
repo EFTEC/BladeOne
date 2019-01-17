@@ -136,7 +136,7 @@ class BladeOne
     /**
      * Bob the constructor.
      * The folder at $compiledPath is created in case it doesn't exist.
-     * @param string $templatePath .If null then it uses (caller_folder)/views
+     * @param string|array $templatePath .If null then it uses (caller_folder)/views
      * @param string $compiledPath .If null then it uses (caller_folder)/compiles
      * @param $mode (see setMode)
      */
@@ -1997,12 +1997,32 @@ class BladeOne
         $arr = explode('.', $templateName);
         $c = count($arr);
         if ($c == 1) {
-            return $this->templatePath.'/'.$templateName.$this->fileExtension;
+            return $this->locateView($templateName.$this->fileExtension);
         } else {
             $file = $arr[$c - 1];
             array_splice($arr, $c - 1, $c - 1); // delete the last element
             $path = implode('/', $arr);
-            return $this->templatePath.'/'.$path.'/'.$file.$this->fileExtension;
+            return $this->locateView($path.'/'.$file.$this->fileExtension);
+        }
+    }
+
+    /**
+     * Find template file with the given name in all template paths in the order the paths were written
+     * @param string $name Filename
+     * @return string template file
+     */
+    private function locateView($name){
+        if(is_array($this->templatePath)) {
+            $path = '';
+            foreach ($this->templatePath as $dir){
+                $path = $dir.'/'.$name;
+                if(file_exists($path)){
+                    break;
+                }
+            }
+            return $path;
+        }else{
+            return $this->templatePath.'/'.$name;
         }
     }
 

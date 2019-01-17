@@ -1,0 +1,1 @@
+Multiple template path test
