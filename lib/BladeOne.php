@@ -1997,12 +1997,12 @@ class BladeOne
         $arr = explode('.', $templateName);
         $c = count($arr);
         if ($c == 1) {
-            return $this->locateView($templateName.$this->fileExtension);
+            return $this->locateTemplate($templateName.$this->fileExtension);
         } else {
             $file = $arr[$c - 1];
             array_splice($arr, $c - 1, $c - 1); // delete the last element
             $path = implode('/', $arr);
-            return $this->locateView($path.'/'.$file.$this->fileExtension);
+            return $this->locateTemplate($path.'/'.$file.$this->fileExtension);
         }
     }
 
@@ -2011,7 +2011,7 @@ class BladeOne
      * @param string $name Filename
      * @return string template file
      */
-    private function locateView($name){
+    private function locateTemplate($name){
         if(is_array($this->templatePath)) {
             $path = '';
             foreach ($this->templatePath as $dir){
