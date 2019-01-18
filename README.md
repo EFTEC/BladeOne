@@ -312,12 +312,20 @@ or
 
 ### constructor
 ```php
-$blade=new bladeone\BladeOne($views,$cache,$mode);
+$blade=new bladeone\BladeOne($views,$compile,$mode);
 ```
 - `BladeOne(templatefolder,compiledfolder,$mode)` Creates the instance of BladeOne.
--   templatefolders indicates the folder (without ending backslash) of where the template files (*.blade.php) are located.
--   compiledfolder indicates the folder where the result of files will be saved. This folder should have write permission. Also, this folder could be located outside of the Web Root.
--   mode (optional).  It sets the mode of the compile. See [setMode(mode)](#setmode) .  By default it's automatic
+-   **$views** indicates the folder or folders (it could be an array of folders) (without ending backslash) of where the template files (*.blade.php) are located.
+-   **$compile** indicates the folder where the result of files will be saved. This folder should have write permission. Also, this folder could be located outside of the Web Root.
+-   **$mode** (optional).  It sets the mode of the compile. See [setMode(mode)](#setmode) .  By default it's automatic
+
+Example:  
+
+```php
+$blade=new bladeone\BladeOne(__DIR__.'/views',__DIR__.'/compiles');
+// or multiple views:
+$blade=new bladeone\BladeOne([__DIR__.'/views',__DIR__.'/viewsextras'],__DIR__.'/compiles');
+```
 
 
 ### run
@@ -853,6 +861,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-01-18 3.19 New changes on new pull from @AVONnadozie 
 - 2018-12-16 3.18 Maintenance version. I checked and BladeOne already support the new features of 5.7 (@method and @csrf)  
 - 2018-10-25 3.17 Halloween version.  Now if the command doesn´t exist,for example @media @font-face and such, 
  it doesn't show the error but returns the same text as verbatim.  
@@ -1007,6 +1016,6 @@ Some features are missing because they are new, or they lack documentation or th
 
 ## License
 MIT License.
-BladeOne (c) 2016-2018 Jorge Patricio Castro Castillo
+BladeOne (c) 2016-2019 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is mostly a original work)
 
