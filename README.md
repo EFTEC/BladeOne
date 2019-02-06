@@ -219,7 +219,7 @@ Use eftec\bladeone;
 
 $views = __DIR__ . '/views'; // it uses the folder /views to read the templates
 $cache = __DIR__ . '/cache'; // it uses the folder /cache to compile the result. 
-$blade=new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO));
+$blade = new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO);
 echo $blade->run("hello",array("variable1"=>"value1")); // /views/hello.blade.php must exist
 ```
 
@@ -231,7 +231,7 @@ include "../lib/BladeOne.php";
 // The nulls indicates the default folders. By drfault it's /views and /compiles
 // \eftec\bladeone\BladeOne::MODE_DEBUG is useful because it indicates the correct file if the template fails to load.  
 //  You must disable it in production. 
-$blade=new \eftec\bladeone\BladeOne(null,null,\eftec\bladeone\BladeOne::MODE_DEBUG);
+$blade = new \eftec\bladeone\BladeOne(null,null,\eftec\bladeone\BladeOne::MODE_DEBUG);
 
 echo $blade->run("Test.hello", []); // the template must be in /views/Test/hello.blade.php
 ```
@@ -241,11 +241,11 @@ echo $blade->run("Test.hello", []); // the template must be in /views/Test/hello
 ```php
 require "vendor/autoload.php";
 
-Use eftec\bladeone;
+Use eftec\bladeone\BladeOne;
 
 $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
-$blade=new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO);
+$blade = new BladeOne($views,$cache,BladeOne::MODE_AUTO);
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
 
