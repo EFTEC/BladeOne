@@ -7,9 +7,10 @@ namespace eftec\tests;
  * @since 17/09/2018
  */
 class AuthTest extends AbstractBladeTestCase {
-    public function tearDown() {
+  /*  public function tearDown() {
         $this->blade->setAuth(null);
     }
+  */
 
     /**
      * @throws \Exception
