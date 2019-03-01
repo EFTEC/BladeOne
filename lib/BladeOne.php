@@ -12,26 +12,26 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.19 2019-01-18
+ * @version 3.20 2019-03-01
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {    //<editor-fold desc="fields">
 
     /** @var array All of the registered extensions. */
-    protected $extensions = array();
+    protected $extensions = [];
     /** @var array All of the finished, captured sections. */
-    protected $sections = array();
+    protected $sections = [];
     /** @var string The template currently being compiled. For example "folder.template" */
     protected $fileName;
     /** @var string File extension for the template files. */
     protected $fileExtension = '.blade.php';
     /** @var array The stack of in-progress sections. */
-    protected $sectionStack = array();
+    protected $sectionStack = [];
     /** @var array The stack of in-progress loops. */
     protected $loopsStack = [];
     /** @var array Dictionary of variables */
-    protected $variables = array();
+    protected $variables = [];
     /** @var array All of the available compiler functions. */
     protected $compilers = [
         'Extensions',
@@ -173,7 +173,7 @@ class BladeOne
      * @return string
      * @throws Exception
      */
-    public function runChild($view, $variables = array())
+    public function runChild($view, $variables = [])
     {
         if (is_array($variables)) {
             $newVariables = array_merge($this->variables, $variables);
@@ -278,7 +278,7 @@ class BladeOne
      * @return string
      * @throws Exception
      */
-    public function run($view, $variables = array())
+    public function run($view, $variables = [])
     {
         $mode = $this->getMode();
         $forced = $mode & 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
@@ -336,7 +336,7 @@ class BladeOne
      * @return string
      * @throws Exception
      */
-    private function runInternal($view, $variables = array(), $forced = false, $isParent = true, $runFast = false)
+    private function runInternal($view, $variables = [], $forced = false, $isParent = true, $runFast = false)
     {
         if ($isParent) {
             $this->variables = $variables;
@@ -1358,9 +1358,13 @@ class BladeOne
 
     protected function compileJSon($expression)
     {
-        return $this->phpTag." echo json_encode({$expression}); ?>";
+	    $parts = explode(',', $this->stripParentheses($expression));
+	    $options = isset($parts[1]) ? trim($parts[1]) : JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
+	    $depth = isset($parts[2]) ? trim($parts[2]) : 512;
+        return $this->phpTag." echo json_encode($parts[0], $options, $depth); ?>";
     }
-
+  
+    
     protected function compileIsset($expression)
     {
         return $this->phpTag."if(isset{$expression}): ?>";
@@ -2411,7 +2415,7 @@ class BladeOne
             if (static::startsWith($empty, 'raw|')) {
                 $result = substr($empty, 4);
             } else {
-                $result = $this->run($empty, array());
+                $result = $this->run($empty, []);
             }
         }
         return $result;

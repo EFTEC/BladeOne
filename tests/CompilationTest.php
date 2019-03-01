@@ -59,6 +59,7 @@ class CompilationTest extends AbstractBladeTestCase {
         $this->blade->setFileExtension('.blade.php');
     }
 
+
     /**
      * @throws \Exception
      */

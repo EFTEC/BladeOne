@@ -15,9 +15,9 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 [![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.7 (December 2018)**. It misses some commands [missing](#missing) but nothing more.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.8 (December 2019)**. It misses some commands [missing](#missing) but nothing more.
 
-Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,7 (декабря 2018) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
+Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,8 (2019 января) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
 
 - [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
   * [laravel blade tutorial](#laravel-blade-tutorial)
@@ -861,6 +861,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-03-01 3.20 I checked Laravel's blade and there is nothing now. This version is aligned with Blade 5.8
+-  I added some fixes to @json. Now it allows arguments (the same arguments than PHP's json_encode)
 - 2019-01-18 3.19 New changes on new pull from @AVONnadozie 
 - 2018-12-16 3.18 Maintenance version. I checked and BladeOne already support the new features of 5.7 (@method and @csrf)  
 - 2018-10-25 3.17 Halloween version.  Now if the command doesn´t exist,for example @media @font-face and such, 
