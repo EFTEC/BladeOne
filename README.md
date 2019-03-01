@@ -861,7 +861,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
-- 2019-03-01 3.20 I checked Laravel's blade and there is nothing now. This version is aligned with Blade 5.8
+- 2019-03-01 3.20 I checked Laravel's blade and there is nothing new. This version is aligned with Blade 5.8
 -  I added some fixes to @json. Now it allows arguments (the same arguments than PHP's json_encode)
 - 2019-01-18 3.19 New changes on new pull from @AVONnadozie 
 - 2018-12-16 3.18 Maintenance version. I checked and BladeOne already support the new features of 5.7 (@method and @csrf)  
