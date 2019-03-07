@@ -20,6 +20,7 @@ class BladeOne
 
     /** @var array All of the registered extensions. */
     protected $extensions = [];
+    
     /** @var array All of the finished, captured sections. */
     protected $sections = [];
     /** @var string The template currently being compiled. For example "folder.template" */
@@ -183,6 +184,21 @@ class BladeOne
         }
         return $this->runInternal($view, $newVariables, false, false, $this->isRunFast);
     }
+
+	/**
+	 * @param string $view example "folder.template"
+	 * @param string|null $alias example "mynewop"
+	 */
+	public function addInclude($view, $alias = null) {
+		if (!isset($alias)) {
+			$alias=explode('.', $view);
+			$alias=end($alias);
+		}
+		$this->directive($alias, function ($expression) use ($view) {
+			$expression = $this->stripParentheses($expression) ?: '[]';
+			return "<?php echo \$this->runChild('{$view}', {$expression}); ?>";
+		});
+	}
 
     /**
      * It sets the base url and it also calculates the relative path.<br>
