@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.20 2019-03-01
+ * @version 3.21 2019-03-07
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
