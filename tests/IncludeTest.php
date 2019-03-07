@@ -14,6 +14,23 @@ class IncludeTest extends AbstractBladeTestCase {
         $this->assertEqualsIgnoringWhitespace("First... Included... Second...", $this->blade->run("include.base", []));
     }
 
+	/**
+	 * based on bug #68
+	 * @throws \Exception
+	 */
+	public function testIncludeAlias() {
+		$this->blade->addInclude('Shared.input', 'input');
+		$expected='<input type="text" value=""><input type="email" value="billgates@microsoft.com">';
+		$html=$this->blade->run("include.includealias", []);
+		$this->assertEquals($expected,$html );
+
+		$this->blade->addInclude('Shared.input');
+		$expected='<input type="text" value=""><input type="email" value="billgates@microsoft.com">';
+		$html=$this->blade->run("include.includealias", []);
+		$this->assertEquals($expected,$html );
+	}
+    
+    
     /**
      * @throws \Exception
      */

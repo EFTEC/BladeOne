@@ -187,7 +187,7 @@ class BladeOne
 
 	/**
 	 * @param string $view example "folder.template"
-	 * @param string|null $alias example "mynewop"
+	 * @param string|null $alias example "mynewop". If null then it uses the name of the template.
 	 */
 	public function addInclude($view, $alias = null) {
 		if (!isset($alias)) {
