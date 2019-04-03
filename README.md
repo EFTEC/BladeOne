@@ -276,7 +276,7 @@ $views = __DIR__ . '/views';
 $cache = __DIR__ . '/cache';
 $blade=new bladeone\BladeOne($views,$cache,BladeOne::MODE_AUTO);
 
-$blade->login('johndoe','admin'); // where johndoe is an user and admin is the role. The role is optional
+$blade->setAuth('johndoe','admin'); // where johndoe is an user and admin is the role. The role is optional
 
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
