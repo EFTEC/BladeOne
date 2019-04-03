@@ -7,6 +7,9 @@ use Closure;
 use Countable;
 use Exception;
 use InvalidArgumentException;
+use function count;
+use function array_merge;
+use function is_array;
 
 /**
  * Class BladeOne
@@ -2348,7 +2351,7 @@ class BladeOne
      */
     public function addLoop($data)
     {
-        $length = is_array($data) || $data instanceof Countable ? count($data) : null;
+        $length = is_array($data) || $data instanceof Countable ? \count($data) : null;
         $parent = static::last($this->loopsStack);
         $this->loopsStack[] = [
             'index' => 0,
