@@ -15,7 +15,7 @@ use function is_array;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.21 2019-03-07
+ * @version 3.22 2019-04-03
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -163,7 +163,7 @@ class BladeOne
 
         if (!file_exists($this->compiledPath)) {
             $ok = @mkdir($this->compiledPath, 0777, true);
-            if (!$ok) {
+            if ($ok===false) {
                 $this->showError("Constructing", "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.", true);
             }
         }
@@ -396,7 +396,7 @@ class BladeOne
                 $dir = dirname($compiled);
                 if (!file_exists($dir)) {
                     $ok = @mkdir($dir, 0777, true);
-                    if (!$ok) {
+                    if ($ok===false) {
                         $this->showError("Compiling", "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
                         return false;
                     }
