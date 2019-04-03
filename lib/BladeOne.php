@@ -404,7 +404,7 @@ class BladeOne
                 $optimizedContent = preg_replace('/^ {2,}/m', ' ', $contents);
                 $optimizedContent = preg_replace('/^\t{2,}/m', ' ', $optimizedContent);
                 $ok = @file_put_contents($compiled, $optimizedContent);
-                if (!$ok) {
+                if ($ok===false) {
                     $this->showError("Compiling", "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission");
                     return false;
                 }
