@@ -884,6 +884,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-04-03 3.22 it solves #70. It also adds some small optimizations.
 - 2019-03-07 3.21 method "addInclude()" for aliasing include.  
 - 2019-03-01 3.20 I checked Laravel's blade and there is nothing new. This version is aligned with Blade 5.8
 -  I added some fixes to @json. Now it allows arguments (the same arguments than PHP's json_encode)
