@@ -1,1 +1,1 @@
-<input type="{{ !isset($type)? 'text':$type }}" value="{{ !isset($value)? '':$value }}">
+<input type="{{ !isset($type)? 'text':$type }}" value="{{ !isset($value)? '':$value }}"> (global {{$globalme}})

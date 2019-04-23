@@ -15,7 +15,7 @@ use function is_array;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.22 2019-04-03
+ * @version 3.23 2019-04-23
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -36,6 +36,8 @@ class BladeOne
     protected $loopsStack = [];
     /** @var array Dictionary of variables */
     protected $variables = [];
+    /** @var null Dictionary of global variables */
+    protected $variablesGlobal=[];
     /** @var array All of the available compiler functions. */
     protected $compilers = [
         'Extensions',
@@ -180,7 +182,7 @@ class BladeOne
     public function runChild($view, $variables = [])
     {
         if (is_array($variables)) {
-            $newVariables = array_merge($this->variables, $variables);
+			$newVariables = array_merge($this->variables, $variables);
         } else {
             $this->showError("run/include", "Include/run variables should be defined as array ['idx'=>'value']", true);
             return "";
@@ -358,7 +360,12 @@ class BladeOne
     private function runInternal($view, $variables = [], $forced = false, $isParent = true, $runFast = false)
     {
         if ($isParent) {
-            $this->variables = $variables;
+	        if (count($this->variablesGlobal)>0) {
+		        $this->variables  = array_merge($variables,$this->variablesGlobal);
+		        $variables=$this->variablesGlobal;
+	        } else {
+		        $this->variables = $variables;	
+	        }            
         }
         if (!$runFast) {
             // a) if the compile is forced then we compile the original file, then save the file.
@@ -1864,6 +1871,15 @@ class BladeOne
             $this->sections[$last] = ob_get_clean();
         }
         return $last;
+    }
+
+	/**
+	 * Adds a global variable
+	 * @param $varname
+	 * @param $value
+	 */
+    public function share($varname,$value) {
+    	$this->variablesGlobal[$varname]=$value;
     }
 
     /**

@@ -336,6 +336,14 @@ echo $blade->run("hello",array("variable1"=>"value1"));
 -   template is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder\example.blade.php"
 -   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
 
+### share
+```php
+echo $blade->share("global","valueglobal"));
+echo $blade->run("hello",array("variable1"=>"value1"));
+```
+
+It adds a global variable
+
 ### setMode
 
 It sets the mode of compilation.
@@ -884,6 +892,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-04-23 3.23 method share()
 - 2019-04-03 3.22 it solves #70. It also adds some small optimizations.
 - 2019-03-07 3.21 method "addInclude()" for aliasing include.  
 - 2019-03-01 3.20 I checked Laravel's blade and there is nothing new. This version is aligned with Blade 5.8

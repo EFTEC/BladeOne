@@ -11,13 +11,15 @@ class ExtendsTest extends AbstractBladeTestCase {
      * @throws \Exception
      */
     public function testExtends() {
-        $this->assertEqualsIgnoringWhitespace("Child... Base...", $this->blade->run("extends.child", []));
+    	$this->blade->share('globalme','global!');
+        $this->assertEqualsIgnoringWhitespace("Child(global!)...Base(global!)...", $this->blade->run("extends.child", []));
     }
 
     /**
      * @throws \Exception
      */
     public function testExtendsWithSection() {
-        $this->assertEqualsIgnoringWhitespace("Base... From Child...", $this->blade->run("extends.child_section", []));
+	    $this->blade->share('globalme','global!');
+        $this->assertEqualsIgnoringWhitespace("Base(global!)...FromChild(global!)...", $this->blade->run("extends.child_section", []));
     }
 }

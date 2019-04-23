@@ -1,5 +1,5 @@
 @extends('extends.base')
 
 @section('from_child')
-    From Child...
+    From Child({{$globalme}})...
 @endsection
