@@ -892,6 +892,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-05-05 3.24 #75
 - 2019-04-24 10k downloads 👏 👏 👏!  
 - 2019-04-23 3.23 method share()
 - 2019-04-03 3.22 it solves #70. It also adds some small optimizations.

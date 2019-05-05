@@ -15,7 +15,7 @@ use function is_array;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.23 2019-04-23
+ * @version 3.24 2019-05-05
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -362,7 +362,7 @@ class BladeOne
         if ($isParent) {
 	        if (count($this->variablesGlobal)>0) {
 		        $this->variables  = array_merge($variables,$this->variablesGlobal);
-		        $variables=$this->variablesGlobal;
+		        $variables=$this->variables;
 	        } else {
 		        $this->variables = $variables;	
 	        }            
