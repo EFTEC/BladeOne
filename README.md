@@ -742,8 +742,57 @@ Once the include has been aliased, you may render it using the alias name as the
 |Tag|Note|
 |---|---|
 |@push('elem')|Add the next block to the push stack|
+|@pushonce('elem')|Add the next block to the push stack. It is only pushed once.|
 |@endpush|End the push block|
 |@stack('elem')|Show the stack|
+
+```html
+@push('scripts')
+script1
+@endpush
+@push('scripts')
+script2
+@endpush
+@push('scripts')
+script3
+@endpush
+<hr>
+@stack('scripts')
+<hr>
+```
+
+It returns 
+
+```html
+<hr>
+script1 script2 script3
+<hr>
+```
+
+```html
+@pushonce('scripts')
+script1
+@endpushonce
+@pushonce('scripts')
+script2
+@endpushonce
+@pushonce('scripts')
+script3
+@endpushonce
+<hr>
+@stack('scripts')
+<hr>
+```
+
+It returns 
+
+```html
+<hr>
+script1
+<hr>
+```
+
+
 
 ## @set (new for 1.5)
 ```
@@ -913,6 +962,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-05-25 3.26 #75 addes method @pushonce('namestack') and @endpuchonce
 - 2019-05-24 3.25 #77 added method setOptimize(bool) and setIsCompiled(bool)
 - 2019-05-05 3.24 #75
 - 2019-04-24 10k downloads 👏 👏 👏!  

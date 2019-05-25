@@ -99,7 +99,19 @@ script2
 @push('scripts')
 script3
 @endpush
-
+@pushonce('scriptonce')
+scriptpush1
+@endpushonce
+@pushonce('scriptonce')
+scriptpush2
+@endpushonce
+@pushonce('scriptonce')
+scriptpush3
+@endpushonce
+<hr>Stack pushed:
+@stack('scripts')
+<hr>Stack pushed once:
+@stack('scriptonce')
 <hr>Push inverted:<br>
 first stack...<br>
 @stack('first')

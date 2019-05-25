@@ -16,7 +16,7 @@ use ParseError;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.25 2019-05-24
+ * @version 3.26 2019-05-24
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -1353,7 +1353,17 @@ class BladeOne
     {
         return $this->phpTag."\$this->startPush{$expression}; ?>";
     }
-
+	/**
+	 * Compile the push statements into valid PHP.
+	 * @param  string $expression
+	 * @return string
+	 */
+	public function compilePushOnce($expression)
+	{
+		$key = '$__pushonce__'.trim(substr($expression, 2, -2));
+		//die(1);
+		return $this->phpTag."if(!isset($key)): $key=1;  \$this->startPush{$expression}; ?>";
+	}
     /**
      * Compile the push statements into valid PHP.
      * @param  string $expression
@@ -1372,6 +1382,14 @@ class BladeOne
     {
         return $this->phpTag.'$this->stopPush(); ?>';
     }
+	/**
+	 * Compile the endpushonce statements into valid PHP.
+	 * @return string
+	 */
+	protected function compileEndpushOnce()
+	{
+		return $this->phpTag.'$this->stopPush(); endif; ?>';
+	}
 
     /**
      * Compile the endpush statements into valid PHP.
