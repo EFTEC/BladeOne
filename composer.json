@@ -12,7 +12,7 @@
     }],
   "extra": {
     "branch-alias": {
-      "dev-master": "3.24-dev"
+      "dev-master": "3.25-dev"
     }
   },
   "config": {

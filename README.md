@@ -344,6 +344,27 @@ echo $blade->run("hello",array("variable1"=>"value1"));
 
 It adds a global variable
 
+### setOptimize(bool=false)
+
+If true then it optimizes the result (it removes tab and extra spaces).  
+By default BladeOne will optimize the result.
+
+```php
+$blade->setOptimize(false); 
+```
+
+### setIsCompiled(bool=false)
+
+If false then the file is not compiled and it is executed directly from the memory.
+This behaviour is slow because the compiled file is used as a cache and without 
+this file, then the file is compiled each time.     
+By default the value is true   
+It also sets the mode to MODE_SLOW   
+
+```php
+$blade->setIsCompiled(false); 
+```
+
 ### setMode
 
 It sets the mode of compilation.
@@ -892,6 +913,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-05-24 3.25 #77 added method setOptimize(bool) and setIsCompiled(bool)
 - 2019-05-05 3.24 #75
 - 2019-04-24 10k downloads 👏 👏 👏!  
 - 2019-04-23 3.23 method share()

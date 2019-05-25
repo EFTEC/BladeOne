@@ -10,12 +10,13 @@ use InvalidArgumentException;
 use function count;
 use function array_merge;
 use function is_array;
+use ParseError;
 
 /**
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.24 2019-05-05
+ * @version 3.25 2019-05-24
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -53,7 +54,7 @@ class BladeOne
     protected $renderCount = 0;
     /** @var string Get the template path for the compiled views. */
     protected $templatePath;
-    /** @var string Get the compiled path for the compiled views. */
+    /** @var string Get the compiled path for the compiled views. If null then it uses the default path */
     protected $compiledPath;
     /** @var string the extension of the compiled file. */
     protected $compileExtension='.bladec';
@@ -73,8 +74,10 @@ class BladeOne
     protected $relativePath="";
     /** @var string[] Dictionary of assets */
     protected $assetDict;
-
-
+	/** @var bool if true then it removes tabs and unneeding spaces  */
+	protected $optimize=true;
+	/** @var bool if false, then the template is not compiled (but executed on memory).   */
+	protected $isCompiled=true;	
     /** @var bool  */
     protected $isRunFast = false;
     /** @var array Array of opening and closing tags for raw echos. */
@@ -144,7 +147,7 @@ class BladeOne
      * The folder at $compiledPath is created in case it doesn't exist.
      * @param string|array $templatePath .If null then it uses (caller_folder)/views
      * @param string $compiledPath .If null then it uses (caller_folder)/compiles
-     * @param $mode (see setMode)
+     * @param int $mode=[BladeOne::MODE_AUTO,BladeOne::MODE_DEBUG,BladeOne::MODE_FAST,BladeOne::MODE_SLOW][$i]
      */
     public function __construct($templatePath=null, $compiledPath=null,$mode=0)
     {
@@ -225,6 +228,33 @@ class BladeOne
         }
     }
 
+	/**
+	 * If true then it optimizes the result (it removes tab and extra spaces).
+	 * @param bool $bool
+	 * @return BladeOne
+	 */
+    public function setOptimize($bool=false) {
+    	$this->optimize=$bool;
+    	return $this;
+    }
+
+	/**
+	 * If false then the file is not compiled and it is executed directly from the memory.<br>
+	 * By default the value is true<br>
+	 * It also sets the mode to MODE_SLOW
+	 * @param bool $bool
+	 * @return BladeOne
+	 * @see \eftec\bladeone\BladeOne::setMode
+	 */
+	public function setIsCompiled($bool=false) {
+		
+		$this->isCompiled=$bool;
+		if (!$bool) {
+			$this->setMode(self::MODE_SLOW);
+		}
+		return $this;
+	}
+
     /**
      * Returns the current base url
      * @return string
@@ -234,12 +264,16 @@ class BladeOne
     }
 
     /**
-     * @param $view
-     * @param $compile
+     * It sets the template and compile path (without trailing slash).
+     * <p>Example:setPath("somefolder","otherfolder");
+     * @param null|string $templatePath If null then it uses the current path /views folder
+     * @param null|string $compiledPath If null then it uses the current path /views folder
      */
-    public function setPath($view,$compile) {
-        $this->templatePath=$view;
-        $this->compiledPath=$compile;
+    public function setPath($templatePath,$compiledPath) {
+	    if ($templatePath===null) $templatePath=getcwd(). '/views';
+	    if ($compiledPath===null) $compiledPath=getcwd() . '/compiles';
+	    $this->templatePath=$templatePath;
+        $this->compiledPath=$compiledPath;
     }
 
     /**
@@ -272,7 +306,7 @@ class BladeOne
 
     /**
      * Get the mode of the engine.See BladeOne::MODE_* constants
-     * @return int
+     * @return int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
      */
     public function getMode()
     {
@@ -284,7 +318,7 @@ class BladeOne
 
     /**
      * Set the compile mode
-     * @param $mode int See BladeOne::MODE_* constants
+     * @param $mode int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
      * @return void
      */
     public function setMode($mode)
@@ -332,7 +366,7 @@ class BladeOne
         } catch (Exception $e) {
             while (ob_get_level() > $obLevel) ob_end_clean();
             throw $e;
-        } catch (\ParseError $e) { // PHP 7
+        } catch (ParseError $e) { // PHP 7
             while (ob_get_level() > $obLevel) ob_end_clean();
             throw new Exception($e->getMessage(),$e->getCode());
         }
@@ -374,7 +408,10 @@ class BladeOne
             if ($view) {
                 $this->fileName = $view;
             }
-            $this->compile($view, $forced);
+            $result=$this->compile($view, $forced);
+            if (!$this->isCompiled) {
+            	return $this->evaluateText($result,$variables);
+            }
         } else {
             // running fast, we don't compile neither we check or read the original template.
             if ($view) {
@@ -382,6 +419,7 @@ class BladeOne
             }
         }
         $this->isRunFast = $runFast;
+        
         return $this->evaluatePath($this->getCompiledFile(), $variables);
     }
 
@@ -389,32 +427,38 @@ class BladeOne
      * Compile the view at the given path.
      * @param string $templateName The name of the template. Example folder.template
      * @param bool $forced If the compilation will be forced (always compile) or not.
-     * @return boolean True if the operation was correct, or false (if not exception) if it fails.
+     * @return boolean|string True if the operation was correct, or false (if not exception) 
+     *          if it fails. It returns a string (the content compiled) if isCompiled=false
      * @throws Exception
      */
     public function compile($templateName = null, $forced = false)
     {
-        $compiled = $this->getCompiledFile($templateName);
-        $template = $this->getTemplateFile($templateName);
+	    $compiled = $this->getCompiledFile($templateName);
+	    $template = $this->getTemplateFile($templateName);
+    	if (!$this->isCompiled) {
+		    $contents = $this->compileString($this->getFile($template));
+		    return $contents;
+	    }
         if ($forced || $this->isExpired($templateName)) {
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
-            if (!is_null($this->compiledPath)) {
-                $dir = dirname($compiled);
-                if (!file_exists($dir)) {
-                    $ok = @mkdir($dir, 0777, true);
-                    if ($ok===false) {
-                        $this->showError("Compiling", "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
-                        return false;
-                    }
-                }
-                $optimizedContent = preg_replace('/^ {2,}/m', ' ', $contents);
-                $optimizedContent = preg_replace('/^\t{2,}/m', ' ', $optimizedContent);
-                $ok = @file_put_contents($compiled, $optimizedContent);
+            $dir = dirname($compiled);
+            if (!file_exists($dir)) {
+                $ok = @mkdir($dir, 0777, true);
                 if ($ok===false) {
-                    $this->showError("Compiling", "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission");
+                    $this->showError("Compiling", "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.", true);
                     return false;
                 }
+            }
+            if ($this->optimize) {
+                // removes space and tabs and replaces by a single space
+                $contents = preg_replace('/^ {2,}/m', ' ', $contents);
+                $contents = preg_replace('/^\t{2,}/m', ' ', $contents);
+            }
+            $ok = @file_put_contents($compiled, $contents);
+            if ($ok===false) {
+                $this->showError("Compiling", "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission");
+                return false;
             }
         }
         return true;
@@ -2018,7 +2062,7 @@ class BladeOne
     public function getCompiledFile($templateName = '')
     {
         $templateName = (empty($templateName)) ? $this->fileName : $templateName;
-        if ($this->getMode() == self::MODE_DEBUG) {
+        if ($this->getMode()  == self::MODE_DEBUG) {
             return $this->compiledPath.'/'.$templateName.$this->compileExtension;
         } else {
             return $this->compiledPath.'/'.sha1($templateName).$this->compileExtension;
@@ -2152,8 +2196,9 @@ class BladeOne
     }
 
     /**
-     * @param $compiledFile
-     * @param $variables
+     * Evaluates a compiled file using the current variables
+     * @param string $compiledFile full path of the compile file.
+     * @param array $variables
      * @return string
      * @throws Exception
      */
@@ -2171,6 +2216,27 @@ class BladeOne
             $this->handleViewException($e);
         }
         return ltrim(ob_get_clean());
+    }
+
+	/**
+	 * Evaluates a text (string) using the current variables
+	 * @param string $content
+	 * @param array $variables
+	 * @return string
+	 * @throws Exception
+	 */
+    protected function evaluateText($content,$variables) {
+	    ob_start();
+	    extract($variables);
+	    // We'll evaluate the contents of the view inside a try/catch block so we can
+	    // flush out any stray output that might get out before an error occurs or
+	    // an exception is thrown. This prevents any partial views from leaking.
+	    try {
+		    eval(' ?>'.$content.'<?php ');
+	    } catch (\Exception $e) {
+		    $this->handleViewException($e);
+	    }
+	    return ltrim(ob_get_clean());
     }
 
     /**
