@@ -16,7 +16,7 @@ use ParseError;
  * Class BladeOne
  * @package  BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @version 3.26 2019-05-24
+ * @version 3.27 2019-05-25
  * @link https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -52,7 +52,7 @@ class BladeOne
     protected $pushes = [];
     /** @var int The number of active rendering operations. */
     protected $renderCount = 0;
-    /** @var string Get the template path for the compiled views. */
+    /** @var string|string[] Get the template path for the compiled views. */
     protected $templatePath;
     /** @var string Get the compiled path for the compiled views. If null then it uses the default path */
     protected $compiledPath;
@@ -266,7 +266,7 @@ class BladeOne
     /**
      * It sets the template and compile path (without trailing slash).
      * <p>Example:setPath("somefolder","otherfolder");
-     * @param null|string $templatePath If null then it uses the current path /views folder
+     * @param null|string|string[] $templatePath If null then it uses the current path /views folder
      * @param null|string $compiledPath If null then it uses the current path /views folder
      */
     public function setPath($templatePath,$compiledPath) {
@@ -2088,16 +2088,19 @@ class BladeOne
     }
 
     /**
-     * Get the full path of the compiled file.
+     * Get the full path of the template file.
+     * <p>Example: getTemplateFile('.abc.def')</p> 
      * @param string $templateName template name. If not template is set then it uses the base template.
      * @return string
      */
     public function getTemplateFile($templateName = '')
     {
         $templateName = (empty($templateName)) ? $this->fileName : $templateName;
+        if (strpos($templateName,'/')!==false) return $this->locateTemplate($templateName); // it's a literal
         $arr = explode('.', $templateName);
         $c = count($arr);
         if ($c == 1) {
+        	// its in the root of the template folder.
             return $this->locateTemplate($templateName.$this->fileExtension);
         } else {
             $file = $arr[$c - 1];
@@ -2186,8 +2189,8 @@ class BladeOne
 
     /**
      * Set the file extension for the template files.
-     * Including the leading dot for the extension is required, e.g. .blade.php
-     * @param $fileExtension
+     * It must includes the leading dot e.g. .blade.php
+     * @param string $fileExtension Example: .prefix.ext
      */
     public function setFileExtension($fileExtension)
     {

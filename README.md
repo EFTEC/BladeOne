@@ -333,16 +333,25 @@ $blade=new bladeone\BladeOne([__DIR__.'/views',__DIR__.'/viewsextras'],__DIR__.'
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
 - run([template],[array])  Runs the template and generates a compiled version (if its required), then it shows the result.
--   template is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder\example.blade.php"
--   array (optional). Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
+-   **template** is the template to open. The dots are used for to separate folders.  If the template is called "folder.example" then the engine tries to open the file "folder/example.blade.php"
+- - If the template has a slash (/), then it uses the full literal path, ignoring the default extension.  
+-   **array (optional)**. Indicates the values to use for the template.  For example ['v1'=>10'], indicates the variable $v1 is equals to 10
+
+Examples:
+
+```php
+echo $blade->run("path.hello",array("variable1"=>"value1")); // calls the template in /(view folders)/path/hello.blade.php
+echo $blade->run("path/hello.blade.php",array("variable1"=>"value1")); // calls the template in /(view folders)/path/hello.blade.php
+```
 
 ### share
+
+It adds a global variable
+
 ```php
 echo $blade->share("global","valueglobal"));
 echo $blade->run("hello",array("variable1"=>"value1"));
 ```
-
-It adds a global variable
 
 ### setOptimize(bool=false)
 
@@ -962,7 +971,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
-- 2019-05-25 3.26 #75 addes method @pushonce('namestack') and @endpuchonce
+- 2019-05-25 3.27 #78 Some comments are corrected. The views folder(s) could be an string or an array.  It also allows to specific the route of the template literally. Now  "folder.template" is equals to "folder/template.blade.php"
+- 2019-05-25 3.26 #75 added method @pushonce('namestack') and @endpuchonce
 - 2019-05-24 3.25 #77 added method setOptimize(bool) and setIsCompiled(bool)
 - 2019-05-05 3.24 #75
 - 2019-04-24 10k downloads 👏 👏 👏!  

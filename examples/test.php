@@ -52,7 +52,8 @@ try {
 
 
 try {
-    echo $blade->run("Test.hello"
+	//echo $blade->run("Test/hello.blade.php" // also works
+	echo $blade->run("Test.hello"
         , ["name" => "hola mundo"
             , 'records' => $records
             , 'users' => $users]);
