@@ -122,6 +122,8 @@ class BladeOne
     public $authCallBack;
     /** @var callable callback of validation. It is used for @canany */
     public $authAnyCallBack;
+    /** @var callable callback of errors. It is used for @error */
+    public $errorCallBack;
     /** @var string security token */
     public $csrf_token="";
     /**
@@ -159,10 +161,15 @@ class BladeOne
         $this->authCallBack=function($action=null, $subject=null) {
             return in_array($action,$this->currentPermission);
         };
+
         $this->authAnyCallBack=function($array=[]) {
             foreach($array as $permission) {
                 if (in_array($permission,$this->currentPermission)) return true;
             }
+            return false;
+        };
+
+        $this->errorCallBack = function ($key = null) {
             return false;
         };
 
@@ -302,6 +309,16 @@ class BladeOne
      */
     public function setAnyFunction(callable $fn) {
         $this->authAnyCallBack=$fn;
+    }
+
+    /**
+     * It sets the callback function for errors. It is used by @error
+     *
+     * @param callable $fn
+     */
+    public function setErrorFunction(callable $fn)
+    {
+        $this->errorCallBack = $fn;
     }
 
     /**
@@ -1012,6 +1029,28 @@ class BladeOne
     }
 
     /**
+     * @error('key')
+     *
+     * @param $expression
+     * @return string
+     */
+    protected function compileError($expression)
+    {
+        $key = $this->stripParentheses($expression);
+        return $this->phpTag . 'if (call_user_func($this->errorCallBack,' . $key . ')): ?>';
+    }
+
+    /**
+     * Compile the end-error statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileEndError()
+    {
+        return $this->phpTag . 'endif; ?>';
+    }
+
+    /**
      * Compile the else statements into valid PHP.
      * @return string
      */
@@ -1019,9 +1058,6 @@ class BladeOne
     {
         return $this->phpTag.'else: ?>';
     }
-
-
-
 
     /**
      * Compile the for statements into valid PHP.
