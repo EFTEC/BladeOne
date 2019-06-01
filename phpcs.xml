@@ -12,4 +12,9 @@
 
     <rule ref="PSR2"/>
 
+    <!-- Exclude Camel casing for _e,_ef,_n -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <exclude-pattern>/lib/BladeOneLang\.php</exclude-pattern>
+    </rule>
+
 </ruleset>
