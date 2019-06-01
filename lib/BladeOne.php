@@ -407,7 +407,7 @@ class BladeOne
      * @return string
      * @throws Exception
      */
-    public function runString($string, $data)
+    public function runString($string, $data = [])
     {
         $php = $this->compileString($string);
 
