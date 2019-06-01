@@ -8,6 +8,8 @@ use eftec\bladeone\BladeOneLang;
 /**
  * @author Jake Whiteley <jakebwhiteley@gmail.com>
  * @since  01/06/2019
+ *
+ * @property HasLang blade
  */
 class BladeOneLangTest extends AbstractBladeTestCase
 {
@@ -28,8 +30,8 @@ class BladeOneLangTest extends AbstractBladeTestCase
         ];
 
         copy(
-            \realpath( dirname(__FILE__ ) . '/resources/DummyLogContent.txt'),
-            \realpath( dirname(__FILE__ ) . '/resources/fullDummyLog.txt')
+            \realpath(dirname(__FILE__) . '/resources/DummyLogContent.txt'),
+            \realpath(dirname(__FILE__) . '/resources/fullDummyLog.txt')
         );
     }
 
@@ -138,7 +140,7 @@ class BladeOneLangTest extends AbstractBladeTestCase
      */
     public function testLargeLogFilesAreOverwritten()
     {
-        $this->blade->missingLog = realpath(dirname(__FILE__ ) . '/resources/fullDummyLog.txt');
+        $this->blade->missingLog = realpath(dirname(__FILE__) . '/resources/fullDummyLog.txt');
 
         $this->assertLessThan(\filesize($this->blade->missingLog), 100000);
         $this->blade->runString("Dog in spanish is @_e('Dog')");
