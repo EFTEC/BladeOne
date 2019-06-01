@@ -38,7 +38,11 @@
   },
   "autoload": {
     "psr-4": {
-      "eftec\\bladeone\\": "lib/",
+      "eftec\\bladeone\\": "lib/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
       "eftec\\tests\\": "tests/"
     }
   },
