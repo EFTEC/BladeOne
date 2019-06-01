@@ -3,10 +3,10 @@
 namespace eftec\tests;
 
 /**
- * @author G.J.W. Oolbekkink <g.j.w.oolbekkink@gmail.com>
- * @since  17/09/2018
+ * @author Jake Whiteley <jakebwhiteley@gmail.com>
+ * @since  01/06/2019
  */
-class CanTest extends AbstractBladeTestCase
+class ErrorTest extends AbstractBladeTestCase
 {
     /**
      * @throws \Exception
