@@ -27,7 +27,10 @@ class BladeOneLangTest extends AbstractBladeTestCase
             'There are %d %s cats' => 'hay %d %s gatos'
         ];
 
-        copy(\realpath('resources/DummyLogContent.txt'), \realpath('resources/fullDummyLog.txt'));
+        copy(
+            \realpath( dirname(__FILE__ ) . '/resources/DummyLogContent.txt'),
+            \realpath( dirname(__FILE__ ) . '/resources/fullDummyLog.txt')
+        );
     }
 
     /**
@@ -135,7 +138,7 @@ class BladeOneLangTest extends AbstractBladeTestCase
      */
     public function testLargeLogFilesAreOverwritten()
     {
-        $this->blade->missingLog = \realpath('resources/fullDummyLog.txt');
+        $this->blade->missingLog = realpath(dirname(__FILE__ ) . '/resources/fullDummyLog.txt');
 
         $this->assertLessThan(\filesize($this->blade->missingLog), 100000);
         $this->blade->runString("Dog in spanish is @_e('Dog')");
