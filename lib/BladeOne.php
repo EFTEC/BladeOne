@@ -24,7 +24,7 @@ class BladeOne
 
     /** @var array All of the registered extensions. */
     protected $extensions = [];
-    
+
     /** @var array All of the finished, captured sections. */
     protected $sections = [];
     /** @var string The template currently being compiled. For example "folder.template" */
@@ -77,7 +77,7 @@ class BladeOne
 	/** @var bool if true then it removes tabs and unneeding spaces  */
 	protected $optimize=true;
 	/** @var bool if false, then the template is not compiled (but executed on memory).   */
-	protected $isCompiled=true;	
+	protected $isCompiled=true;
     /** @var bool  */
     protected $isRunFast = false;
     /** @var array Array of opening and closing tags for raw echos. */
@@ -254,7 +254,7 @@ class BladeOne
 	 * @see \eftec\bladeone\BladeOne::setMode
 	 */
 	public function setIsCompiled($bool=false) {
-		
+
 		$this->isCompiled=$bool;
 		if (!$bool) {
 			$this->setMode(self::MODE_SLOW);
@@ -415,8 +415,8 @@ class BladeOne
 		        $this->variables  = array_merge($variables,$this->variablesGlobal);
 		        $variables=$this->variables;
 	        } else {
-		        $this->variables = $variables;	
-	        }            
+		        $this->variables = $variables;
+	        }
         }
         if (!$runFast) {
             // a) if the compile is forced then we compile the original file, then save the file.
@@ -436,7 +436,7 @@ class BladeOne
             }
         }
         $this->isRunFast = $runFast;
-        
+
         return $this->evaluatePath($this->getCompiledFile(), $variables);
     }
 
@@ -444,7 +444,7 @@ class BladeOne
      * Compile the view at the given path.
      * @param string $templateName The name of the template. Example folder.template
      * @param bool $forced If the compilation will be forced (always compile) or not.
-     * @return boolean|string True if the operation was correct, or false (if not exception) 
+     * @return boolean|string True if the operation was correct, or false (if not exception)
      *          if it fails. It returns a string (the content compiled) if isCompiled=false
      * @throws Exception
      */
@@ -1487,8 +1487,8 @@ class BladeOne
 	    $depth = isset($parts[2]) ? trim($parts[2]) : 512;
         return $this->phpTag." echo json_encode($parts[0], $options, $depth); ?>";
     }
-  
-    
+
+
     protected function compileIsset($expression)
     {
         return $this->phpTag."if(isset{$expression}): ?>";
@@ -2125,7 +2125,7 @@ class BladeOne
 
     /**
      * Get the full path of the template file.
-     * <p>Example: getTemplateFile('.abc.def')</p> 
+     * <p>Example: getTemplateFile('.abc.def')</p>
      * @param string $templateName template name. If not template is set then it uses the base template.
      * @return string
      */
@@ -2137,12 +2137,12 @@ class BladeOne
         $c = count($arr);
         if ($c == 1) {
         	// its in the root of the template folder.
-            return $this->locateTemplate($templateName.$this->fileExtension);
+            return $this->locateTemplate($templateName.$this->getFileExtension());
         } else {
             $file = $arr[$c - 1];
             array_splice($arr, $c - 1, $c - 1); // delete the last element
             $path = implode('/', $arr);
-            return $this->locateTemplate($path.'/'.$file.$this->fileExtension);
+            return $this->locateTemplate($path.'/'.$file.$this->getFileExtension());
         }
     }
 
