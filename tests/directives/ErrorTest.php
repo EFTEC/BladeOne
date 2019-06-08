@@ -1,6 +1,8 @@
 <?php
 
-namespace eftec\tests;
+namespace eftec\tests\directives;
+
+use eftec\tests\AbstractBladeTestCase;
 
 /**
  * @author Jake Whiteley <jakebwhiteley@gmail.com>
@@ -45,6 +47,35 @@ BLADE;
         $this->blade->setErrorFunction($errorCallback);
 
         $this->assertEqualsIgnoringWhitespace("Is hidden...", $this->blade->runString($bladeSource, []));
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function testErrorMessage()
+    {
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
+@error('key')
+    {{ $message }}
+@enderror
+BLADE;
+
+        $errorArray = [
+            'key' => 'error string'
+        ];
+
+        $errorCallback = function($key = null) use ($errorArray) {
+            if (array_key_exists($key, $errorArray)) {
+                return $errorArray[$key];
+            }
+
+            return false;
+        };
+
+        $this->blade->setErrorFunction($errorCallback);
+
+        $this->assertEqualsIgnoringWhitespace("error string", $this->blade->runString($bladeSource, []));
     }
 
     /**
