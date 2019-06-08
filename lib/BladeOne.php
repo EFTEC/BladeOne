@@ -2916,4 +2916,6 @@ class BladeOne
         return \count($this->componentStack) - 1;
     }
     //</editor-fold>
+
+    public function _this_should_fail() {}
 }
