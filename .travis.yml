@@ -4,3 +4,25 @@ php:
   - '7.1'
   - '7.2'
   - '7.3'
+
+matrix:
+  fast_finish: true
+
+  include:
+    - php: '7.1'
+      env: SNIFF=1
+
+before_install:
+  # Install PHP CodeSniffer.
+  - if [[ "$SNIFF" == "1" ]]; then composer self-update; fi
+  - if [[ "$SNIFF" == "1" ]]; then composer install; fi
+  - phpenv rehash
+
+script:
+  # Search for PHP syntax errors.
+  - find -L . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+  # Run PHPCS.
+  # If the custom ruleset is named `.phpcs.xml`, `phpcs.xml`, `.phpcs.xml.dist` or `phpcs.xml.dist`
+  # and, like the travis script, is in the root of the project, you can leave
+  # out the `--standard=` part of the command.
+  - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs .; fi
