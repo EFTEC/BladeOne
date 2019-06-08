@@ -1814,7 +1814,7 @@ class BladeOne
      * @param  callable $callback
      * @return string
      */
-    public function _if($name, callable $callback)
+    public function registerIfStatement($name, callable $callback)
     {
         $this->conditions[$name] = $callback;
 
@@ -1847,7 +1847,7 @@ class BladeOne
     public function __call($name, $args)
     {
         if ($name == 'if') {
-            return $this->_if(@$args[0], @$args[1]);
+            return $this->registerIfStatement(@$args[0], @$args[1]);
         }
         throw new Exception("function $name is not defined<br>");
     }
