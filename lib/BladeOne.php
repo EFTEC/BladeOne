@@ -2,12 +2,24 @@
 
 namespace eftec\bladeone;
 
+use function array_shift;
+use function array_unshift;
 use ArrayAccess;
+use function call_user_func;
 use Closure;
 use Countable;
 use Exception;
+use function extract;
 use InvalidArgumentException;
+use function ltrim;
+use function ob_get_clean;
+use function ob_start;
 use ParseError;
+use function stripcslashes;
+use function strlen;
+use function substr;
+use function trim;
+use function uksort;
 
 /**
  * BladeOne - A Blade Template implementation in a single file
@@ -17,7 +29,7 @@ use ParseError;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.27 2019-05-25
+ * @version   3.28 2019-06-08
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -111,6 +123,9 @@ class BladeOne
     protected $PARENTKEY = '@parentXYZABC';
     /** @var string $currentUser Current user. Example: john */
     public $currentUser = null;
+
+	
+
     /** @var string $currentRole Current role. Example: admin */
     public $currentRole = null;
     /** @var string[] $currentPermission Current permission. Example ['edit','add'] */
@@ -253,18 +268,6 @@ class BladeOne
     }
 
     /**
-     * If true then it optimizes the result (it removes tab and extra spaces).
-     *
-     * @param bool $bool
-     * @return BladeOne
-     */
-    public function setOptimize($bool = false)
-    {
-        $this->optimize = $bool;
-        return $this;
-    }
-
-    /**
      * If false then the file is not compiled and it is executed directly from the memory.<br>
      * By default the value is true<br>
      * It also sets the mode to MODE_SLOW
@@ -283,15 +286,7 @@ class BladeOne
         return $this;
     }
 
-    /**
-     * Returns the current base url
-     *
-     * @return string
-     */
-    public function getBaseUrl()
-    {
-        return $this->baseUrl;
-    }
+
 
     /**
      * It sets the template and compile path (without trailing slash).
@@ -325,61 +320,6 @@ class BladeOne
         $this->currentRole = $role;
         $this->currentPermission = $permission;
     }
-
-    /**
-     * It sets the callback function for authentication. It is used by @can and @cannot
-     *
-     * @param callable $fn
-     */
-    public function setCanFunction(callable $fn)
-    {
-        $this->authCallBack = $fn;
-    }
-
-    /**
-     * It sets the callback function for authentication. It is used by @canany
-     *
-     * @param callable $fn
-     */
-    public function setAnyFunction(callable $fn)
-    {
-        $this->authAnyCallBack = $fn;
-    }
-
-    /**
-     * It sets the callback function for errors. It is used by @error
-     *
-     * @param callable $fn
-     */
-    public function setErrorFunction(callable $fn)
-    {
-        $this->errorCallBack = $fn;
-    }
-
-    /**
-     * Get the mode of the engine.See BladeOne::MODE_* constants
-     *
-     * @return int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
-     */
-    public function getMode()
-    {
-        if (\defined('BLADEONE_MODE')) {
-            $this->mode = BLADEONE_MODE;
-        }
-        return $this->mode;
-    }
-
-    /**
-     * Set the compile mode
-     *
-     * @param $mode int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
-     * @return void
-     */
-    public function setMode($mode)
-    {
-        $this->mode = $mode;
-    }
-
     /**
      * run the blade engine. It returns the result of the code.
      *
@@ -393,6 +333,7 @@ class BladeOne
         $mode = $this->getMode();
         $forced = $mode & 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
         $runFast = $mode & 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
+	    $this->sections=[];
         if ($mode == 3) {
             $this->showError("run", "we can't force and run fast at the same time", true);
         }
@@ -412,8 +353,8 @@ class BladeOne
         $php = $this->compileString($string);
 
         $obLevel = \ob_get_level();
-        \ob_start();
-        \extract($data, EXTR_SKIP);
+        ob_start();
+        extract($data, EXTR_SKIP);
 
         $previousError = \error_get_last();
 
@@ -439,7 +380,7 @@ class BladeOne
             throw new Exception($lastError["message"], $lastError["type"]);
         }
 
-        return \ob_get_clean();
+        return ob_get_clean();
     }
 
     /**
@@ -482,7 +423,6 @@ class BladeOne
             }
         }
         $this->isRunFast = $runFast;
-
         return $this->evaluatePath($this->getCompiledFile(), $variables);
     }
 
@@ -667,8 +607,8 @@ class BladeOne
             $var = $this->stripQuotes($ex);
             $namespace = '';
         } else {
-            $var = $this->stripQuotes(\substr($ex, 0, $p0));
-            $namespace = $this->stripQuotes(\substr($ex, $p0 + 1));
+            $var = $this->stripQuotes(substr($ex, 0, $p0));
+            $namespace = $this->stripQuotes(substr($ex, $p0 + 1));
         }
         return $this->phpTag . "\$$var = \$this->injectClass('$namespace', '$var'); ?>";
     }
@@ -699,7 +639,7 @@ class BladeOne
         // add them here at the end of the template. This gets used mainly for the
         // template inheritance via the extends keyword that should be appended.
         if (\count($this->footer) > 0) {
-            $result = \ltrim($result, PHP_EOL)
+            $result = ltrim($result, PHP_EOL)
                 . PHP_EOL . \implode(PHP_EOL, \array_reverse($this->footer));
         }
         return $result;
@@ -715,7 +655,7 @@ class BladeOne
     {
         foreach ($this->extensions as $compiler) {
             echo "<hr><hr>extensions $compiler<hr><hr>";
-            $value = \call_user_func($compiler, $value, $this);
+            $value = call_user_func($compiler, $value, $this);
         }
         return $value;
     }
@@ -761,7 +701,7 @@ class BladeOne
                 if ($this->customDirectivesRT[$match[1]] == true) {
                     $match[0] = $this->compileStatementCustom($match);
                 } else {
-                    $match[0] = \call_user_func($this->customDirectives[$match[1]], static::get($match, 3));
+                    $match[0] = call_user_func($this->customDirectives[$match[1]], static::get($match, 3));
                 }
             } elseif (\method_exists($this, $method = 'compile' . \ucfirst($match[1]))) {
                 $match[0] = $this->$method(static::get($match, 3));
@@ -798,7 +738,7 @@ class BladeOne
         $pattern = \sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->rawTags[0], $this->rawTags[1]);
         $callback = function ($matches) {
             $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
-            return $matches[1] ? \substr(
+            return $matches[1] ? substr(
                 $matches[0],
                 1
             ) : $this->phpTag . 'echo ' . $this->compileEchoDefaults($matches[2]) . '; ?>' . $whitespace;
@@ -818,7 +758,7 @@ class BladeOne
         $callback = function ($matches) {
             $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
             $wrapped = \sprintf($this->echoFormat, $this->compileEchoDefaults($matches[2]));
-            return $matches[1] ? \substr($matches[0], 1) : $this->phpTag . 'echo ' . $wrapped . '; ?>' . $whitespace;
+            return $matches[1] ? substr($matches[0], 1) : $this->phpTag . 'echo ' . $wrapped . '; ?>' . $whitespace;
         };
         return \preg_replace_callback($pattern, $callback, $value);
     }
@@ -866,7 +806,7 @@ class BladeOne
         //$segments = explode('=', preg_replace("/[\(\)\\\"\']/", '', $expression));
         $segments = \explode('=', \preg_replace("/[\(\)\\\']/", '', $expression));
         $value = (\count($segments) >= 2) ? ' =@' . $segments[1] : '++';
-        return $this->phpTag . \trim($segments[0]) . $value . "; ?>";
+        return $this->phpTag . trim($segments[0]) . $value . "; ?>";
     }
 
     /**
@@ -1189,8 +1129,8 @@ class BladeOne
     protected function compileForeach($expression)
     {
         \preg_match('/\( *(.*) * as *([^\)]*)/', $expression, $matches);
-        $iteratee = \trim($matches[1]);
-        $iteration = \trim($matches[2]);
+        $iteratee = trim($matches[1]);
+        $iteration = trim($matches[2]);
         $initLoop = "\$__currentLoopData = {$iteratee}; \$this->addLoop(\$__currentLoopData);";
         $iterateLoop = '$this->incrementLoopIndices(); $loop = $this->getFirstLoop();';
         return $this->phpTag . "{$initLoop} foreach(\$__currentLoopData as {$iteration}): {$iterateLoop} ?>";
@@ -1537,7 +1477,7 @@ class BladeOne
      */
     public function compilePushOnce($expression)
     {
-        $key = '$__pushonce__' . \trim(\substr($expression, 2, -2));
+        $key = '$__pushonce__' . trim(substr($expression, 2, -2));
         //die(1);
         return $this->phpTag . "if(!isset($key)): $key=1;  \$this->startPush{$expression}; ?>";
     }
@@ -1634,8 +1574,8 @@ class BladeOne
     protected function compileJSon($expression)
     {
         $parts = \explode(',', $this->stripParentheses($expression));
-        $options = isset($parts[1]) ? \trim($parts[1]) : JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
-        $depth = isset($parts[2]) ? \trim($parts[2]) : 512;
+        $options = isset($parts[1]) ? trim($parts[1]) : JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
+        $depth = isset($parts[2]) ? trim($parts[2]) : 512;
         return $this->phpTag . " echo json_encode($parts[0], $options, $depth); ?>";
     }
 
@@ -1667,7 +1607,7 @@ class BladeOne
     public function startPush($section, $content = '')
     {
         if ($content === '') {
-            if (\ob_start()) {
+            if (ob_start()) {
                 $this->pushStack[] = $section;
             }
         } else {
@@ -1685,8 +1625,8 @@ class BladeOne
     public function startPrepend($section, $content = '')
     {
         if ($content === '') {
-            if (\ob_start()) {
-                \array_unshift($this->pushStack[], $section);
+            if (ob_start()) {
+                array_unshift($this->pushStack[], $section);
             }
         } else {
             $this->extendPush($section, $content);
@@ -1704,7 +1644,7 @@ class BladeOne
             $this->showError('stopPush', 'Cannot end a section without first starting one', true);
         }
         $last = \array_pop($this->pushStack);
-        $this->extendPush($last, \ob_get_clean());
+        $this->extendPush($last, ob_get_clean());
         return $last;
     }
 
@@ -1718,8 +1658,8 @@ class BladeOne
         if (empty($this->pushStack)) {
             $this->showError('stopPrepend', 'Cannot end a section without first starting one', true);
         }
-        $last = \array_shift($this->pushStack);
-        $this->extendStartPush($last, \ob_get_clean());
+        $last = array_shift($this->pushStack);
+        $this->extendStartPush($last, ob_get_clean());
         return $last;
     }
 
@@ -1866,7 +1806,7 @@ class BladeOne
      */
     public function check($name, ...$parameters)
     {
-        return \call_user_func($this->conditions[$name], ...$parameters);
+        return call_user_func($this->conditions[$name], ...$parameters);
     }
 
     /**
@@ -1929,7 +1869,7 @@ class BladeOne
     protected function restoreVerbatimBlocks($result)
     {
         $result = \preg_replace_callback('/' . \preg_quote($this->verbatimPlaceholder) . '/', function () {
-            return \array_shift($this->verbatimBlocks);
+            return array_shift($this->verbatimBlocks);
         }, $result);
         $this->verbatimBlocks = [];
         return $result;
@@ -2024,11 +1964,11 @@ class BladeOne
     protected function getEchoMethods()
     {
         $methods = [
-            'compileRawEchos' => \strlen(\stripcslashes($this->rawTags[0])),
-            'compileEscapedEchos' => \strlen(\stripcslashes($this->escapedTags[0])),
-            'compileRegularEchos' => \strlen(\stripcslashes($this->contentTags[0])),
+            'compileRawEchos' => strlen(stripcslashes($this->rawTags[0])),
+            'compileEscapedEchos' => strlen(stripcslashes($this->escapedTags[0])),
+            'compileRegularEchos' => strlen(stripcslashes($this->contentTags[0])),
         ];
-        \uksort($methods, function ($method1, $method2) use ($methods) {
+        uksort($methods, function ($method1, $method2) use ($methods) {
             // Ensure the longest tags are processed first
             if ($methods[$method1] > $methods[$method2]) {
                 return -1;
@@ -2086,7 +2026,7 @@ class BladeOne
     public function startSection($section, $content = '')
     {
         if ($content === '') {
-            \ob_start() && $this->sectionStack[] = $section;
+            ob_start() && $this->sectionStack[] = $section;
         } else {
             $this->extendSection($section, $content);
         }
@@ -2122,9 +2062,9 @@ class BladeOne
         }
         $last = \array_pop($this->sectionStack);
         if ($overwrite) {
-            $this->sections[$last] = \ob_get_clean();
+            $this->sections[$last] = ob_get_clean();
         } else {
-            $this->extendSection($last, \ob_get_clean());
+            $this->extendSection($last, ob_get_clean());
         }
         return $last;
     }
@@ -2142,9 +2082,9 @@ class BladeOne
         }
         $last = \array_pop($this->sectionStack);
         if (isset($this->sections[$last])) {
-            $this->sections[$last] .= \ob_get_clean();
+            $this->sections[$last] .= ob_get_clean();
         } else {
-            $this->sections[$last] = \ob_get_clean();
+            $this->sections[$last] = ob_get_clean();
         }
         return $last;
     }
@@ -2469,18 +2409,20 @@ class BladeOne
      */
     protected function evaluatePath($compiledFile, $variables)
     {
-        \ob_start();
-        \extract($variables);
+        ob_start();
+	    // note, the variables are extracted locally inside this method,
+	    // they are not global variables :-3
+	    extract($variables); 
         // We'll evaluate the contents of the view inside a try/catch block so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
         try {
             /** @noinspection PhpIncludeInspection */
             include $compiledFile;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->handleViewException($e);
         }
-        return \ltrim(\ob_get_clean());
+        return ltrim(ob_get_clean());
     }
 
     /**
@@ -2493,29 +2435,29 @@ class BladeOne
      */
     protected function evaluateText($content, $variables)
     {
-        \ob_start();
-        \extract($variables);
+        ob_start();
+        extract($variables);
         // We'll evaluate the contents of the view inside a try/catch block so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
         try {
             eval(' ?>' . $content . '<?php ');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->handleViewException($e);
         }
-        return \ltrim(\ob_get_clean());
+        return ltrim(ob_get_clean());
     }
 
     /**
      * Handle a view exception.
      *
-     * @param  \Exception $e
+     * @param Exception $e
      * @return void
      * @throws $e
      */
     protected function handleViewException($e)
     {
-        \ob_get_clean();
+        ob_get_clean();
         throw $e;
     }
     //</editor-fold>
@@ -2579,7 +2521,7 @@ class BladeOne
             return empty($array) ? static::value($default) : \reset($array);
         }
         foreach ($array as $key => $value) {
-            if (\call_user_func($callback, $key, $value)) {
+            if (call_user_func($callback, $key, $value)) {
                 return $value;
             }
         }
@@ -2633,10 +2575,10 @@ class BladeOne
      * @param  string $expression
      * @return string
      */
-    protected function stripParentheses($expression)
+    public function stripParentheses($expression)
     {
         if (static::startsWith($expression, '(')) {
-            $expression = \substr($expression, 1, -1);
+            $expression = substr($expression, 1, -1);
         }
         return $expression;
     }
@@ -2647,9 +2589,9 @@ class BladeOne
      * @param mixed $text
      * @return null|string|string[]
      */
-    protected function stripQuotes($text)
+    public function stripQuotes($text)
     {
-        $unquoted = \preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3', \trim($text));
+        $unquoted = \preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3', trim($text));
         return $unquoted;
     }
 
@@ -2760,15 +2702,7 @@ class BladeOne
         return ($last = static::last($this->loopsStack)) ? (object)$last : null;
     }
 
-    /**
-     * Get the entire loop stack.
-     *
-     * @return array
-     */
-    public function getLoopStack()
-    {
-        return $this->loopsStack;
-    }
+
 
     /**
      * Get the rendered contents of a partial from a loop.
@@ -2797,7 +2731,7 @@ class BladeOne
             // view. Alternatively, the "empty view" could be a raw string that begins
             // with "raw|" for convenience and to let this know that it is a string.
             if (static::startsWith($empty, 'raw|')) {
-                $result = \substr($empty, 4);
+                $result = substr($empty, 4);
             } else {
                 $result = $this->run($empty, []);
             }
@@ -2815,7 +2749,7 @@ class BladeOne
      */
     public function showError($id, $text, $critic = false)
     {
-        \ob_get_clean();
+        ob_get_clean();
         echo "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
         echo "BladeOne Error [{$id}]:<br>";
         echo "<span style='color:white'>$text</span><br></div>\n";
@@ -2834,7 +2768,7 @@ class BladeOne
      */
     public function startComponent($name, array $data = [])
     {
-        if (\ob_start()) {
+        if (ob_start()) {
             $this->componentStack[] = $name;
 
             $this->componentData[$this->currentComponent()] = $data;
@@ -2864,7 +2798,7 @@ class BladeOne
     {
         return \array_merge(
             $this->componentData[\count($this->componentStack)],
-            ['slot' => \trim(\ob_get_clean())],
+            ['slot' => trim(ob_get_clean())],
             $this->slots[\count($this->componentStack)]
         );
     }
@@ -2881,7 +2815,7 @@ class BladeOne
         if (\count(\func_get_args()) == 2) {
             $this->slots[$this->currentComponent()][$name] = $content;
         } else {
-            if (\ob_start()) {
+            if (ob_start()) {
                 $this->slots[$this->currentComponent()][$name] = '';
 
                 $this->slotStack[$this->currentComponent()][] = $name;
@@ -2903,7 +2837,7 @@ class BladeOne
         );
 
         $this->slots[$this->currentComponent()]
-        [$currentSlot] = \trim(\ob_get_clean());
+        [$currentSlot] = trim(ob_get_clean());
     }
 
     /**
@@ -2915,5 +2849,176 @@ class BladeOne
     {
         return \count($this->componentStack) - 1;
     }
-    //</editor-fold>
+
+	//<editor-fold desc="setter and getters">
+	/**
+	 * @return string
+	 */
+	public function getPhpTag()
+	{
+		return $this->phpTag;
+	}
+
+	/**
+	 * @param string $phpTag
+	 */
+	public function setPhpTag($phpTag)
+	{
+		$this->phpTag = $phpTag;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCurrentUser()
+	{
+		return $this->currentUser;
+	}
+
+	/**
+	 * @param string $currentUser
+	 */
+	public function setCurrentUser($currentUser)
+	{
+		$this->currentUser = $currentUser;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCurrentRole()
+	{
+		return $this->currentRole;
+	}
+
+	/**
+	 * @param string $currentRole
+	 */
+	public function setCurrentRole($currentRole)
+	{
+		$this->currentRole = $currentRole;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getCurrentPermission()
+	{
+		return $this->currentPermission;
+	}
+
+	/**
+	 * @param string[] $currentPermission
+	 */
+	public function setCurrentPermission($currentPermission)
+	{
+		$this->currentPermission = $currentPermission;
+	}
+
+	/**
+	 * @param callable $authCallBack
+	 */
+	public function setAuthCallBack($authCallBack)
+	{
+		$this->authCallBack = $authCallBack;
+	}
+	
+	/**
+	 * @param callable $authAnyCallBack
+	 */
+	public function setAuthAnyCallBack($authAnyCallBack)
+	{
+		$this->authAnyCallBack = $authAnyCallBack;
+	}
+	/**
+	 * @param callable $errorCallBack
+	 */
+	public function setErrorCallBack($errorCallBack)
+	{
+		$this->errorCallBack = $errorCallBack;
+	}
+	/**
+	 * Returns the current base url
+	 *
+	 * @return string
+	 */
+	public function getBaseUrl()
+	{
+		return $this->baseUrl;
+	}
+	/**
+	 * Get the mode of the engine.See BladeOne::MODE_* constants
+	 *
+	 * @return int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
+	 */
+	public function getMode()
+	{
+		if (\defined('BLADEONE_MODE')) {
+			$this->mode = BLADEONE_MODE;
+		}
+		return $this->mode;
+	}
+
+	/**
+	 * If true then it optimizes the result (it removes tab and extra spaces).
+	 *
+	 * @param bool $bool
+	 * @return BladeOne
+	 */
+	public function setOptimize($bool = false)
+	{
+		$this->optimize = $bool;
+		return $this;
+	}
+
+	/**
+	 * It sets the callback function for authentication. It is used by @can and @cannot
+	 *
+	 * @param callable $fn
+	 */
+	public function setCanFunction(callable $fn)
+	{
+		$this->authCallBack = $fn;
+	}
+
+	/**
+	 * It sets the callback function for authentication. It is used by @canany
+	 *
+	 * @param callable $fn
+	 */
+	public function setAnyFunction(callable $fn)
+	{
+		$this->authAnyCallBack = $fn;
+	}
+
+	/**
+	 * It sets the callback function for errors. It is used by @error
+	 *
+	 * @param callable $fn
+	 */
+	public function setErrorFunction(callable $fn)
+	{
+		$this->errorCallBack = $fn;
+	}
+
+	/**
+	 * Set the compile mode
+	 *
+	 * @param $mode int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
+	 * @return void
+	 */
+	public function setMode($mode)
+	{
+		$this->mode = $mode;
+	}
+	/**
+	 * Get the entire loop stack.
+	 *
+	 * @return array
+	 */
+	public function getLoopStack()
+	{
+		return $this->loopsStack;
+	}	
+	//</editor-fold>
 }

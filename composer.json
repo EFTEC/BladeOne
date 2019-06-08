@@ -19,7 +19,7 @@
   ],
   "extra": {
     "branch-alias": {
-      "dev-master": "3.27-dev"
+      "dev-master": "3.28-dev"
     }
   },
   "config": {
@@ -31,6 +31,9 @@
     "php": ">=5.6",
     "ext-json": "*"
   },
+  "suggest": {
+    "ext-mbstring": "This extension is used if it's active"
+  },  
   "archive": {
     "exclude": [
       "/examples"
