@@ -442,7 +442,6 @@ class BladeOne
         return \ob_get_clean();
     }
 
-
     /**
      * run the blade engine. It returns the result of the code.
      *
@@ -511,9 +510,11 @@ class BladeOne
             if (!\file_exists($dir)) {
                 $ok = @\mkdir($dir, 0777, true);
                 if ($ok === false) {
-                    $this->showError("Compiling",
+                    $this->showError(
+                        "Compiling",
                         "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.",
-                        true);
+                        true
+                    );
                     return false;
                 }
             }
@@ -524,8 +525,10 @@ class BladeOne
             }
             $ok = @\file_put_contents($compiled, $contents);
             if ($ok === false) {
-                $this->showError("Compiling",
-                    "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission");
+                $this->showError(
+                    "Compiling",
+                    "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission"
+                );
                 return false;
             }
         }
@@ -795,8 +798,10 @@ class BladeOne
         $pattern = \sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->rawTags[0], $this->rawTags[1]);
         $callback = function ($matches) {
             $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
-            return $matches[1] ? \substr($matches[0],
-                1) : $this->phpTag . 'echo ' . $this->compileEchoDefaults($matches[2]) . '; ?>' . $whitespace;
+            return $matches[1] ? \substr(
+                $matches[0],
+                1
+            ) : $this->phpTag . 'echo ' . $this->compileEchoDefaults($matches[2]) . '; ?>' . $whitespace;
         };
         return \preg_replace_callback($pattern, $callback, $value);
     }
@@ -994,6 +999,7 @@ class BladeOne
     }
 
     /**
+     * Compile the canany statements into valid PHP.
      * canany(['edit','write'])
      *
      * @param $expression
@@ -1020,7 +1026,6 @@ class BladeOne
             return $this->phpTag . 'elseif (call_user_func($this->authAnyCallBack,' . $role . ')): ?>';
         }
     }
-
 
     /**
      * Compile the guest statements into valid PHP.
@@ -1910,7 +1915,7 @@ class BladeOne
         return \implode(' ', \array_map('static::convertArgCallBack', \array_keys($array), $array));
     }
 
-    function convertArgCallBack($k, $v)
+    protected static function convertArgCallBack($k, $v)
     {
         return $k . "='{$v}' ";
     }
