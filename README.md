@@ -971,6 +971,7 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-06-08 3.28 Added setter and getters. #84
 - 2019-05-25 3.27 #78 Some comments are corrected. The views folder(s) could be an string or an array.  It also allows to specific the route of the template literally. Now  "folder.template" is equals to "folder/template.blade.php"
 - 2019-05-25 3.26 #75 added method @pushonce('namestack') and @endpuchonce
 - 2019-05-24 3.25 #77 added method setOptimize(bool) and setIsCompiled(bool)
