@@ -12,6 +12,12 @@ matrix:
     - php: '7.1'
       env: SNIFF=1
 
+before_install:
+  # Install PHP CodeSniffer.
+  - if [[ "$SNIFF" == "1" ]]; then composer self-update; fi
+  - if [[ "$SNIFF" == "1" ]]; then composer install; fi
+  - phpenv rehash
+
 script:
   # Search for PHP syntax errors.
   - find -L . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
