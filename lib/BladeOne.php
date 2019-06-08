@@ -1968,7 +1968,7 @@ class BladeOne
      * @param bool $fullToken It returns a token with the current ip.
      * @return string
      */
-    public function csrf_token($fullToken = false)
+    public function getCsrfToken($fullToken = false)
     {
         if ($this->csrf_token == "") {
             $this->regenerateToken();
