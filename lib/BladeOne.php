@@ -1617,30 +1617,6 @@ class BladeOne
     }
 
     /**
-     * @param callable $authCallBack
-     */
-    public function setAuthCallBack($authCallBack)
-    {
-        $this->authCallBack = $authCallBack;
-    }
-
-    /**
-     * @param callable $authAnyCallBack
-     */
-    public function setAuthAnyCallBack($authAnyCallBack)
-    {
-        $this->authAnyCallBack = $authAnyCallBack;
-    }
-
-    /**
-     * @param callable $errorCallBack
-     */
-    public function setErrorCallBack($errorCallBack)
-    {
-        $this->errorCallBack = $errorCallBack;
-    }
-
-    /**
      * Returns the current base url
      *
      * @return string
