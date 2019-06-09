@@ -2403,7 +2403,7 @@ class BladeOne
     protected function compileError($expression)
     {
         $key = $this->stripParentheses($expression);
-        return $this->phpTag . 'if (call_user_func($this->errorCallBack,' . $key . ')): ?>';
+        return $this->phpTag . '$message = call_user_func($this->errorCallBack,' . $key . '); if ($message): ?>';
     }
 
     /**
