@@ -24,7 +24,7 @@ trait BladeOneLang
     public $missingLog = '';
 
     /** @var array Hold dictionary of translations */
-    static public $dictionary = [];
+    public static $dictionary = [];
 
     /**
      * Tries to translate the word if its in the array defined by BladeOneLang::$dictionary

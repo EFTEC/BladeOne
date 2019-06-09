@@ -6,6 +6,7 @@ $finder = PhpCsFixer\Finder::create()
 return PhpCsFixer\Config::create()
 	->setRiskyAllowed(true)
     ->setRules([
-        'native_function_invocation' => true,
+        '@PSR2' => true,
+        'array_syntax' => ['syntax' => 'short'],
     ])
     ->setFinder($finder);

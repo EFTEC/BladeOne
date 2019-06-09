@@ -379,7 +379,6 @@ class BladeOne
      */
     public function setIsCompiled($bool = false)
     {
-
         $this->isCompiled = $bool;
         if (!$bool) {
             $this->setMode(self::MODE_SLOW);
@@ -1064,7 +1063,6 @@ class BladeOne
 
     public function ipClient()
     {
-
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             if (preg_match("/^([d]{1,3}).([d]{1,3}).([d]{1,3}).([d]{1,3})$/", $_SERVER['HTTP_X_FORWARDED_FOR'])) {
                 return $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -1081,7 +1079,6 @@ class BladeOne
      */
     public function csrfIsValid()
     {
-
         if (@$_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->csrf_token = @$_POST['_token'];
             return $this->csrf_token . "|" . $this->ipClient() == @$_SESSION["_token"];
@@ -2531,7 +2528,6 @@ class BladeOne
      */
     protected function compileEmpty($expression = '')
     {
-
         if (($expression == '')) {
             $empty = '$__empty_' . $this->forelseCounter--;
             return $this->phpTag . "endforeach; if ({$empty}): ?>";
