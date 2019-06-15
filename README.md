@@ -22,44 +22,46 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
 - [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
   * [laravel blade tutorial](#laravel-blade-tutorial)
   * [About this version](#about-this-version)
-  * [Why to use it instead of native PHP?](#why-to-use-it-instead-of-native-php-)
+  * [Why to use it instead of native PHP?](#why-to-use-it-instead-of-native-php)
     + [Separation of concerns](#separation-of-concerns)
   * [Security](#security)
   * [Easy to use](#easy-to-use)
     + [Performance](#performance)
     + [Scalable](#scalable)
-  * [Install (pick one of the next one)](#install--pick-one-of-the-next-one-)
+  * [Install (pick one of the next one)](#install-pick-one-of-the-next-one)
   * [Usage](#usage)
-  * [Security (optional)](#security--optional-)
-  * [Business Logic/Controller methods](#business-logic-controller-methods)
+  * [Security (optional)](#security-optional)
+  * [Business Logic/Controller methods](#business-logiccontroller-methods)
     + [constructor](#constructor)
     + [run](#run)
     + [setMode](#setmode)
-    + [setFileExtension($ext), getFileExtension](#setfileextension--ext---getfileextension)
-    + [setCompiledExtension($ext), getCompiledExtension](#setcompiledextension--ext---getcompiledextension)
+    + [setFileExtension($ext), getFileExtension](#setfileextensionext-getfileextension)
+    + [setCompiledExtension($ext), getCompiledExtension](#setcompiledextensionext-getcompiledextension)
     + [runString](#runstring)
     + [directive](#directive)
     + [directiveRT](#directivert)
-    + [BLADEONE_MODE (global constant) (optional)](#bladeone-mode--global-constant---optional-)
+    + [BLADEONE_MODE (global constant) (optional)](#bladeone_mode-global-constant-optional)
+    + [setErrorFunction](#seterrorfunction)    
+    + [setCanFunction and setAnyFunction](#setcanfunction-and-setanyfunction)
   * [Template tags](#template-tags)
     + [Template Inheritance](#template-inheritance)
-    + [In the master page (layout)](#in-the-master-page--layout-)
-    + [Using the master page (using the layout)](#using-the-master-page--using-the-layout-)
+    + [In the master page (layout)](#in-the-master-page-layout)
+    + [Using the master page (using the layout)](#using-the-master-page-using-the-layout)
     + [variables](#variables)
     + [logic](#logic)
     + [loop](#loop)
-      - [@for($variable;$condition;$increment) / @endfor](#-for--variable--condition--increment-----endfor)
-      - [@inject('variable name', 'namespace')](#-inject--variable-name----namespace--)
-      - [@foreach($array as $alias) / @endforeach](#-foreach--array-as--alias-----endforeach)
-      - [@forelse($array as $alias) / @empty / @endforelse](#-forelse--array-as--alias-----empty----endforelse)
-      - [@while($condition) / @endwhile](#-while--condition-----endwhile)
-      - [@splitforeach($nElem,$textbetween,$textend="")  inside @foreach](#-splitforeach--nelem--textbetween--textend------inside--foreach)
-      - [@continue / @break](#-continue----break)
-    + [switch / case](#switch---case)
+      - [@for($variable;$condition;$increment) / @endfor](#forvariableconditionincrement--endfor)
+      - [@inject('variable name', 'namespace')](#injectvariable-name-namespace)
+      - [@foreach($array as $alias) / @endforeach](#foreacharray-as-alias--endforeach)
+      - [@forelse($array as $alias) / @empty / @endforelse](#forelsearray-as-alias--empty--endforelse)
+      - [@while($condition) / @endwhile](#whilecondition--endwhile)
+      - [@splitforeach($nElem,$textbetween,$textend="")  inside @foreach](#splitforeachnelemtextbetweentextend--inside-foreach)
+      - [@continue / @break](#continue--break)
+    + [switch / case](#switch--case)
     + [Sub Views](#sub-views)
   * [Comments](#comments)
     + [Stacks](#stacks)
-  * [@set (new for 1.5)](#-set--new-for-15-)
+  * [@set (new for 1.5)](#set-new-for-15)
     + [Service Inject](#service-inject)
   * [Asset Management](#asset-management)
     + [@asset](#asset)
@@ -67,10 +69,10 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
     + [setBaseUrl($url)](#setbaseurlurl)
     + [getBaseUrl()](#getbaseurl)
     + [addAssetDict()](#addassetdictnameurl)
-  * [Extensions Libraries (optional)](#extensions-libraries--optional-)
+  * [Extensions Libraries (optional)](#extensions-libraries-optional)
   * [Definition of Blade Template](#definition-of-blade-template)
   * [Differences between Blade and BladeOne](#differences-between-blade-and-bladeone)
-  * [Differences between Blade+Laravel and BladeOne+BladeOneHTML](#differences-between-blade-laravel-and-bladeone-bladeonehtml)
+  * [Differences between Blade+Laravel and BladeOne+BladeOneHTML](#differences-between-bladelaravel-and-bladeonebladeonehtml)
   * [Version](#version)
     + [Changes between 2.x and 3.0](#changes-between-2x-and-30)
   * [todo](#todo)
@@ -445,6 +447,57 @@ define("BLADEONE_MODE",BladeOne::MODE_AUTO);
 
 - `BLADEONE_MODE` Is a global constant that defines the behaviour of the engine.
 - Optionally, you could use `$blade->setMode(BladeOne::MODE_AUTO);`
+
+### setErrorFunction
+In order to use `@error()`, you must first add a callback function so that BladeOne knows where to get your errors from.
+
+The callback will be passed the `$key` to find errors for, and must return `false` if no error is found, and `true` if it is.
+
+If you want to use `$message` as per the Laravel implementation, just before sure your error callback returns an error `string` or `false` if not found:
+```php
+$errorCallback = function($key = null) use ($errorArray) {
+    if (array_key_exists($key, $errorArray)) {
+        return $errorArray[$key];
+    }
+
+    return false;
+};
+
+$blade->setErrorFunction($errorCallback);
+```
+
+```php
+<input id="title" type="text" class="@error('title') is-invalid @enderror">
+
+@error('title')
+    <div class="alert alert-danger">{{ $message }}</div>
+@enderror
+```
+
+### setCanFunction and setAnyFunction
+The `setCanFunction`  must be set in order to use `@can`/`@cannot`/`@elsecan`/`@Eesecannot`, and likewise `setAnyFunction` is used to allow `@canany` to work.
+
+Very similar to `setErrorFunction`, just pass a `callable` in which will return a `bool` value indicating is the current user can perform a given action:
+
+```php
+$blade->setCanFunction(function($action, $subject = null) {
+    // Perform your permissions checks here
+    
+    return true;
+});
+```
+
+#### Quick permission validation
+You can also provide the current user's permissions via the `setAuth` method for a quick solution:
+
+```php
+$permissions = ['read', 'write'];
+$blade->setAuth($username, $role, $permissions);
+```
+
+This method will perform a simple check to see if the action requested by `@can`/`@cannot` etc is in the provided array of permissions.
+
+Although this works fine for simple solutions, adding a full-featured check via `setCanFunction` and `setAnyFunction` is advisable.
 
 ## Template tags
 

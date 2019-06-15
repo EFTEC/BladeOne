@@ -170,8 +170,8 @@ trait BladeOneHtmlBootstrap
                     $extra .= ' checked="checked"';
                 }
             }
-            return '<div><label>' . $this->inputParent($id, $value, 'checkbox', $extra) . ' ' . $text . '</label></div>';
             //return '<div class="checkbox"><label>'.$this->inputParent($id, $value, 'checkbox', $extra) . ' ' . $text.'</label></div>';
+            return '<div><label>' . $this->inputParent($id, $value, 'checkbox', $extra) . ' ' . $text . '</label></div>';
         } else {
             \array_push($this->htmlCurrentId, $id);
             return '<div>';

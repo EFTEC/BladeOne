@@ -28,13 +28,12 @@ namespace eftec\bladeone;
  */
 trait BladeOneHtml
 {
-    protected $htmlItem = array(); // indicates the type of the current tag. such as select/selectgroup/etc.
-    protected $htmlCurrentId = array(); //indicates the id of the current tag.
+    protected $htmlItem = []; // indicates the type of the current tag. such as select/selectgroup/etc.
+    protected $htmlCurrentId = []; //indicates the id of the current tag.
 
     //<editor-fold desc="compile function">
     protected function compileSelect($expression)
     {
-
         \array_push($this->htmlItem, 'select');
         return $this->phpTag . "echo \$this->select{$expression}; ?>";
     }
@@ -51,7 +50,6 @@ trait BladeOneHtml
 
     protected function compileSelectGroup($expression)
     {
-
         \array_push($this->htmlItem, 'selectgroup');
         $this->compilePush('');
         return $this->phpTag . "echo \$this->select{$expression}; ?>";
@@ -206,7 +204,6 @@ trait BladeOneHtml
      */
     private function listboxesFindArray($find, $array, $field)
     {
-
         if (\count($array) == 0) {
             return false;
         }
