@@ -15,9 +15,9 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 [![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.8 (December 2019)**. It misses some commands [missing](#missing) but nothing more.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.8 (March 2019)**. It misses some commands [missing](#missing) but nothing more.
 
-Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,8 (2019 января) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
+Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,8 (2019 Марта) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
 
 - [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
   * [laravel blade tutorial](#laravel-blade-tutorial)
