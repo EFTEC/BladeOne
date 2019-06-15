@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.28 2019-06-08
+ * @version   3.30 2019-06-14
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
