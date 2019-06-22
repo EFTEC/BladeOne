@@ -17,7 +17,18 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 
 NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.8 (March 2019)**. It misses some commands [missing](#missing) but nothing more.
 
-Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,8 (2019 Марта) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.  
+Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,8 (2019 Марта) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.
+
+
+## NOTE about questions, reports, doubts or suggestings:
+
+✔ If you want to open an inquiry, do you have a doubt, or you find a bug, then you could open an [ISSUE](https://github.com/EFTEC/BladeOne/issues).   
+Please, don't email me (or send me PM) directly for question or reports.    
+Also, if you want to reopen a report, then you are open to do that.     
+I will try to answer all and every one of the question (in my limited time).    
+
+
+  
 
 - [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
   * [laravel blade tutorial](#laravel-blade-tutorial)
