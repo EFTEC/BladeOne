@@ -15,7 +15,11 @@ $compiledFolder = __DIR__ . '/compiled';
 
 class myBlade extends BladeOne
 {
-    use BladeOneHtml, BladeOneCustom;
+    protected function compileMyFunction($expression='')
+    {
+        return $this->phpTag . "echo 'YAY MY FUNCTION IS WORKING ".$expression."'; ?>";
+    }
+    
 }
 
 $blade = new myBlade($views, $compiledFolder);
@@ -23,7 +27,7 @@ $blade = new myBlade($views, $compiledFolder);
 
 //</editor-fold>
 try {
-    echo $blade->run("TestCustom.test", []);
+    echo $blade->run("TestCustom.test2", []);
 } catch (Exception $e) {
     echo "error found " . $e->getMessage() . "<br>" . $e->getTraceAsString();
 }
