@@ -23,7 +23,11 @@
 
 <div class="container">
     <hr style="background-color: cadetblue">container<br>
+    @@yield('footer')
     @yield('footer')
+    <hr>
+    @@yield('footermissing')
+    @yield('footermissing',$this->runChild("Test.footermising"))
     <hr>
 </div>
 </body>

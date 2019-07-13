@@ -6,14 +6,14 @@
 
 include "../lib/BladeOne.php";
 
-$blade=new \eftec\bladeone\BladeOne(null,null,\eftec\bladeone\BladeOne::MODE_DEBUG);
+$blade=new \eftec\bladeone\BladeOne(null, null, \eftec\bladeone\BladeOne::MODE_DEBUG);
 
 
 
 //<editor-fold desc="Example data">
 $name="New User";
-$records=array(1,2,3);
-$users=array();
+$records=[1,2,3];
+$users=[];
 $usr=new stdClass();
     $usr->id=1;
     $usr->name="John Doe";
@@ -27,34 +27,35 @@ $usr=new stdClass();
     $usr->number=5;
 $users[]=$usr;
 
-$drinks7=array('Cocacola','Pepsi','Fanta','Sprite','7up');
-$drinks8=array('Cocacola','Pepsi','Fanta','Sprite','7up','Bilz&Pap');
+$drinks7=['Cocacola','Pepsi','Fanta','Sprite','7up'];
+$drinks8=['Cocacola','Pepsi','Fanta','Sprite','7up','Bilz&Pap'];
 //</editor-fold>
 
 
 
-class ClassService {
-    public static function myfunction() {
+class ClassService
+{
+    public static function myfunction()
+    {
         return "hello world";
     }
 }
 
-function asset($url='') {
+function asset($url='')
+{
     return "hello world ".$url;
-    
 }
 
 try {
-    echo $blade->runString('<p>{{$direccion}}</p>', array('direccion' => 'Some address 20 #33-58'));
+    echo $blade->runString('<p>{{$direccion}}</p>', ['direccion' => 'Some address 20 #33-58']);
 } catch (Exception $e) {
     echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
 }
 
 
 try {
-	//echo $blade->run("Test/hello.blade.php" // also works
-	echo $blade->run("Test.hello"
-        , ["name" => "hola mundo"
+    //echo $blade->run("Test/hello.blade.php" // also works
+    echo $blade->run("Test.hello", ["name" => "hola mundo"
             , 'records' => $records
             , 'users' => $users]);
 } catch (Exception $e) {

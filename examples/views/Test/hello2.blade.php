@@ -3,6 +3,7 @@
 @section('title', 'Page Title')
 
 @section('sidebar')
+    @include('Test.sometemplate')
     <p style="background-color: darkgrey">It is a sidebar created in hello2.blade.php. It could be used as many times as you want
     @parent
     </p>
