@@ -7,8 +7,3 @@
     </p>
 @endsection
 
-@section('footermissing')
-    <p style="background-color: darkgrey">If you are reading this, then footermissing is not missing.
-    </p>
-    <p>Note: @@parent Don't add this one.</p>
-@endsection
