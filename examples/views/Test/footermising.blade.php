@@ -1,1 +1,1 @@
-<hr>**The fottermissing is missing**</hr>
+<hr>**The fottermissing is missing {{$other}} {{myfunction()}} **</hr>
