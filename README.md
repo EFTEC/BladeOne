@@ -27,7 +27,17 @@ Please, don't email me (or send me PM) directly for question or reports.
 Also, if you want to reopen a report, then you are open to do that.     
 I will try to answer all and every one of the question (in my limited time).    
 
+## Some example
 
+[ExampleTicketPHP](https://github.com/jorgecc/ExampleTicketPHP)
+
+![](https://camo.githubusercontent.com/3c938f71f46a90eb85bb104f0f396fcba62b8f4a/68747470733a2f2f74686570726163746963616c6465762e73332e616d617a6f6e6177732e636f6d2f692f3436696b7061376661717677726533797537706a2e6a7067 =200px)
+
+[Example cupcakes](https://github.com/EFTEC/example.cupcakes)
+
+![](https://github.com/EFTEC/example.cupcakes/raw/master/docs/result.jpg =200px)
+
+## Index
   
 
 - [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
