@@ -35,7 +35,7 @@ I will try to answer all and every one of the question (in my limited time).
 
 [Example cupcakes](https://github.com/EFTEC/example.cupcakes)
 
-![](https://github.com/EFTEC/example.cupcakes/raw/master/docs/result.jpg =200px)
+<img src="https://github.com/EFTEC/example.cupcakes/raw/master/docs/result.jpg" alt="example php bladeone cupcakes" width="200"/>
 
 ## Index
   
