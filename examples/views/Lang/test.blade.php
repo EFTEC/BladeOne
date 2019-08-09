@@ -1,5 +1,5 @@
 <hr>
-Translation
+Translation (it must translate to japanese)
 <hr>
 @@_e('Hat') :<br>
 @_e('Hat')<br><br>

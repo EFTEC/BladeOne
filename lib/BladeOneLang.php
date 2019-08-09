@@ -11,9 +11,10 @@ namespace eftec\bladeone;
  * @ _n('Product','Products',$n)
  * @ _ef('hello %s',$user)
  * </code>
+ * Not: It is not needing anymore (BladeOne already includes the functionalities). It is keep for compatibility purpose.
  *
  * @package    eftec\bladeone
- * @version    1.0 2017-12-17 (1)
+ * @version    1.1 2019-08-09
  * @link       https://github.com/EFTEC/BladeOne
  * @author     Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  * @copyright  2017 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
@@ -31,6 +32,7 @@ trait BladeOneLang
      * If the operation fails then, it returns the original expression without translation.
      *
      * @param $phrase
+     *
      * @return string
      */
     public function _e($phrase)
@@ -48,6 +50,7 @@ trait BladeOneLang
      * If the operation fails then, it returns the original expression without translation.
      *
      * @param $phrase
+     *
      * @return string
      */
     public function _ef($phrase)
@@ -67,6 +70,7 @@ trait BladeOneLang
      * @param string $phrase
      * @param string $phrases
      * @param int    $num
+     *
      * @return string
      */
     public function _n($phrase, $phrases, $num = 0)
@@ -85,6 +89,7 @@ trait BladeOneLang
      * Used for @_e directive.
      *
      * @param $expression
+     *
      * @return string
      */
     protected function compile_e($expression)
@@ -96,6 +101,7 @@ trait BladeOneLang
      * Used for @_ef directive.
      *
      * @param $expression
+     *
      * @return string
      */
     protected function compile_ef($expression)
@@ -107,6 +113,7 @@ trait BladeOneLang
      * Used for @_n directive.
      *
      * @param $expression
+     *
      * @return string
      */
     protected function compile_n($expression)
@@ -117,9 +124,10 @@ trait BladeOneLang
     //</editor-fold>
 
     /**
-     * Log a missing translation to $this->missingLog.
+     * Log a missing translation into the file $this->missingLog.<br>
+     * If the file is not defined, then it doesn't write the log.
      *
-     * @param $txt
+     * @param string $txt Message to write on.
      */
     private function missingTranslation($txt)
     {

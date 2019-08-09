@@ -19,7 +19,7 @@
   ],
   "extra": {
     "branch-alias": {
-      "dev-master": "3.30-dev"
+      "dev-master": "3.31-dev"
     }
   },
   "config": {

@@ -1049,6 +1049,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-08-09 3.31 The operations _e(), _n() and _ef() used for language are now integrated on BladeOne. 
+ So we don't need BladeOneLang anymore.
 - 2019-06-14 3.30 Here it goes again.Returned cause psr-2 (but it breaks phpstorm so I added exceptions)
 - 2019-06-08 3.29 More cleanup. tabs removed, some exceptions were changed, added imports (instead of /)
 - 2019-06-08 3.28 Added setter and getters and solved some issues

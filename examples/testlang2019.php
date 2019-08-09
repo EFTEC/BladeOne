@@ -11,18 +11,15 @@ use eftec\bladeone\BladeOneLang;
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
 
-class myBlade extends BladeOne
-{
-    use BladeOneLang;
-}
 
-$blade=new myBlade($views, $compiledFolder);
+
+$blade=new BladeOne($views, $compiledFolder);
 
 
 $blade->missingLog='c:\temp\missingkey.txt'; // if a traduction is missing the it will be saved here.
 
 $lang='jp'; // try es,jp or fr
-include __DIR__.'/lang/'.$lang.'.php';
+include __DIR__.'/lang2/'.$lang.'.php';
 
 
 

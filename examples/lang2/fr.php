@@ -3,9 +3,9 @@
 use eftec\bladeone\BladeOneLang;
 
 /**
- * @see \myBlade is defined on /BladeOne/examples/testlang.php
+ * @see \$blade is defined on /BladeOne/examples/testlang.php
  */
-myBlade::$dictionary=array(
+$blade::$dictionary=array(
     'Hat'=>'Sombrero'
     ,'Cat'=>'chat'
     ,'Cats'=>'Chats'
