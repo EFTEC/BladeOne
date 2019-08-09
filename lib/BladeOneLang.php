@@ -11,13 +11,13 @@ namespace eftec\bladeone;
  * @ _n('Product','Products',$n)
  * @ _ef('hello %s',$user)
  * </code>
- * Not: It is not needing anymore (BladeOne already includes the functionalities). It is keep for compatibility purpose.
  *
  * @package    eftec\bladeone
  * @version    1.1 2019-08-09
  * @link       https://github.com/EFTEC/BladeOne
  * @author     Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  * @copyright  2017 Jorge Patricio Castro Castillo MIT License. Don't delete this comment, its part of the license.
+ * @deprecated Note: It is not needing anymore (BladeOne already includes the same functionalities). It is keep for compatibility purpose.
  */
 trait BladeOneLang
 {
