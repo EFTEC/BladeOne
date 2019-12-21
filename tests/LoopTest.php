@@ -6,11 +6,13 @@ namespace eftec\tests;
  * @author G.J.W. Oolbekkink <g.j.w.oolbekkink@gmail.com>
  * @since 17/09/2018
  */
-class LoopTest extends AbstractBladeTestCase {
+class LoopTest extends AbstractBladeTestCase
+{
     /**
      * @throws \Exception
      */
-    public function testFor() {
+    public function testFor()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @for($i = 1; $i <= 6; $i++) 
@@ -23,7 +25,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testForEach() {
+    public function testForEach()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @foreach($items as $item)
@@ -32,11 +35,33 @@ BLADE;
 BLADE;
         $this->assertEqualsIgnoringWhitespace("Item a Item b", $this->blade->runString($bladeSource, ['items' => ['a', 'b']]));
     }
-
     /**
      * @throws \Exception
      */
-    public function testForElse() {
+    public function testForEachLoopVar()
+    {
+        $bladeSource = /** @lang Blade */
+            <<<'BLADE'
+@foreach($items as $item)
+    Item_index:{{$loop->index}},iteration:{{$loop->iteration}},first:{{$loop->first}}
+    ,last:{{$loop->last}},remaining:{{$loop->remaining}}
+    ,count:{{$loop->count}},depth:{{$loop->depth}},parent:{{$loop->parent}}
+    ,even:{{$loop->even}},odd:{{$loop->odd}},value{{ $item }}
+@endforeach
+BLADE;
+        $this->assertEqualsIgnoringWhitespace("Item_index:0,iteration:1,first:1"."
+        ,last:,remaining:2"."
+        ,count:2,depth:1,parent:"."
+        ,even:1,odd:,valuea"."
+        Item_index:1,iteration:2,first:"."
+        ,last:,remaining:1,count:2,depth:1,parent:"."
+        ,even:,odd:1,valueb", $this->blade->runString($bladeSource, ['items' => ['a', 'b']]));
+    }
+    /**
+     * @throws \Exception
+     */
+    public function testForElse()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @forelse($items as $item)
@@ -52,7 +77,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testWhile() {
+    public function testWhile()
+    {
         $bladeSource = <<<'BLADE'
 @php($i = 1)
 @while($i < 5)
@@ -61,6 +87,5 @@ BLADE;
 @endwhile
 BLADE;
         $this->assertEqualsIgnoringWhitespace("Item 2 Item 3 Item 4 Item 5", $this->blade->runString($bladeSource, []));
-
     }
 }

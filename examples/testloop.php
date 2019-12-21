@@ -7,8 +7,7 @@ use eftec\bladeone\BladeOne;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
-$blade=new BladeOne($views,$compiledFolder,BladeOne::MODE_SLOW);
-
+$blade=new BladeOne($views,$compiledFolder,BladeOne::MODE_DEBUG);
 
 
 //<editor-fold desc="Example data">

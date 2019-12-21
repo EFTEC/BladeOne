@@ -3,12 +3,13 @@
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License.
  */
 
+use eftec\bladeone\BladeOne;
 
 include "../lib/BladeOne.php";
 
-$blade=new \eftec\bladeone\BladeOne(null, null, \eftec\bladeone\BladeOne::MODE_DEBUG);
+$blade=new BladeOne(null, null, BladeOne::MODE_DEBUG);
 
-
+$blade->setCompiledExtension();
 
 //<editor-fold desc="Example data">
 $name="New User";

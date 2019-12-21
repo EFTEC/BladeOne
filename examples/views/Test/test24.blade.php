@@ -38,7 +38,7 @@ This will be first...
 @endforelse
 
 @forelse ($emptyArray as $user)
-    <li>{{ $user->name }}</li>
+    <li>{{ $john->name }}</li>
 @empty
     <p>No users</p>
 @endforelse

@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.31 2019-08-09
+ * @version   3.32 2019-12-21
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -1304,10 +1304,13 @@ class BladeOne
         $length = \is_array($data) || $data instanceof Countable ? \count($data) : null;
         $parent = static::last($this->loopsStack);
         $this->loopsStack[] = [
-            'index' => 0,
+            'index' => -1,
+            'iteration' => 0,
             'remaining' => isset($length) ? $length + 1 : null,
             'count' => $length,
             'first' => true,
+            'even' => false,
+            'odd' => false,
             'last' => isset($length) ? $length == 1 : null,
             'depth' => \count($this->loopsStack) + 1,
             'parent' => $parent ? (object)$parent : null,
@@ -1323,7 +1326,10 @@ class BladeOne
     {
         $loop = &$this->loopsStack[\count($this->loopsStack) - 1];
         $loop['index']++;
-        $loop['first'] = $loop['index'] == 1;
+        $loop['iteration']++;
+        $loop['first'] = $loop['index'] == 0;
+        $loop['even']=$loop['index'] % 2 ==0;
+        $loop['odd']=!$loop['even'];
         if (isset($loop['count'])) {
             $loop['remaining']--;
             $loop['last'] = $loop['index'] == $loop['count'];

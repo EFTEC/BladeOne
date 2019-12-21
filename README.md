@@ -1049,6 +1049,9 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-12-21 3.32 
+    * For #96 added $loop->even and $loop->odd and $loop->iteration
+    * Also, **$loop->index now starts with 0 instead of 1**
 - 2019-08-09 3.31 The operations _e(), _n() and _ef() used for language are now integrated on BladeOne. 
  So we don't need BladeOneLang anymore.
 - 2019-06-14 3.30 Here it goes again.Returned cause psr-2 (but it breaks phpstorm so I added exceptions)

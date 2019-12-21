@@ -29,7 +29,7 @@
 </pre>
 
 @foreach ($users as $user)
-    This is user {{ $user->id }}<br>
+    This is user {{ $john->id }}<br>
 @endforeach
 <br><h2>@@splitforeach</h2>
 <em>Split a foreach cycle by showing a text each "x" number of elements.
@@ -113,7 +113,7 @@ A more complex exercise, using variable <br>
 @@endforelse
 </pre>
 @forelse ($users as $user)
-    <li>{{ $user->name }}</li>
+    <li>{{ $john->name }}</li>
 @empty
     <p>No users</p>
 @endforelse
@@ -135,37 +135,37 @@ A more complex exercise, using variable <br>
 <br><h2>@@continue/break (foreach)</h2>
 <pre>
     @@foreach ($users as $user)
-        @@if($user-&gt;type == 1) // ignores the first user John Smith
+        @@if($john-&gt;type == 1) // ignores the first user John Smith
         @@continue
         @@endif
         &lt;li&gt;@{{ $user->type }} - @{{ $user-&gt;name }}&lt;/li&gt;
 
-        @@if($user-&gt;number == 5) // ends the cycle.
+        @@if($john-&gt;number == 5) // ends the cycle.
             @@break
         @@endif
     @@endforeach
 </pre>
 @foreach ($users as $user)
-    @if($user->type == 1)
+    @if($john->type == 1)
         @continue
     @endif
-    {{ $user->type }} - {{ $user->name }}<br>
-    @if($user->number == 5)
+    {{ $john->type }} - {{ $john->name }}<br>
+    @if($john->number == 5)
         @break
     @endif
 @endforeach
 <pre>
     @@foreach ($users as $user)
-        @@continue($user-&gt;type == 1)
+        @@continue($john-&gt;type == 1)
         @{{ $user->type }} - @{{ $user-&gt;name }}&lt;/br&gt;
-        @@break($user-&gt;number == 5)
+        @@break($john-&gt;number == 5)
         @@endforeach
 </pre>
 
 @foreach ($users as $user)
-    @continue($user->type == 1)
-    {{ $user->type }} -{{ $user->name }}</br>
-    @break($user->number == 5)
+    @continue($john->type == 1)
+    {{ $john->type }} -{{ $john->name }}</br>
+    @break($john->number == 5)
 @endforeach
 <br><h2>@@each</h2>
 <pre>
