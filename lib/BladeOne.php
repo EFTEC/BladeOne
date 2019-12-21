@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.32 2019-12-21
+ * @version   3.33 2019-12-21
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -943,7 +943,7 @@ class BladeOne
             if ($this->templateExist($view)) {
                 return $this->runChild($view, $value);
             }
-        };
+        }
         return '';
     }
 
@@ -1042,8 +1042,7 @@ class BladeOne
      */
     public function yieldSection()
     {
-        $r = @$this->sections[$this->stopSection()];
-        return $r;
+        return @$this->sections[$this->stopSection()];
     }
 
     /**
@@ -1152,8 +1151,7 @@ class BladeOne
     public function yieldContent($section, $default = '')
     {
         if (isset($this->sections[$section])) {
-            $content = \str_replace($this->PARENTKEY, $default, $this->sections[$section]);
-            return $content;
+            return \str_replace($this->PARENTKEY, $default, $this->sections[$section]);
         } else {
             return $default;
         }
@@ -1762,8 +1760,7 @@ class BladeOne
      */
     public function stripQuotes($text)
     {
-        $unquoted = \preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3', \trim($text));
-        return $unquoted;
+        return \preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3', \trim($text));
     }
 
     /**
@@ -2653,10 +2650,7 @@ class BladeOne
             // if the file doesn't exist then it's created
             $this->compile($file, true);
         }
-        $txt = $this->getFile($fileC);
-
-        //eval("\$x=\$this->run($expression);")."123";
-        return $txt;
+        return $this->getFile($fileC);
     }
 
     /**
@@ -2713,8 +2707,7 @@ class BladeOne
         $compiled = $this->getCompiledFile($templateName);
         $template = $this->getTemplateFile($templateName);
         if (!$this->isCompiled) {
-            $contents = $this->compileString($this->getFile($template));
-            return $contents;
+            return $this->compileString($this->getFile($template));
         }
         if ($forced || $this->isExpired($templateName)) {
             // compile the original file
@@ -3112,24 +3105,16 @@ class BladeOne
         if (!$this->missingLog) {
             return; // if there is not a file assigned then it skips saving.
         }
-
         $fz = @\filesize($this->missingLog);
-        $mode = 'a';
-
         if (\is_object($txt) || \is_array($txt)) {
             $txt = \print_r($txt, true);
         }
-
         // Rewrite file if more than 100000 bytes
-        if ($fz > 100000) {
-            $mode = 'w';
-        }
-
-        $fp = \fopen($this->missingLog, 'w');
+        $mode=($fz > 100000) ? 'w':'a';
+        $fp = \fopen($this->missingLog, $mode);
         \fwrite($fp, $txt . "\n");
         \fclose($fp);
     }
-    
     
     // </editor-fold>
 }

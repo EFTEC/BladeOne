@@ -1049,6 +1049,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2019-12-21 3.33
+    *  For #99  Fixed missingTranslation(). Also some cleanups.
 - 2019-12-21 3.32 
     * For #96 added $loop->even and $loop->odd and $loop->iteration
     * Also, **$loop->index now starts with 0 instead of 1**
