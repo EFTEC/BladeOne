@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpFullyQualifiedNameUsageInspection */
+
+/** @noinspection PhpUnused */
 
 namespace eftec\bladeone;
 
@@ -197,9 +199,9 @@ trait BladeOneHtml
      * Find an element in a array of arrays
      * If the element doesn't exist in the array then it returns false, otherwise returns true
      *
-     * @param       $find
+     * @param string $find
      * @param array $array array of primitives or objects
-     * @param array $field field to search
+     * @param string $field field to search
      * @return bool
      */
     private function listboxesFindArray($find, $array, $field)
@@ -491,6 +493,16 @@ trait BladeOneHtml
             $result .= "</optgroup>";
         }
         return $result;
+    }
+    protected $paginationStructure=['selHtml'=>'<li class="selected" %3s><a href="%1s">%2s</a></li>'
+                                    ,'html'=>'<li %3s><a href="%1s">%2s</a></li>'
+                                    ,'maxItem'=>5
+                                    ,'url'=>''];
+    public function pagination($id,$curPage,$maxPage,$baseUrl,$extra='') {
+        $r="<ul $extra>";
+        
+        $r.="</ul>";
+        return $r;
     }
 
     public function input($id, $value = '', $type = 'text', $extra = '')

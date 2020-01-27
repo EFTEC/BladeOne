@@ -43,6 +43,9 @@ $blade->directiveRT('datetimert', function ($expression) {
     echo $expression->format('m/d/Y H:i');
 });
 
+$blade->directive('randomValFromArr', function ($expression) {
+    return '<?php $array='.$expression.'; $val = array_rand($array, 1); echo $array[$val]; ?>';
+});
 
 try {
     echo $blade->run("Test2.directive", ['mary'=>'Mary Sue','now'=>new DateTime()]);

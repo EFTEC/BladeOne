@@ -8,7 +8,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 [![Build Status](https://travis-ci.org/EFTEC/BladeOne.svg?branch=master)](https://travis-ci.org/EFTEC/BladeOne)
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
 [![Total Downloads](https://poser.pugx.org/eftec/bladeone/downloads)](https://packagist.org/packages/eftec/bladeone)
-[![Maintenance](https://img.shields.io/maintenance/yes/2019.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2020.svg)]()
 [![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
 [![php](https://img.shields.io/badge/php->5.6-green.svg)]()
 [![php](https://img.shields.io/badge/php-7.x-green.svg)]()
@@ -32,13 +32,6 @@ I will try to answer all and every one of the question (in my limited time).
 |-------|---------|
 | <img src="https://camo.githubusercontent.com/3c938f71f46a90eb85bb104f0f396fcba62b8f4a/68747470733a2f2f74686570726163746963616c6465762e73332e616d617a6f6e6177732e636f6d2f692f3436696b7061376661717677726533797537706a2e6a7067" alt="example php bladeone" width="200"/>   | <img src="https://github.com/EFTEC/example.cupcakes/raw/master/docs/result.jpg" alt="example php bladeone cupcakes" width="200"/>  |
  
-
-
-
-
-
-
-
 
 
 ## Index
@@ -881,6 +874,7 @@ script1
 
 
 
+
 ## @set (new for 1.5)
 ```
 @set($variable=[value])
@@ -969,6 +963,13 @@ $obj->setBaseUrl("https://www.example.com/urlbase/"); // with or without trail s
 ```
 > Security: Don't use the variables $SERVER['HTTP_HOST'] or $SERVER['SERVER_NAME'] unless the url is protected or the address is sanitized.
 
+### @use(namespace)
+It works exactly like the command "use" of PHP.  
+
+```
+@use(\namespace1\namespace2)
+```
+
 ### @resource
 
 It's similar to `@asset`. However, it uses a relative path.
@@ -990,6 +991,7 @@ It sets the base url.
 $obj=new BladeOne();
 $obj->setBaseUrl("https://www.example.com/urlbase/"); // with or without trail slash
 ```
+
 
 
 ### getBaseUrl()
@@ -1016,6 +1018,65 @@ $url=$obj->addAssetDict('css/style.css','http://....');
 
 [BladeOneLang Documentation](BladeOneLang.md)
 
+## Calling a static methods inside the template.
+
+Since **3.34**, BladeOne allows to call a static method inside a class.
+
+Let's say we have a class with namespace \namespace1\namespace2
+
+```php
+namespace namespace1\namespace2 {
+    class SomeClass {
+        public static function Method($arg='') {
+            return "hi world";
+        }
+    }
+}
+```
+
+### Method 1 PHP Style
+
+We could add a "use" in the template.  Example:
+
+Add the next line to the template
+```html
+@use(\namespace1\namespace2)
+```
+
+and the next lines to the template (different methods)
+
+```html
+{{SomeClass::Method()}}
+{!! SomeClass::Method() !!}
+@SomeClass::Method()
+```
+
+> All those methods are executed at runtime
+
+
+### Method 2 Alias
+Or we could define alias for each classes.
+
+php code:
+```php
+    $blade = new BladeOne();
+    // with the method addAliasClasses
+    $blade->addAliasClasses('SomeClass', '\namespace1\namespace2\SomeClass');
+    // with the setter setAliasClasses
+    $blade->setAliasClasses(['SomeClass'=>'\namespace1\namespace2\SomeClass']);
+    // or directly in the field
+    $blade->aliasClasses=['SomeClass'=>'\namespace1\namespace2\SomeClass'];
+```
+
+Template:
+```html
+{{SomeClass::Method()}}
+{!! SomeClass::Method() !!}
+@SomeClass::Method()
+```
+
+> We won't need alias or use for global classes.
+
 ## Definition of Blade Template
 https://laravel.com/docs/5.6/blade
 
@@ -1034,6 +1095,8 @@ Instead of use the Laravel functions, for example Form::select
 {{Form::select('countryID', $arrayCountries,$countrySelected)}}
 ```
 
+> Note: Since 3.34 this method is also allowed.
+
 We have native tags as @select,@item,@items and @endselect
 ```html
 @select('countryID')
@@ -1049,6 +1112,16 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2020-01-17 3.34
+    * It allows to calls a static method inside a class
+    * See section **Calling a static methods inside the template**.
+    * new field $aliasClasses
+    * new method getAliasClasses()
+    * new method setAliasClasses()
+    * new method addAliasClasses()
+    * new method compileUse()
+    * new method compileStatementClass()
+    * new method fixNamespaceClass()
 - 2019-12-21 3.33
     *  For #99  Fixed missingTranslation(). Also some cleanups.
 - 2019-12-21 3.32 
@@ -1215,15 +1288,13 @@ Some features are missing because they are new, or they lack documentation or th
 - ~~@csrf. Pending~~ DONE
 - ~~@dd. Done. Ugly but it is done too.~~ DONE
 - ~~@method. Pending~~ DONE
-
-
-
-
-
+- Comment with the name of the template folder. It is not done because it could break functionality.
+ BladeOne allows to write and work even with non-html templates.
+ 
 
 
 ## License
 MIT License.
-BladeOne (c) 2016-2019 Jorge Patricio Castro Castillo
+BladeOne (c) 2016-2020 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is mostly a original work)
 

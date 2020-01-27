@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.33 2019-12-21
+ * @version   3.34 2020-01-27
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -151,7 +151,10 @@ class BladeOne
 
     /** @var array Hold dictionary of translations */
     public static $dictionary = [];
-    
+    /** @var array Alias (with or without namespace) of the classes) */
+    public $aliasClasses=[];
+
+
     //</editor-fold>
 
     //<editor-fold desc="constructor">
@@ -348,6 +351,30 @@ class BladeOne
         $this->templatePath = $templatePath;
         $this->compiledPath = $compiledPath;
     }
+    /**
+     * @return array
+     */
+    public function getAliasClasses()
+    {
+        return $this->aliasClasses;
+    }
+
+    /**
+     * @param array $aliasClasses
+     */
+    public function setAliasClasses($aliasClasses)
+    {
+        $this->aliasClasses = $aliasClasses;
+    }
+
+    /**
+     * @param string $aliasName
+     * @param string $classWithNS
+     */
+    public function addAliasClasses($aliasName, $classWithNS)
+    {
+        $this->aliasClasses[$aliasName] = $classWithNS;
+    }
 
     /**
      * Authentication. Sets with a user,role and permission
@@ -407,6 +434,10 @@ class BladeOne
 
         return \ob_get_clean();
     }
+    protected function compileUse($expression)
+    {
+        return $this->phpTag . 'use '.$this->stripParentheses($expression).'; ?>';
+    }
 
     /**
      * Compile the given Blade template contents.
@@ -458,7 +489,13 @@ class BladeOne
      * Parse the tokens from the template.
      *
      * @param array $token
+     *
      * @return string
+     *
+     * @see \eftec\bladeone\BladeOne::compileStatements
+     * @see \eftec\bladeone\BladeOne::compileExtends
+     * @see \eftec\bladeone\BladeOne::compileComments
+     * @see \eftec\bladeone\BladeOne::compileEchos
      */
     protected function parseToken($token)
     {
@@ -539,7 +576,6 @@ class BladeOne
     public function compilePushOnce($expression)
     {
         $key = '$__pushonce__' . \trim(\substr($expression, 2, -2));
-        //die(1);
         return $this->phpTag . "if(!isset($key)): $key=1;  \$this->startPush{$expression}; ?>";
     }
 
@@ -1406,7 +1442,7 @@ class BladeOne
         if ($mode == 3) {
             $this->showError("run", "we can't force and run fast at the same time", true);
         }
-        return $this->runInternal($view, $variables, $forced, true, $runFast);
+        return  $this->runInternal($view, $variables, $forced, true, $runFast);
     }
 
     /**
@@ -1772,7 +1808,6 @@ class BladeOne
     protected function compileExtensions($value)
     {
         foreach ($this->extensions as $compiler) {
-            echo "<hr><hr>extensions $compiler<hr><hr>";
             $value = \call_user_func($compiler, $value, $this);
         }
         return $value;
@@ -1848,31 +1883,70 @@ class BladeOne
      * Compile Blade statements that start with "@".
      *
      * @param string $value
+     *
      * @return mixed
      */
     protected function compileStatements($value)
     {
+        /**
+         * @param array $match
+         *                    [0]=full expression with @ and parenthesis
+         *                    [1]=expression without @ and argument
+         *                    [2]=????
+         *                    [3]=argument with parenthesis and without the first @
+         *                    [4]=argument without parenthesis.
+         *
+         * @return mixed|string
+         */
         $callback = function ($match) {
+            /*echo "<pre>";
+            var_dump($match);
+            echo "</pre>";*/
+
             if (static::contains($match[1], '@')) {
+                // @@escaped tag
                 $match[0] = isset($match[3]) ? $match[1] . $match[3] : $match[1];
-            } elseif (isset($this->customDirectivesRT[$match[1]])) {
-                if ($this->customDirectivesRT[$match[1]] == true) {
-                    $match[0] = $this->compileStatementCustom($match);
-                } else {
-                    $match[0] = \call_user_func(
-                        $this->customDirectives[$match[1]],
-                        $this->stripParentheses(static::get($match, 3))
-                    );
-                }
-            } elseif (\method_exists($this, $method = 'compile' . \ucfirst($match[1]))) {
-                $match[0] = $this->$method(static::get($match, 3));
             } else {
-                return $match[0];
-                //$this->showError("@compile", "Operation not defined:@".$match[1], true);
+                if (strpos($match[1], '::')!==false) {
+                    // Someclass::method
+                    return $this->compileStatementClass($match);
+                }
+                if (isset($this->customDirectivesRT[$match[1]])) {
+                    if ($this->customDirectivesRT[$match[1]] == true) {
+                        $match[0] = $this->compileStatementCustom($match);
+                    } else {
+                        $match[0] = \call_user_func(
+                            $this->customDirectives[$match[1]],
+                            $this->stripParentheses(static::get($match, 3))
+                        );
+                    }
+                } else {
+                    if (\method_exists($this, $method = 'compile' . \ucfirst($match[1]))) {
+                        $match[0] = $this->$method(static::get($match, 3));
+                    } else {
+                        /*echo "<pre>";
+                        var_dump($match);
+                        echo "</pre>";
+                        echo "operation not defined!";
+                        */
+                        //todo: $this->showError("@compile", "Operation not defined:@".$match[1], true);
+                        return $match[0];
+                    }
+                }
             }
             return isset($match[3]) ? $match[0] : $match[0] . $match[2];
         };
-        return \preg_replace_callback('/\B@(@?\w+)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value);
+        /* return \preg_replace_callback('/\B@(@?\w+)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value); */
+        return preg_replace_callback('/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value);
+    }
+    
+    private function compileStatementClass($match)
+    {
+        if (isset($match[3])) {
+            return '<?php echo '.$this->fixNamespaceClass($match[1]). $match[3].'; ?>';
+        } else {
+            return '<?php echo '.$this->fixNamespaceClass($match[1]).'(); ?>';
+        }
     }
 
     /**
@@ -1995,7 +2069,29 @@ class BladeOne
      */
     protected function compileEchoDefaults($value)
     {
-        return \preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', 'isset($1) ? $1 : $2', $value);
+        $result= \preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', 'isset($1) ? $1 : $2', $value);
+        return $this->fixNamespaceClass($result);
+    }
+
+    /**
+     * Util method to fix namespace of a class<br>
+     * Example: "SomeClass::method()" -> "\namespace\SomeClass::method()"<br>
+     *
+     * @param string $text
+     *
+     * @return string
+     * @see \eftec\bladeone\BladeOne::$aliasClasses
+     */
+    private function fixNamespaceClass($text)
+    {
+        if (strpos($text, '::')===false) {
+            return $text;
+        }
+        $classPart=explode('::', $text, 2);
+        if (isset($this->aliasClasses[$classPart[0]])) {
+            $classPart[0]=$this->aliasClasses[$classPart[0]];
+        }
+        return $classPart[0].'::'.$classPart[1];
     }
 
     /**

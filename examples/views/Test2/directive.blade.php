@@ -21,3 +21,5 @@
 @@datetimert($now)
 <hr>
 @datetimert($now)
+
+@randomValFromArr(["a", "b", "c"])
