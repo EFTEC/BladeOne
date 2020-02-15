@@ -1112,6 +1112,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2020-02-15 3.35
+    * Added a new argument optional for csrfIsValid()
 - 2020-01-17 3.34
     * It allows to calls a static method inside a class
     * See section **Calling a static methods inside the template**.

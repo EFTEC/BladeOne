@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.34 2020-01-27
+ * @version   3.35 2020-02-15
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -1052,18 +1052,24 @@ class BladeOne
     }
 
     /**
-     * Validates if the csrf token is valid or not.
-     * It could require an open session.
+     * Validates if the csrf token is valid or not.<br>
+     * It requires an open session.
      *
-     * @return bool
+     * @param bool $alwaysRegenerate  [optional] Default is false.<br>
+     *                                If <b>true</b> then it will generate a new token regardless
+     *                                of the method.<br>
+     *                                If <b>false</b>, then it will generate only if the method is POST.<br>
+     *                                Note: You must not use true if you want to use csrf with AJAX.
+     *
+     * @return bool It returns true if the token is valid or it is generated. Otherwise, false.
      */
-    public function csrfIsValid()
+    public function csrfIsValid($alwaysRegenerate = false)
     {
-        if (@$_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->csrf_token = @$_POST['_token'];
+        if (@$_SERVER['REQUEST_METHOD'] == 'POST' && $alwaysRegenerate === false) {
+            $this->csrf_token = @$_POST['_token']; // ping pong the token.
             return $this->csrf_token . "|" . $this->ipClient() == @$_SESSION["_token"];
         } else {
-            if ($this->csrf_token == "") {
+            if ($this->csrf_token == ""  || $alwaysRegenerate) {
                 // if not token then we generate a new one
                 $this->regenerateToken();
             }

@@ -9,7 +9,7 @@ use eftec\bladeone\BladeOne;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
-$blade=new BladeOne($views,$compiledFolder,BladeOne::MODE_SLOW);
+$blade=new BladeOne($views, $compiledFolder, BladeOne::MODE_SLOW);
 
 $isvalid=$blade->csrfIsValid(); // a) for get= it generates a new token, b) for post, it validates the token.
 session_write_close();// we close the session for writes.
