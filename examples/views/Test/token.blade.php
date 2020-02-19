@@ -1,6 +1,6 @@
 <h1>Testing the token {{$token}}</h1>
 <form method="post">
-    @csrf
+    @csrf('_mytoken')
     <input type="text" name="field" value="{{$field}}" /><br/>
     <input type="submit" name="button" value="send"/>
 

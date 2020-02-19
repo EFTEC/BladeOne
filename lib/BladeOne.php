@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.35 2020-02-15
+ * @version   3.36 2020-02-19
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -260,7 +260,7 @@ class BladeOne
         }
         $this->directive($alias, function ($expression) use ($view) {
             $expression = $this->stripParentheses($expression) ?: '[]';
-            return "<?php echo \$this->runChild('{$view}', {$expression}); ?>";
+            return "{$this->phpTag} echo \$this->runChild('{$view}', {$expression}); ?>";
         });
     }
 
@@ -921,7 +921,7 @@ class BladeOne
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
         try {
-            eval(' ?>' . $content . '<?php ');
+            eval(' ?>' . $content . $this->phpTag);
         } catch (Exception $e) {
             $this->handleViewException($e);
         }
@@ -1013,13 +1013,15 @@ class BladeOne
      * Returns the current token. if there is not a token then it generates a new one.
      * It could require an open session.
      *
-     * @param bool $fullToken It returns a token with the current ip.
+     * @param bool   $fullToken It returns a token with the current ip.
+     * @param string $tokenId [optional] Name of the token.
+     *
      * @return string
      */
-    public function getCsrfToken($fullToken = false)
+    public function getCsrfToken($fullToken = false, $tokenId = '_token')
     {
         if ($this->csrf_token == "") {
-            $this->regenerateToken();
+            $this->regenerateToken($tokenId);
         }
         if ($fullToken) {
             return $this->csrf_token . "|" . $this->ipClient();
@@ -1030,15 +1032,17 @@ class BladeOne
     /**
      * Regenerates the csrf token and stores in the session.
      * It requires an open session.
+     *
+     * @param string $tokenId [optional] Name of the token.
      */
-    public function regenerateToken()
+    public function regenerateToken($tokenId = '_token')
     {
         try {
             $this->csrf_token = \bin2hex(\random_bytes(10));
         } catch (Exception $e) {
             $this->csrf_token = "123456789012345678901234567890"; // unable to generates a random token.
         }
-        @$_SESSION["_token"] = $this->csrf_token . "|" . $this->ipClient();
+        @$_SESSION[$tokenId] = $this->csrf_token . "|" . $this->ipClient();
     }
 
     public function ipClient()
@@ -1055,23 +1059,25 @@ class BladeOne
      * Validates if the csrf token is valid or not.<br>
      * It requires an open session.
      *
-     * @param bool $alwaysRegenerate  [optional] Default is false.<br>
-     *                                If <b>true</b> then it will generate a new token regardless
-     *                                of the method.<br>
-     *                                If <b>false</b>, then it will generate only if the method is POST.<br>
-     *                                Note: You must not use true if you want to use csrf with AJAX.
+     * @param bool   $alwaysRegenerate [optional] Default is false.<br>
+     *                                 If <b>true</b> then it will generate a new token regardless
+     *                                 of the method.<br>
+     *                                 If <b>false</b>, then it will generate only if the method is POST.<br>
+     *                                 Note: You must not use true if you want to use csrf with AJAX.
+     *
+     * @param string $tokenId [optional] Name of the token.
      *
      * @return bool It returns true if the token is valid or it is generated. Otherwise, false.
      */
-    public function csrfIsValid($alwaysRegenerate = false)
+    public function csrfIsValid($alwaysRegenerate = false, $tokenId = '_token')
     {
         if (@$_SERVER['REQUEST_METHOD'] == 'POST' && $alwaysRegenerate === false) {
-            $this->csrf_token = @$_POST['_token']; // ping pong the token.
-            return $this->csrf_token . "|" . $this->ipClient() == @$_SESSION["_token"];
+            $this->csrf_token = @$_POST[$tokenId]; // ping pong the token.
+            return $this->csrf_token . "|" . $this->ipClient() == @$_SESSION[$tokenId];
         } else {
             if ($this->csrf_token == ""  || $alwaysRegenerate) {
                 // if not token then we generate a new one
-                $this->regenerateToken();
+                $this->regenerateToken($tokenId);
             }
             return true;
         }
@@ -1706,16 +1712,11 @@ class BladeOne
     {
         return $this->phpTag . " echo \$this->relative{$expression};?>";
     }
-
-    protected function compileMethod($expression)
+    
+    protected function compilecsrf($expression = null)
     {
-        $v = $this->stripParentheses($expression);
-        return $this->phpTag . " echo '<input type=\"hidden\" name=\"_method\" value=\"$v\"/>';?>";
-    }
-
-    protected function compilecsrf()
-    {
-        return $this->phpTag . " echo '<input type=\"hidden\" name=\"_token\" value=\"" . $this->csrf_token . "\"/>';?>";
+        $expression=($expression === null)?"'_token'" : $expression;
+        return "<input type='hidden' name='{$this->phpTag} echo {$expression}; ?>' value='{$this->phpTag}echo \$this->csrf_token; " . "?>'/>";
     }
 
     protected function compileDd($expression)
@@ -1905,10 +1906,6 @@ class BladeOne
          * @return mixed|string
          */
         $callback = function ($match) {
-            /*echo "<pre>";
-            var_dump($match);
-            echo "</pre>";*/
-
             if (static::contains($match[1], '@')) {
                 // @@escaped tag
                 $match[0] = isset($match[3]) ? $match[1] . $match[3] : $match[1];
@@ -1949,9 +1946,9 @@ class BladeOne
     private function compileStatementClass($match)
     {
         if (isset($match[3])) {
-            return '<?php echo '.$this->fixNamespaceClass($match[1]). $match[3].'; ?>';
+            return $this->phpTag.'echo '.$this->fixNamespaceClass($match[1]). $match[3].'; ?>';
         } else {
-            return '<?php echo '.$this->fixNamespaceClass($match[1]).'(); ?>';
+            return $this->phpTag.'echo '.$this->fixNamespaceClass($match[1]).'(); ?>';
         }
     }
 

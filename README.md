@@ -1112,6 +1112,13 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2020-02-19 3.36
+    * removed compileExpression() // it was never used
+    * solved csrfIsValid() when it is compile with mode BladeOne::MODE_FAST	
+    * @csrf tag it has a new argument (name of the token)
+        * @csrf('_mytag')
+    * method csrfIsValid has a new argument (name of the token)
+        * $blade->csrfIsValid(true,'_mytag');
 - 2020-02-15 3.35
     * Added a new argument optional for csrfIsValid()
 - 2020-01-17 3.34

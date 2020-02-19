@@ -119,7 +119,11 @@ then push..<br>
 @push('first')
 after the stack<br>
 @endpush
+@use("
 
+@if(SomeClass::method())
+    
+@endif    
 
 {{'kevinbacon@email.com'}}
 

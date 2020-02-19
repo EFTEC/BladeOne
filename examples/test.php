@@ -9,7 +9,6 @@ include "../lib/BladeOne.php";
 
 $blade=new BladeOne(null, null, BladeOne::MODE_DEBUG);
 
-$blade->setCompiledExtension();
 
 //<editor-fold desc="Example data">
 $name="New User";
