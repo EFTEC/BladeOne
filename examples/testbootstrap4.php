@@ -49,6 +49,16 @@ $countrySelected=3;
 $multipleSelect=[1,2];
 //</editor-fold>
 
+class FormOne {
+    public function Exampple() {
+        return $this;
+    }
+}
+
+function Form() {
+    return new FormOne();
+}
+
 
 try {
     echo $blade->run("TestBS.hellobootstrap"

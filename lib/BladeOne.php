@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.36 2020-02-19
+ * @version   3.36.1 2020-02-28
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -1712,6 +1712,12 @@ class BladeOne
     {
         return $this->phpTag . " echo \$this->relative{$expression};?>";
     }
+    protected function compileMethod($expression)
+    {
+        $v = $this->stripParentheses($expression);
+        
+        return "<input type='hidden' name='_method' value='{$this->phpTag}echo $v; " . "?>'/>";
+    }
     
     protected function compilecsrf($expression = null)
     {
@@ -1925,6 +1931,7 @@ class BladeOne
                     }
                 } else {
                     if (\method_exists($this, $method = 'compile' . \ucfirst($match[1]))) {
+                        // it calls the function compile<name of the tag>
                         $match[0] = $this->$method(static::get($match, 3));
                     } else {
                         /*echo "<pre>";

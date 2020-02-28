@@ -119,13 +119,14 @@ then push..<br>
 @push('first')
 after the stack<br>
 @endpush
-@use("
 
-@if(SomeClass::method())
-    
-@endif    
+
+
 
 {{'kevinbacon@email.com'}}
+
+@method('PUT')
+@method($put)
 
 kevinbacon @@gmail.com
 Show all the stack:<br>

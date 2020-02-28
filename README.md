@@ -1112,6 +1112,9 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 ## Version
 
+- 2020.02-28 3.36.1
+    * @method returned and fixed.
+    * BladeOneHtml2 still in WIP
 - 2020-02-19 3.36
     * removed compileExpression() // it was never used
     * solved csrfIsValid() when it is compile with mode BladeOne::MODE_FAST	

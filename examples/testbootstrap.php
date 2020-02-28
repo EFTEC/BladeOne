@@ -14,14 +14,16 @@ include "../lib/BladeOneHtmlBootstrap.php";
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
 
-class myBlade extends  BladeOne {
+class myBlade extends BladeOne
+{
     use BladeOneHtmlBootstrap;
 }
 
-$blade=new myBlade($views,$compiledFolder);
+$blade=new myBlade($views, $compiledFolder);
+$blade->setMode(BladeOne::MODE_DEBUG);
 
 //<editor-fold desc="Example data">
-$countries=array();
+$countries=[];
 $country=new stdClass();
 $country->id=1;
 $country->cod='ar';
@@ -53,8 +55,7 @@ $multipleSelect=[1,2];
 
 
 try {
-    echo $blade->run("TestBS.hellobootstrap"
-        , ["countries" => $countries
+    echo $blade->run("TestBS.hellobootstrap", ["countries" => $countries
             , 'countrySelected' => $countrySelected
             , 'multipleSelect' => $multipleSelect]);
 } catch (Exception $e) {

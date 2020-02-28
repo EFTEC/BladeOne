@@ -71,6 +71,11 @@ Group select (with single selection):<br>
 @trio('0','--Select a country--','')
 @trios($countries,'id','name','continent',$countrySelected)
 @endselect()
+                
+{!! Form()->Exampple()->Exampple() !!}::selectgroup('id')->class('object')->extra('')
+                
+                
+                
 <br>
 <br>
 Radio simple:<br>
