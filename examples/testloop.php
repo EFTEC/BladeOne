@@ -27,7 +27,7 @@ $usr->type=2;
 $usr->number=5;
 $users[]=$usr;
 
-$drinks7=array('Cocacola','Pepsi','Fanta','Sprite','7up',"Mountain Dew","Dr Pepper");
+$drinks7=array('Cocacola','Pepsi','Fanta','Sprite','7up',"Mountain Dew","Dr Pepper",'Cocacola','Pepsi','Fanta','Sprite','7up',"Mountain Dew","Dr Pepper");
 $drinks8=array('Cocacola','Pepsi','Fanta','Sprite','7up',"Mountain Dew","Dr Pepper",'Bilz&Pap');
 //</editor-fold>
 

@@ -1111,7 +1111,8 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 
 ## Version
-
+- 2020-02-28 3.36.2
+    * @splitforeach a fix.
 - 2020.02-28 3.36.1
     * @method returned and fixed.
     * BladeOneHtml2 still in WIP

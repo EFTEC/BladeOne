@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.36.1 2020-02-28
+ * @version   3.36.2 2020-02-28
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -724,10 +724,10 @@ class BladeOne
     public function splitForeach($each = 1, $splitText = ',', $splitEnd = '')
     {
         $loopStack = static::last($this->loopsStack); // array(7) { ["index"]=> int(0) ["remaining"]=> int(6) ["count"]=> int(5) ["first"]=> bool(true) ["last"]=> bool(false) ["depth"]=> int(1) ["parent"]=> NULL }
-        if ($loopStack['index'] == $loopStack['count']) {
+        if (($loopStack['index']) == $loopStack['count']-1) {
             return $splitEnd;
         }
-        if ($loopStack['index'] % $each == 0) {
+        if (($loopStack['index']+1) % $each == 0) {
             return $splitText;
         }
         return "";

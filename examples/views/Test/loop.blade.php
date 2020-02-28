@@ -29,18 +29,25 @@
 </pre>
 
 @foreach ($users as $user)
-    This is user {{ $john->id }}<br>
+    This is user {{ $user->id }}<br>
 @endforeach
 <br><h2>@@splitforeach</h2>
 <em>Split a foreach cycle by showing a text each "x" number of elements.
     The text is not displayed if its the last element of the list</em><br>
 
 <pre>
+    
+</pre>
+
+
+
+
+<pre>
    &lt;table border=&quot;1&quot;&gt;
     &lt;tr&gt;
     @@foreach ($drinks7 as $drink)
         &lt;td&gt;@{{$drink}}&lt;/td&gt;
-        @@splitforeach(2,'&lt;/tr&gt;&lt;tr&gt;','&lt;/tr&gt;&lt;tr&gt;&lt;td colspan=2&gt;end of the table&lt;/td&gt;&lt;/tr&gt;')
+        @@splitforeach(3,'&lt;/tr&gt;&lt;tr&gt;','&lt;/tr&gt;&lt;tr&gt;&lt;td colspan=3&gt;end of the table&lt;/td&gt;&lt;/tr&gt;')
         @@endforeach
     &lt;/table&gt;
 </pre>
@@ -48,7 +55,7 @@
     <tr>
         @foreach ($drinks7 as $drink)
             <td>{{$drink}}</td>
-    @splitforeach(2,'</tr><tr>','</tr><tr><td colspan=2>end of the table</td></tr>')
+    @splitforeach(3,'</tr><tr>','</tr><tr><td colspan=3>end of the table</td></tr>')
     @endforeach
 </table>
 
@@ -113,7 +120,7 @@ A more complex exercise, using variable <br>
 @@endforelse
 </pre>
 @forelse ($users as $user)
-    <li>{{ $john->name }}</li>
+    <li>{{ $user->name }}</li>
 @empty
     <p>No users</p>
 @endforelse
@@ -135,37 +142,37 @@ A more complex exercise, using variable <br>
 <br><h2>@@continue/break (foreach)</h2>
 <pre>
     @@foreach ($users as $user)
-        @@if($john-&gt;type == 1) // ignores the first user John Smith
+        @@if($user-&gt;type == 1) // ignores the first user John Smith
         @@continue
         @@endif
         &lt;li&gt;@{{ $user->type }} - @{{ $user-&gt;name }}&lt;/li&gt;
 
-        @@if($john-&gt;number == 5) // ends the cycle.
+        @@if($user-&gt;number == 5) // ends the cycle.
             @@break
         @@endif
     @@endforeach
 </pre>
 @foreach ($users as $user)
-    @if($john->type == 1)
+    @if($user->type == 1)
         @continue
     @endif
-    {{ $john->type }} - {{ $john->name }}<br>
-    @if($john->number == 5)
+    {{ $user->type }} - {{ $user->name }}<br>
+    @if($user->number == 5)
         @break
     @endif
 @endforeach
 <pre>
     @@foreach ($users as $user)
-        @@continue($john-&gt;type == 1)
+        @@continue($user-&gt;type == 1)
         @{{ $user->type }} - @{{ $user-&gt;name }}&lt;/br&gt;
-        @@break($john-&gt;number == 5)
+        @@break($user-&gt;number == 5)
         @@endforeach
 </pre>
 
 @foreach ($users as $user)
-    @continue($john->type == 1)
-    {{ $john->type }} -{{ $john->name }}</br>
-    @break($john->number == 5)
+    @continue($user->type == 1)
+    {{ $user->type }} -{{ $user->name }}</br>
+    @break($user->number == 5)
 @endforeach
 <br><h2>@@each</h2>
 <pre>
