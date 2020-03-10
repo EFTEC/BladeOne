@@ -80,7 +80,7 @@ class BladeOne
     protected $pushes = [];
     /** @var int The number of active rendering operations. */
     protected $renderCount = 0;
-    /** @var string|string[] Get the template path for the compiled views. */
+    /** @var string[] Get the template path for the compiled views. */
     protected $templatePath;
     /** @var string Get the compiled path for the compiled views. If null then it uses the default path */
     protected $compiledPath;
@@ -175,7 +175,7 @@ class BladeOne
         if ($compiledPath === null) {
             $compiledPath = \getcwd() . '/compiles';
         }
-        $this->templatePath = $templatePath;
+        $this->templatePath = (is_array($templatePath)) ? $templatePath : [ $templatePath];
         $this->compiledPath = $compiledPath;
         $this->setMode($mode);
         $this->authCallBack = function ($action = null, /** @noinspection PhpUnusedParameterInspection */ $subject = null) {
@@ -348,7 +348,7 @@ class BladeOne
         if ($compiledPath === null) {
             $compiledPath = \getcwd() . '/compiles';
         }
-        $this->templatePath = $templatePath;
+        $this->templatePath = (is_array($templatePath)) ? $templatePath : [ $templatePath];
         $this->compiledPath = $compiledPath;
     }
     /**
@@ -865,7 +865,7 @@ class BladeOne
     /**
      * run the blade engine. It returns the result of the code.
      *
-     * @param       $view
+     * @param string $view
      * @param array $variables
      * @param bool $forced if true then it recompiles no matter if the compiled file exists or not.
      * @param bool $isParent
@@ -1440,7 +1440,7 @@ class BladeOne
     /**
      * run the blade engine. It returns the result of the code.
      *
-     * @param       $view
+     * @param string $view
      * @param array $variables
      * @return string
      * @throws Exception
@@ -2876,23 +2876,18 @@ class BladeOne
     /**
      * Find template file with the given name in all template paths in the order the paths were written
      *
-     * @param string $name Filename
+     * @param string $name Filename of the template (without path)
      * @return string template file
      */
     private function locateTemplate($name)
     {
-        if (\is_array($this->templatePath)) {
-            $path = '';
-            foreach ($this->templatePath as $dir) {
-                $path = $dir . '/' . $name;
-                if (\file_exists($path)) {
-                    break;
-                }
+        foreach ($this->templatePath as $dir) {
+            $path = $dir . '/' . $name;
+            if (\file_exists($path)) {
+                return $path;
             }
-            return $path;
-        } else {
-            return $this->templatePath . '/' . $name;
         }
+        return '';
     }
 
     //<editor-fold desc="setter and getters">
@@ -2900,20 +2895,21 @@ class BladeOne
     /**
      * Get the contents of a file.
      *
-     * @param $fileName
+     * @param string $fullFileName It gets the content of a filename or returns ''.
+     *
      * @return string
      */
-    public function getFile($fileName)
+    public function getFile($fullFileName)
     {
-        if (\is_file($fileName)) {
-            return \file_get_contents($fileName);
+        if (\is_file($fullFileName)) {
+            return \file_get_contents($fullFileName);
         }
-        $this->showError('getFile', "File does not exist at path {$fileName}", true);
+        $this->showError('getFile', "File does not exist at path {$fullFileName}", true);
         return '';
     }
 
     /**
-     * Determine if the view  is expired.
+     * Determine if the view has expired.
      *
      * @param string|null $fileName
      * @return bool
@@ -2971,6 +2967,43 @@ class BladeOne
     {
         $expression = $this->stripParentheses($expression);
         return $replace = $this->phpTag . 'echo $this->includeFirst(' . $expression . '); ?>';
+    }
+
+    /**
+     * Compile the {@}compilestamp statement.
+     *
+     * @param string $expression
+     *
+     * @return false|string
+     */
+    protected function compileCompileStamp($expression)
+    {
+        $expression = $this->stripQuotes($this->stripParentheses($expression));
+        $expression = ($expression==='')? 'Y-m-d H:i:s' : $expression;
+        return date($expression);
+    }
+
+    /**
+     * compile the {@}viewname statement<br>
+     * {@}viewname('compiled') returns the full compiled path
+     * {@}viewname('template') returns the full template path
+     * {@}viewname('') returns the view name.
+     *
+     * @param mixed $expression
+     *
+     * @return string
+     */
+    protected function compileViewName($expression)
+    {
+        $expression = $this->stripQuotes($this->stripParentheses($expression));
+        switch ($expression) {
+            case 'compiled':
+                return $this->getCompiledFile($this->fileName);
+            case 'template':
+                return $this->getTemplateFile($this->fileName);
+            default:
+                return $this->fileName;
+        }
     }
 
     /**

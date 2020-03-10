@@ -134,6 +134,26 @@ stack :  @stack('scripts')
 <hr>extra functions<br>
 @{{ClassService::Function()}}
 
+<hr>
+<pre>
+@@compilestamp()
+</pre>
+<hr>
+
+@compilestamp()<br>
+@compilestamp('d-m-y')<br>
+<hr>
+
+<hr>
+<pre>
+@@viewname()
+</pre>
+<hr>
+
+@viewname('compiled')<br>
+@viewname('template')<br>
+@viewname('')<br>
+<hr>
 
 
 

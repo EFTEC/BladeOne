@@ -1078,7 +1078,7 @@ Template:
 > We won't need alias or use for global classes.
 
 ## Definition of Blade Template
-https://laravel.com/docs/5.6/blade
+https://laravel.com/docs/7/blade
 
 ## Differences between Blade and BladeOne
 
@@ -1111,8 +1111,12 @@ Also, BladeOneHTML adds multiple select, fixed values (without array), grouped s
 
 
 ## Version
+- 2020-03-10 3.37
+    * new tag @compilestamp() shows the date and time where the template was compiled.
+    * new tag @viewname() shows the current view template, compile filename or template filename
+    
 - 2020-02-28 3.36.2
-    * @splitforeach a fix.
+    * @splitforeach fixed. Now, it works as base zero.
 - 2020.02-28 3.36.1
     * @method returned and fixed.
     * BladeOneHtml2 still in WIP
