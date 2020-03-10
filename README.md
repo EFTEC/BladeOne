@@ -35,7 +35,7 @@ I will try to answer all and every one of the question (in my limited time).
 
 
 ## Index
-  
+
 - [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
   * [NOTE about questions, reports, doubts or suggestings:](#note-about-questions--reports--doubts-or-suggestings-)
   * [Some example](#some-example)
@@ -88,14 +88,14 @@ I will try to answer all and every one of the question (in my limited time).
   * [Template](#template)
     + [@compilestamp($format='')](#-compilestamp--format----)
     + [@viewname($type='')](#-viewname--type----)
-    + [Sub Views](#sub-views)
+  * [Sub Views](#sub-views)
     + [@include](#-include)
     + [@includeif](#-includeif)
     + [@includefast](#-includefast)
     + [aliasing include](#aliasing-include)
   * [Comments](#comments)
     + [Stacks](#stacks)
-  * [@set (new for 1.5)](#-set--new-for-15-)
+  * [@set](#-set)
     + [Service Inject](#service-inject)
   * [Asset Management](#asset-management)
     + [@asset](#-asset)
@@ -119,6 +119,8 @@ I will try to answer all and every one of the question (in my limited time).
   * [Future](#future)
   * [Missing](#missing)
   * [License](#license)
+
+
 
 ## Laravel blade tutorial
 
