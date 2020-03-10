@@ -15,9 +15,9 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 [![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 5.8 (March 2019)**. It misses some commands [missing](#missing) but nothing more.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 7 (March 2020)**. It misses some commands [missing](#missing) but nothing more.
 
-Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 5,8 (2019 Марта) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.
+Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 7 (2020 Марта) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.
 
 
 ## NOTE about questions, reports, doubts or suggestings:
@@ -36,61 +36,81 @@ I will try to answer all and every one of the question (in my limited time).
 
 ## Index
   
-
 - [BladeOne Blade Template Engine](#bladeone-blade-template-engine)
-  * [laravel blade tutorial](#laravel-blade-tutorial)
+  * [NOTE about questions, reports, doubts or suggestings:](#note-about-questions--reports--doubts-or-suggestings-)
+  * [Some example](#some-example)
+  * [Index](#index)
+  * [Laravel blade tutorial](#laravel-blade-tutorial)
   * [About this version](#about-this-version)
-  * [Why to use it instead of native PHP?](#why-to-use-it-instead-of-native-php)
+  * [Why to use it instead of native PHP?](#why-to-use-it-instead-of-native-php-)
     + [Separation of concerns](#separation-of-concerns)
   * [Security](#security)
   * [Easy to use](#easy-to-use)
     + [Performance](#performance)
     + [Scalable](#scalable)
-  * [Install (pick one of the next one)](#install-pick-one-of-the-next-one)
+  * [Install (pick one of the next one)](#install--pick-one-of-the-next-one-)
   * [Usage](#usage)
-  * [Security (optional)](#security-optional)
-  * [Business Logic/Controller methods](#business-logiccontroller-methods)
+    + [Without composer's autoload.php](#without-composer-s-autoloadphp)
+    + [Without namespace nor composer](#without-namespace-nor-composer)
+    + [With composer's autoload.php](#with-composer-s-autoloadphp)
+  * [Security (optional)](#security--optional-)
+  * [Business Logic/Controller methods](#business-logic-controller-methods)
     + [constructor](#constructor)
     + [run](#run)
+    + [share](#share)
+    + [setOptimize(bool=false)](#setoptimize-bool-false-)
+    + [setIsCompiled(bool=false)](#setiscompiled-bool-false-)
     + [setMode](#setmode)
-    + [setFileExtension($ext), getFileExtension](#setfileextensionext-getfileextension)
-    + [setCompiledExtension($ext), getCompiledExtension](#setcompiledextensionext-getcompiledextension)
+    + [setFileExtension($ext), getFileExtension](#setfileextension--ext---getfileextension)
+    + [setCompiledExtension($ext), getCompiledExtension](#setcompiledextension--ext---getcompiledextension)
     + [runString](#runstring)
     + [directive](#directive)
     + [directiveRT](#directivert)
-    + [BLADEONE_MODE (global constant) (optional)](#bladeone_mode-global-constant-optional)
-    + [setErrorFunction](#seterrorfunction)    
+    + [BLADEONE_MODE (global constant) (optional)](#bladeone-mode--global-constant---optional-)
+    + [setErrorFunction](#seterrorfunction)
     + [setCanFunction and setAnyFunction](#setcanfunction-and-setanyfunction)
+      - [Quick permission validation](#quick-permission-validation)
   * [Template tags](#template-tags)
     + [Template Inheritance](#template-inheritance)
-    + [In the master page (layout)](#in-the-master-page-layout)
-    + [Using the master page (using the layout)](#using-the-master-page-using-the-layout)
+    + [In the master page (layout)](#in-the-master-page--layout-)
+    + [Using the master page (using the layout)](#using-the-master-page--using-the-layout-)
     + [variables](#variables)
     + [logic](#logic)
     + [loop](#loop)
-      - [@for($variable;$condition;$increment) / @endfor](#forvariableconditionincrement--endfor)
-      - [@inject('variable name', 'namespace')](#injectvariable-name-namespace)
-      - [@foreach($array as $alias) / @endforeach](#foreacharray-as-alias--endforeach)
-      - [@forelse($array as $alias) / @empty / @endforelse](#forelsearray-as-alias--empty--endforelse)
-      - [@while($condition) / @endwhile](#whilecondition--endwhile)
-      - [@splitforeach($nElem,$textbetween,$textend="")  inside @foreach](#splitforeachnelemtextbetweentextend--inside-foreach)
-      - [@continue / @break](#continue--break)
-    + [switch / case](#switch--case)
+      - [@for($variable;$condition;$increment) / @endfor](#-for--variable--condition--increment-----endfor)
+      - [@inject('variable name', 'namespace')](#-inject--variable-name----namespace--)
+      - [@foreach($array as $alias) / @endforeach](#-foreach--array-as--alias-----endforeach)
+      - [@forelse($array as $alias) / @empty / @endforelse](#-forelse--array-as--alias-----empty----endforelse)
+      - [@while($condition) / @endwhile](#-while--condition-----endwhile)
+      - [@splitforeach($nElem,$textbetween,$textend="")  inside @foreach](#-splitforeach--nelem--textbetween--textend------inside--foreach)
+      - [@continue / @break](#-continue----break)
+    + [switch / case](#switch---case)
+  * [Template](#template)
+    + [@compilestamp($format='')](#-compilestamp--format----)
+    + [@viewname($type='')](#-viewname--type----)
     + [Sub Views](#sub-views)
+    + [@include](#-include)
+    + [@includeif](#-includeif)
+    + [@includefast](#-includefast)
+    + [aliasing include](#aliasing-include)
   * [Comments](#comments)
     + [Stacks](#stacks)
-  * [@set (new for 1.5)](#set-new-for-15)
+  * [@set (new for 1.5)](#-set--new-for-15-)
     + [Service Inject](#service-inject)
   * [Asset Management](#asset-management)
-    + [@asset](#asset)
-    + [@resource](#resource)
-    + [setBaseUrl($url)](#setbaseurlurl)
-    + [getBaseUrl()](#getbaseurl)
-    + [addAssetDict()](#addassetdictnameurl)
-  * [Extensions Libraries (optional)](#extensions-libraries-optional)
+    + [@asset](#-asset)
+    + [@use(namespace)](#-use-namespace-)
+    + [@resource](#-resource)
+    + [setBaseUrl($url)](#setbaseurl--url-)
+    + [getBaseUrl()](#getbaseurl--)
+    + [addAssetDict($name,$url)](#addassetdict--name--url-)
+  * [Extensions Libraries (optional)](#extensions-libraries--optional-)
+  * [Calling a static methods inside the template.](#calling-a-static-methods-inside-the-template)
+    + [Method 1 PHP Style](#method-1-php-style)
+    + [Method 2 Alias](#method-2-alias)
   * [Definition of Blade Template](#definition-of-blade-template)
   * [Differences between Blade and BladeOne](#differences-between-blade-and-bladeone)
-  * [Differences between Blade+Laravel and BladeOne+BladeOneHTML](#differences-between-bladelaravel-and-bladeonebladeonehtml)
+  * [Differences between Blade+Laravel and BladeOne+BladeOneHTML](#differences-between-blade-laravel-and-bladeone-bladeonehtml)
   * [Version](#version)
     + [Changes between 2.x and 3.0](#changes-between-2x-and-30)
   * [todo](#todo)
@@ -99,7 +119,6 @@ I will try to answer all and every one of the question (in my limited time).
   * [Future](#future)
   * [Missing](#missing)
   * [License](#license)
-
 
 ## Laravel blade tutorial
 
@@ -748,7 +767,27 @@ _Example:(the indentation is not required)_
 - `@break` Break the case
 - `@endswitch` End the switch.
 
-### Sub Views
+## Template
+
+### @compilestamp($format='')
+It shows the current date of the compiled template
+
+```html
+@compileStamp() // returns the current date and time as "Y-m-d H:i:s"
+@compileStamp('d') // returns the current date AND TIME AS "d" (day)
+```
+
+### @viewname($type='') 
+
+It shows the name of the template
+
+```html
+@viewname('compiled') // the full filename of the compiled file
+@viewname('template') // the full filename of the template
+@viewname('') // the name of the filename
+```
+
+## Sub Views
 |Tag|Note|
 |---|---|
 |@include('folder.template')|Include a template|
@@ -756,7 +795,7 @@ _Example:(the indentation is not required)_
 |@each('view.name', $array, 'variable')|Includes a template for each element of the array|
 Note: Templates called folder.template is equals to folder/template
 
-## @include
+### @include
 It includes a template
 
 You could include a template as follow:
@@ -875,7 +914,7 @@ script1
 
 
 
-## @set (new for 1.5)
+## @set
 ```
 @set($variable=[value])
 ```
