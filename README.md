@@ -1191,15 +1191,17 @@ You could download it or add it via Composer
 
 ## Version
 
-- 2020-04-20 3.38
-    - new feature: named arguments (the method must support it to use)
-    - new method wrapPHP() used internally
-    - new method enq() It's equals than e() but it doesn't encode quotes
-    - new method stripQuotes() It removes quotes from a string "aaa"=>aaa, 'aaa'=>aaa
-    - new method addInsideQuote() It adds a string inside a quote (if any)
-    - new method isQuoted() Returns true if the text is quoted
-    - BladeOneHtml is deprecated (but not deleted) use instead eftec\bladeonehtml 
-- BladeOneHtmlBootstrap is deprecated (but not deleted) use instead eftec\bladeonehtml    
+- 2020-04-20 3.38.1   
+    * fix in method parseArgs() when it returns a single array  
+- 2020-04-20 3.38  
+    - new feature: named arguments (the method must support it to use)     
+    - new method wrapPHP() used internally   
+    - new method enq() It's equals than e() but it doesn't encode quotes    
+    - new method stripQuotes() It removes quotes from a string "aaa"=>aaa, 'aaa'=>aaa    
+    - new method addInsideQuote() It adds a string inside a quote (if any)    
+    - new method isQuoted() Returns true if the text is quoted  
+    - BladeOneHtml is deprecated (but not deleted) use instead eftec\bladeonehtml   
+- BladeOneHtmlBootstrap is deprecated (but not deleted) use instead eftec\bladeonehtml      
 - 2020-03-10 3.37
     * new tag @compilestamp() shows the date and time where the template was compiled.
     * new tag @viewname() shows the current view template, compile filename or template filename

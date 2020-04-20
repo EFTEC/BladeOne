@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.38
+ * @version   3.38.1
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -2102,8 +2102,8 @@ class BladeOne
      */
     public function parseArgs($text, $separator = ',')
     {
-        if ($text === null || $text === '' || strpos($text, $separator)=== false) {
-            return [$text]; //nothing to convert.
+        if ($text === null || $text === '') {
+            return []; //nothing to convert.
         }
         $chars = str_split($text);
         $parts = [];
