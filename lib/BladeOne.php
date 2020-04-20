@@ -242,6 +242,59 @@ class BladeOne
         }
         return \htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
+    /**
+     * Escape HTML entities in a string.
+     *
+     * @param string $value
+     * @return string
+     */
+    public static function enq($value)
+    {
+        if (\is_array($value) || \is_object($value)) {
+            return \htmlentities(\print_r($value, true), ENT_NOQUOTES, 'UTF-8', false);
+        }
+        return \htmlentities($value, ENT_NOQUOTES, 'UTF-8', false);
+    }
+
+    /**
+     * It converts a text into a php code with echo<br>
+     * <b>Example:</b><br>
+     * <pre>
+     * $this->wrapPHP('$hello'); // "< ?php echo $this->e($hello); ? >"
+     * $this->wrapPHP('$hello',''); // < ?php echo $this->e($hello); ? >
+     * $this->wrapPHP('$hello','',false); // < ?php echo $hello; ? >
+     * $this->wrapPHP('"hello"'); // "< ?php echo $this->e("hello"); ? >"
+     * $this->wrapPHP('hello()'); // "< ?php echo $this->e(hello()); ? >"
+     * </pre>
+     *
+     * @param string $input The input value
+     * @param string $quote The quote used (to quote the result)
+     * @param bool $parse If the result will be parsed or not. If false then it's returned without $this->e
+     * @return string
+     */
+    public function wrapPHP($input, $quote = '"', $parse = true)
+    {
+        if (strpos($input, '(') !== false && !$this->isQuoted($input)) {
+            if ($parse) {
+                return $quote .'<?php echo $this->e(' . $input . ');?>'. $quote;
+            } else {
+                return $quote .'<?php echo ' . $input . ';?>'. $quote;
+            }
+        }
+        if (strpos($input, '$') === false) {
+            if ($parse) {
+                return $this->enq($input);
+            } else {
+                return $input;
+            }
+        } else {
+            if ($parse) {
+                return $quote . '<?php echo $this->e(' . $input . ');?>' . $quote;
+            } else {
+                return $quote . '<?php echo ' . $input . ';?>' . $quote;
+            }
+        }
+    }
 
     protected static function convertArgCallBack($k, $v)
     {
@@ -589,7 +642,7 @@ class BladeOne
     {
         return $this->phpTag . "\$this->startPush{$expression}; ?>";
     }
-
+    
     /**
      * Start injecting content into a push section.
      *
@@ -716,7 +769,8 @@ class BladeOne
     /**
      * Get the string contents of a push section.
      *
-     * @param int $each
+     * @param int|string $each if int, then it split the foreach every $each numbers.<br>
+     *                         if string, "c3" it means that it will split in 3 columns<br>
      * @param string $splitText
      * @param string $splitEnd
      * @return string
@@ -727,7 +781,19 @@ class BladeOne
         if (($loopStack['index']) == $loopStack['count']-1) {
             return $splitEnd;
         }
-        if (($loopStack['index']+1) % $each == 0) {
+        if (is_numeric($each)) {
+            $eachN=$each;
+        } else {
+            if (strlen($each)>1) {
+                if (substr($each, 0, 1)=='c') {
+                    $eachN=$loopStack['count']/substr($each, 1);
+                }
+            } else {
+                $eachN=PHP_INT_MAX;
+            }
+        }
+        
+        if (($loopStack['index']+1) % $eachN == 0) {
             return $splitText;
         }
         return "";
@@ -1809,9 +1875,52 @@ class BladeOne
      */
     public function stripQuotes($text)
     {
-        return \preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3', \trim($text));
+        if (!$text || strlen($text)<2) {
+            return $text;
+        }
+        if (substr($text, 0, 1) === '"' && substr($text, -1) === '"') {
+            return substr($text, 1, strlen($text) - 2);
+        }
+        if (substr($text, 0, 1) === "'" && substr($text, -1) === "'") {
+            return substr($text, 1, strlen($text) - 2);
+        }
+        return $text;
     }
-
+    /**
+     * It adds a string inside a quoted string<br>
+     * <b>example:</b><br>
+     * <pre>
+     * $this->addInsideQuote("'hello'"," world"); // 'hello world'
+     * $this->addInsideQuote("hello"," world"); // hello world
+     * </pre>
+     *
+     * @param $quoted
+     * @param $newFragment
+     * @return string
+     */
+    protected function addInsideQuote($quoted, $newFragment)
+    {
+        if ($this->isQuoted($quoted)) {
+            return substr($quoted, 0, -1).$newFragment.substr($quoted, -1);
+        }
+        return $quoted.$newFragment;
+    }
+    /**
+     * Returns true if the text is surrounded by quotes (double or single quote)
+     *
+     * @param $text
+     * @return bool
+     */
+    public function isQuoted($text)
+    {
+        if (!$text || strlen($text)<2) {
+            return $text;
+        }
+        if (substr($text, 0, 1) === '"' && substr($text, -1) === '"') {
+            return true;
+        }
+        return  (substr($text, 0, 1) === "'" && substr($text, -1) === "'");
+    }
     /**
      * Execute the user defined extensions.
      *
@@ -1982,6 +2091,53 @@ class BladeOne
 
         return false;
     }
+    
+
+    /**
+     * It separates a string using a separator and excluding quotes and double quotes.
+     *
+     * @param string $text
+     * @param string $separator
+     * @return array
+     */
+    public function parseArgs($text, $separator = ',')
+    {
+        if ($text === null || $text === '' || strpos($text, $separator)=== false) {
+            return [$text]; //nothing to convert.
+        }
+        $chars = str_split($text);
+        $parts = [];
+        $nextpart = "";
+        $strL = count($chars);
+        for ($i = 0; $i < $strL; $i++) {
+            $char = $chars[$i];
+            if ($char === '"' || $char === "'") {
+                $inext = strpos($text, $char, $i + 1);
+                $inext = $inext === false ? $strL : $inext;
+                $nextpart .= substr($text, $i, $inext - $i + 1);
+                $i = $inext;
+            } else {
+                $nextpart .= $char;
+            }
+            if ($char === $separator) {
+                $parts[] = substr($nextpart, 0, -1);
+                $nextpart = "";
+            }
+        }
+        if (strlen($nextpart) > 0) {
+            $parts[] = $nextpart;
+        }
+        $result = [];
+        foreach ($parts as $part) {
+            $r = explode('=', $part, 2);
+            if (count($r) == 2) {
+                $result[trim($r[0])] = trim($r[1]);
+            }
+        }
+        return $result;
+    }
+    
+
 
     /**
      * For compile custom directive at runtime.

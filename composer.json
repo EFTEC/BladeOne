@@ -32,7 +32,8 @@
     "ext-json": "*"
   },
   "suggest": {
-    "ext-mbstring": "This extension is used if it's active"
+    "ext-mbstring": "This extension is used if it's active",
+    "eftec/bladeonehtml": "Extension to create forms"
   },  
   "archive": {
     "exclude": [

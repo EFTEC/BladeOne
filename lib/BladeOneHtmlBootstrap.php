@@ -25,6 +25,7 @@ namespace eftec\bladeone;
  * @version  1.9.1 2018-06-11 (1)
  * @link     https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
+ * @deprecated use https://github.com/eftec/BladeOneHtml
  */
 trait BladeOneHtmlBootstrap
 {

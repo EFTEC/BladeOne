@@ -105,10 +105,10 @@ Code:<br>
 @@switch($countrySelected)
 @@case(1)
 first country selected<br>
-@break
+@@break
 @@case(2)
 second country selected<br>
-@break
+@@break
 @@default
 other country selected<br>
 @@endswitch()

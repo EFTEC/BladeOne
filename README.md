@@ -31,7 +31,7 @@ I will try to answer all and every one of the question (in my limited time).
 |[ExampleTicketPHP](https://github.com/jorgecc/ExampleTicketPHP) | [Example cupcakes](https://github.com/EFTEC/example.cupcakes)|
 |-------|---------|
 | <img src="https://camo.githubusercontent.com/3c938f71f46a90eb85bb104f0f396fcba62b8f4a/68747470733a2f2f74686570726163746963616c6465762e73332e616d617a6f6e6177732e636f6d2f692f3436696b7061376661717677726533797537706a2e6a7067" alt="example php bladeone" width="200"/>   | <img src="https://github.com/EFTEC/example.cupcakes/raw/master/docs/result.jpg" alt="example php bladeone cupcakes" width="200"/>  |
- 
+
 
 
 ## Index
@@ -110,7 +110,6 @@ I will try to answer all and every one of the question (in my limited time).
     + [Method 2 Alias](#method-2-alias)
   * [Definition of Blade Template](#definition-of-blade-template)
   * [Differences between Blade and BladeOne](#differences-between-blade-and-bladeone)
-  * [Differences between Blade+Laravel and BladeOne+BladeOneHTML](#differences-between-bladelaravel-and-bladeonebladeonehtml)
   * [Version](#version)
     + [Changes between 2.x and 3.0](#changes-between-2x-and-30)
   * [todo](#todo)
@@ -585,7 +584,7 @@ _Generates a loop until the condition is meet and the variable is incremented fo
 
 |Tag|Note|Example|
 |---|---|---|
-|$variable|is a variable that should be initialized.|$i=0|  
+|$variable|is a variable that should be initialized.|$i=0|
 |$condition|is the condition that must be true, otherwise the cycle will end.|$i<10|
 |$increment|is how the variable is incremented in each loop.|$i++|
 
@@ -641,7 +640,7 @@ Generates a loop for each values of the variable.
 
 |Tag|Note|Example|
 |---|---|---|
-|$array|Is an array with values.|$countries|  
+|$array|Is an array with values.|$countries|
 |$alias|is a new variable that it stores each interaction of the cycle.|$country|
 
 Example: ($users is an array of objects)
@@ -661,7 +660,7 @@ Its the same as foreach but jumps to the `@empty` tag if the array is null or em
 
 |Tag|Note|Example|
 |---|---|---|
-|$array|Is an array with values.|$countries|  
+|$array|Is an array with values.|$countries|
 |$alias|is a new variable that it stores each interaction of the cycle.|$country|
 
 
@@ -684,7 +683,7 @@ Loops until the condition is not meet.
 
 |Tag|Note|Example|
 |---|---|---|
-|$condition|The cycle loops until the condition is false.|$counter<10|  
+|$condition|The cycle loops until the condition is false.|$counter<10|
 
 
 Example: ($users is an array of objects)
@@ -708,9 +707,9 @@ NOTE: The `$textbetween` is not displayed if its the last element of the last.  
 
 |Tag|Note|Example|
 |---|---|---|
-|$nElem|Number of elements|2, for every 2 element the text is displayed|  
-|$textbetween|Text to show|`</tr><tr>`| 
-|$textend|Text to show|`</tr>`| 
+|$nElem|Number of elements|2, for every 2 element the text is displayed|
+|$textbetween|Text to show|`</tr><tr>`|
+|$textend|Text to show|`</tr>`|
 
 Example: ($users is an array of objects)
 ```html
@@ -723,6 +722,17 @@ Example: ($users is an array of objects)
 </table>
 ```
 Returns a table with 2 columns.
+
+Example: ($users is an array of objects)
+```html
+<ul>
+@foreach($drinks7 as $drink)
+    <li>{{$drink}}</li>
+    @splitforeach('c3','</ul></ul>','')
+    @endforeach
+</ul>
+```
+Returns 3 unsorted lists.
 
 #### @continue / @break
 Continue jump to the next iteration of a cycle.  `@break` jump out of a cycle.
@@ -1053,7 +1063,6 @@ $url=$obj->addAssetDict('css/style.css','http://....');
 
 
 ## Extensions Libraries (optional)
-[BladeOneHtml Documentation](BladeOneHtml.md)
 
 [BladeOneCache Documentation](BladeOneCache.md)
 
@@ -1129,33 +1138,71 @@ https://laravel.com/docs/7/blade
 - Setter and Getters removed. Instead, we are using the PHP style (public members).
 - BladeOne doesn't support static calls.
 
-## Differences between Blade+Laravel and BladeOne+BladeOneHTML
+## Named argument (since 3.38)
 
-Instead of use the Laravel functions, for example Form::select
-```html
-{{Form::select('countryID', $arrayCountries,$countrySelected)}}
+BladeOne allows named arguments.  This feature must be implemented per function.
+
+Let's say the next problem:
+
+It is the old library BladeOneHtml:
+
+```
+@select('id1')
+    @item('0','--Select a country--',"",class='form-control'")
+    @items($countries,'id','name',"",$countrySelected)
+@endselect
 ```
 
-> Note: Since 3.34 this method is also allowed.
+And it is the next library:
 
-We have native tags as @select,@item,@items and @endselect
 ```html
-@select('countryID')
-    @item('0','--Select a country--',$countrySelected)
-    @items($arrayCountries,'id','name',$countrySelected)
-@endselect()
+@select(id="aaa" value=$selection values=$countries alias=$country)
+    @item(value='aaa' text='-- select a country--')
+    @items( id="chkx" value=$country->id text=$country->name)
+@endselect
 ```
 
-This new syntax adds an (optionally) non-selected row.
-Also, BladeOneHTML adds multiple select, fixed values (without array), grouped select and many more.
+The old method **select** only allows a limited number of arguments. And the order of the arguments is important.
+
+The new method **select** allows to add different types of arguments 
+
+## BladeOneHtml
+
+It is a new extension to BladeOne. It allows to create html components easily and with near-to-native performance.
+
+It uses a new feature of BladeOne: named arguments
+
+Example to create a select:
+
+```html
+@select(id="aaa" value=$selection values=$countries alias=$country)
+    @item(value='aaa' text='-- select a country--')
+    @items( id="chkx" value=$country->id text=$country->name)
+@endselect
+```
+
+[https://github.com/eftec/BladeOneHtml](https://github.com/eftec/BladeOneHtml)
+
+You could download it or add it via Composer
+
+> composer require eftec/bladeonehtml
 
 
 
 ## Version
+
+- 2020-04-20 3.38
+    - new feature: named arguments (the method must support it to use)
+    - new method wrapPHP() used internally
+    - new method enq() It's equals than e() but it doesn't encode quotes
+    - new method stripQuotes() It removes quotes from a string "aaa"=>aaa, 'aaa'=>aaa
+    - new method addInsideQuote() It adds a string inside a quote (if any)
+    - new method isQuoted() Returns true if the text is quoted
+    - BladeOneHtml is deprecated (but not deleted) use instead eftec\bladeonehtml 
+- BladeOneHtmlBootstrap is deprecated (but not deleted) use instead eftec\bladeonehtml    
 - 2020-03-10 3.37
     * new tag @compilestamp() shows the date and time where the template was compiled.
     * new tag @viewname() shows the current view template, compile filename or template filename
-    
 - 2020-02-28 3.36.2
     * @splitforeach fixed. Now, it works as base zero.
 - 2020.02-28 3.36.1
@@ -1299,11 +1346,11 @@ good:
 ## SourceGuardian
 
 This library is compatible with [SourceGuardian](https://www.sourceguardian.com).   
- 
+
 >SourceGuardian provides full PHP 4, PHP 5 and PHP 7 support including the latest PHP 7.2 along with many other protection and encryption features.
- 
+
 However:  
- 
+
 * You must avoid encoding the template folder (copy unencoded the views folder).
 * Optionally, you must avoid encoding the compiled folder because the files could be replaced by Bladeone. Also, you could run BladeOne in mode `BladeOne::MODE_FAST` and encode the compile folder)      
 
@@ -1348,7 +1395,7 @@ Some features are missing because they are new, or they lack documentation or th
 - ~~@method. Pending~~ DONE
 - Comment with the name of the template folder. It is not done because it could break functionality.
  BladeOne allows to write and work even with non-html templates.
- 
+
 
 
 ## License
