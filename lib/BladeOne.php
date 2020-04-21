@@ -1914,7 +1914,7 @@ class BladeOne
     public function isQuoted($text)
     {
         if (!$text || strlen($text)<2) {
-            return $text;
+            return false;
         }
         if (substr($text, 0, 1) === '"' && substr($text, -1) === '"') {
             return true;
