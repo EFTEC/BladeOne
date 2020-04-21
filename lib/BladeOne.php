@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.38.1
+ * @version   3.39
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -1898,7 +1898,7 @@ class BladeOne
      * @param $newFragment
      * @return string
      */
-    protected function addInsideQuote($quoted, $newFragment)
+    public function addInsideQuote($quoted, $newFragment)
     {
         if ($this->isQuoted($quoted)) {
             return substr($quoted, 0, -1).$newFragment.substr($quoted, -1);
@@ -1908,7 +1908,7 @@ class BladeOne
     /**
      * Returns true if the text is surrounded by quotes (double or single quote)
      *
-     * @param $text
+     * @param string|null $text
      * @return bool
      */
     public function isQuoted($text)
@@ -1920,6 +1920,20 @@ class BladeOne
             return true;
         }
         return  (substr($text, 0, 1) === "'" && substr($text, -1) === "'");
+    }
+
+    /**
+     * Return true if the string is a php variable (it starts with $)
+     *
+     * @param string|null $text
+     * @return bool
+     */
+    public function isVariablePHP($text)
+    {
+        if (!$text || strlen($text)<2) {
+            return false;
+        }
+        return substr($text, 0, 1) === '$';
     }
     /**
      * Execute the user defined extensions.
@@ -2055,7 +2069,7 @@ class BladeOne
             }
             return isset($match[3]) ? $match[0] : $match[0] . $match[2];
         };
-        /* return \preg_replace_callback('/\B@(@?\w+)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value); */         
+        /* return \preg_replace_callback('/\B@(@?\w+)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value); */
         return preg_replace_callback('/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value);
     }
     

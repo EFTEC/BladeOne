@@ -29,5 +29,20 @@ class OtherTest extends AbstractBladeTestCase
 
 
         $this->assertEquals($compare, $arr);
+        $this->assertEquals(true, $this->blade->isQuoted("'aaa'"));
+        $this->assertEquals(false, $this->blade->isQuoted("aaa'"));
+        $this->assertEquals(true, $this->blade->isQuoted('"aaa"'));
+        $this->assertEquals(false, $this->blade->isQuoted(''));
+        $this->assertEquals(false, $this->blade->isQuoted('"'));
+        $this->assertEquals(false, $this->blade->isQuoted(null));
+        $this->assertEquals(false, $this->blade->isVariablePHP('aaa'));
+        $this->assertEquals(true, $this->blade->isVariablePHP('$aaa'));
+        $this->assertEquals(false, $this->blade->isVariablePHP(''));
+        $this->assertEquals(false, $this->blade->isVariablePHP(null));
+        $this->assertEquals(false, $this->blade->isVariablePHP('$'));
+        $this->assertEquals('"aaabcd"', $this->blade->addInsideQuote('"aaa"', "bcd"));
+        $this->assertEquals('aaa"bcd', $this->blade->addInsideQuote('aaa"', "bcd"));
+        $this->assertEquals('bcd', $this->blade->addInsideQuote('', "bcd"));
+        $this->assertEquals('"bcd"', $this->blade->addInsideQuote('""', "bcd"));
     }
 }

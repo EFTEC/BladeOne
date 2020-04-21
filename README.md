@@ -1061,6 +1061,34 @@ $obj=new BladeOne();
 $url=$obj->addAssetDict('css/style.css','http://....'); 
 ```
 
+## Util methods
+
+It is a collection of methods not used directly by the end user but used in some functionalities.
+
+### stripQuotes
+
+Return true if the string is a php variable (it starts with $)
+
+### addInsideQuote
+
+Execute the user defined extensions.
+
+### isQuoted
+
+Returns true if the text is surrounded by quotes (double or single quote)
+
+### isVariablePHP
+
+Return true if the string is a php variable (it starts with $)
+
+### stripParentheses
+
+Strip the parentheses from the given expression.
+
+### startsWith
+
+Determine if a given string starts with a given substring.
+
 
 ## Extensions Libraries (optional)
 
@@ -1190,7 +1218,9 @@ You could download it or add it via Composer
 
 
 ## Version
-
+- 2020-04-21 3.39
+    * fix method isQuoted() when the string is fewer than 2 chars.
+    * new method isVariablePHP()
 - 2020-04-20 3.38.1   
     * fix in method parseArgs() when it returns a single array  
 - 2020-04-20 3.38  
