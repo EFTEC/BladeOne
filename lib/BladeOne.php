@@ -1,4 +1,13 @@
-<?php /** @noinspection PhpUnused */
+<?php /** @noinspection TypeUnsafeComparisonInspection */
+/** @noinspection NonSecureExtractUsageInspection */
+/** @noinspection PregQuoteUsageInspection */
+/** @noinspection NotOptimalRegularExpressionsInspection */
+/** @noinspection SubStrUsedAsStrPosInspection */
+/** @noinspection ThrowRawExceptionInspection */
+/** @noinspection Annotator */
+/** @noinspection IsNullFunctionUsageInspection */
+/** @noinspection CallableParameterUseCaseInTypeContextInspection */
+/** @noinspection PhpUnused */
 /** @noinspection PhpFullyQualifiedNameUsageInspection */
 /** @noinspection PhpComposerExtensionStubsInspection */
 /** @noinspection Php */
@@ -20,7 +29,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.39
+ * @version   3.40
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -38,9 +47,9 @@ class BladeOne
     /** @var string PHP tag. You could use <?php or <? (if shorttag is active in php.ini) */
     public $phpTag = '<?php ';
     /** @var string $currentUser Current user. Example: john */
-    public $currentUser = null;
+    public $currentUser;
     /** @var string $currentRole Current role. Example: admin */
-    public $currentRole = null;
+    public $currentRole;
     /** @var string[] $currentPermission Current permission. Example ['edit','add'] */
     public $currentPermission = [];
     /** @var callable callback of validation. It is used for @can,@cannot */
@@ -50,7 +59,7 @@ class BladeOne
     /** @var callable callback of errors. It is used for @error */
     public $errorCallBack;
     /** @var string security token */
-    public $csrf_token = "";
+    public $csrf_token = '';
     /** @var array All of the registered extensions. */
     protected $extensions = [];
     /** @var array All of the finished, captured sections. */
@@ -99,7 +108,7 @@ class BladeOne
     /** @var string The main url of the system. Don't use raw $_SERVER values unless sanitized */
     protected $baseUrl = '.';
     /** @var string it is a relative path calculated between baseUrl and the current url. Example ../../ */
-    protected $relativePath = "";
+    protected $relativePath = '';
     /** @var string[] Dictionary of assets */
     protected $assetDict;
     /** @var bool if true then it removes tabs and unneeded spaces */
@@ -191,7 +200,7 @@ class BladeOne
             return false;
         };
 
-        $this->errorCallBack = function (/** @noinspection PhpUnusedParameterInspection */ $key = null) {
+        $this->errorCallBack = static function (/** @noinspection PhpUnusedParameterInspection */ $key = null) {
             return false;
         };
 
@@ -199,10 +208,25 @@ class BladeOne
             $ok = @\mkdir($this->compiledPath, 0777, true);
             if ($ok === false) {
                 $this->showError(
-                    "Constructing",
+                    'Constructing',
                     "Unable to create the compile folder [{$this->compiledPath}]. Check the permissions of it's parent folder.",
                     true
                 );
+            }
+        }
+        // If the traits has "Constructors", then we call them.
+        // Requisites.
+        // 1- the method must be public or protected
+        // 2- it must doesn't have arguments
+        // 3- It must have the name of the trait. i.e. trait=MyTrait, method=MyTrait()
+        $traits = get_declared_traits();
+        if ($traits !== null) {
+            foreach ($traits as $trait) {
+                $r = explode('\\', $trait);
+                $name = end($r);
+                if (is_callable([$this, $name]) && method_exists($this, $name)) {
+                    $this->{$name}();
+                }
             }
         }
     }
@@ -226,7 +250,7 @@ class BladeOne
         if ($critic) {
             die(1);
         }
-        return "";
+        return '';
     }
 
     /**
@@ -277,23 +301,21 @@ class BladeOne
         if (strpos($input, '(') !== false && !$this->isQuoted($input)) {
             if ($parse) {
                 return $quote .'<?php echo $this->e(' . $input . ');?>'. $quote;
-            } else {
-                return $quote .'<?php echo ' . $input . ';?>'. $quote;
             }
+
+            return $quote .'<?php echo ' . $input . ';?>'. $quote;
         }
         if (strpos($input, '$') === false) {
             if ($parse) {
-                return $this->enq($input);
-            } else {
-                return $input;
+                return self::enq($input);
             }
-        } else {
-            if ($parse) {
-                return $quote . '<?php echo $this->e(' . $input . ');?>' . $quote;
-            } else {
-                return $quote . '<?php echo ' . $input . ';?>' . $quote;
-            }
+
+            return $input;
         }
+        if ($parse) {
+            return $quote . '<?php echo $this->e(' . $input . ');?>' . $quote;
+        }
+        return $quote . '<?php echo ' . $input . ';?>' . $quote;
     }
 
     protected static function convertArgCallBack($k, $v)
@@ -354,12 +376,12 @@ class BladeOne
     public static function startsWith($haystack, $needles)
     {
         foreach ((array)$needles as $needle) {
-            if (\function_exists('mb_strpos')) {
-                if ($needle != '' && \mb_strpos($haystack, $needle) === 0) {
-                    return true;
-                }
-            } else {
-                if ($needle != '' && \strpos($haystack, $needle) === 0) {
+            if ($needle != '') {
+                if (\function_exists('mb_strpos')) {
+                    if (\mb_strpos($haystack, $needle) === 0) {
+                        return true;
+                    }
+                } elseif (\strpos($haystack, $needle) === 0) {
                     return true;
                 }
             }
@@ -478,11 +500,11 @@ class BladeOne
         }
 
         $lastError = \error_get_last(); // PHP 5.6
-        if ($previousError != $lastError && $lastError["type"] == E_PARSE) {
+        if ($previousError != $lastError && $lastError['type'] == E_PARSE) {
             while (\ob_get_level() > $obLevel) {
                 \ob_end_clean();
             }
-            throw new Exception($lastError["message"], $lastError["type"]);
+            throw new Exception($lastError['message'], $lastError['type']);
         }
 
         return \ob_get_clean();
@@ -600,7 +622,7 @@ class BladeOne
      * @param string|array $name example 'css/style.css', you could also add an array
      * @param string $url example https://www.web.com/style.css'
      */
-    public function addAssetDict($name, $url = "")
+    public function addAssetDict($name, $url = '')
     {
         if (\is_array($name)) {
             $this->assetDict = \array_merge($this->assetDict, $name);
@@ -781,22 +803,21 @@ class BladeOne
         if (($loopStack['index']) == $loopStack['count']-1) {
             return $splitEnd;
         }
+        $eachN=0;
         if (is_numeric($each)) {
             $eachN=$each;
-        } else {
-            if (strlen($each)>1) {
-                if (substr($each, 0, 1)=='c') {
-                    $eachN=$loopStack['count']/substr($each, 1);
-                }
-            } else {
-                $eachN=PHP_INT_MAX;
+        } elseif (strlen($each)>1) {
+            if ($each[0] ==='c') {
+                $eachN=$loopStack['count']/substr($each, 1);
             }
+        } else {
+            $eachN=PHP_INT_MAX;
         }
         
-        if (($loopStack['index']+1) % $eachN == 0) {
+        if (($loopStack['index']+1) % $eachN === 0) {
             return $splitText;
         }
-        return "";
+        return '';
     }
 
     /**
@@ -829,7 +850,7 @@ class BladeOne
             return empty($array) ? static::value($default) : \reset($array);
         }
         foreach ($array as $key => $value) {
-            if (\call_user_func($callback, $key, $value)) {
+            if ($callback($key, $value)) {
                 return $value;
             }
         }
@@ -844,7 +865,7 @@ class BladeOne
      */
     public function __call($name, $args)
     {
-        if ($name == 'if') {
+        if ($name === 'if') {
             return $this->registerIfStatement(@$args[0], @$args[1]);
         }
         throw new BadMethodCallException("function $name is not defined<br>");
@@ -878,7 +899,7 @@ class BladeOne
         $this->directive('end' . $name, function () {
             return $this->phpTag . ' endif; ?>';
         });
-        return "";
+        return '';
     }
 
     /**
@@ -904,9 +925,8 @@ class BladeOne
     {
         if ($bool) {
             return $this->runChild($view, $value);
-        } else {
-            return "";
         }
+        return '';
     }
 
     /**
@@ -922,8 +942,8 @@ class BladeOne
         if (\is_array($variables)) {
             $newVariables = \array_merge($this->variables, $variables);
         } else {
-            $this->showError("run/include", "Include/run variables should be defined as array ['idx'=>'value']", true);
-            return "";
+            $this->showError('run/include', "Include/run variables should be defined as array ['idx'=>'value']", true);
+            return '';
         }
         return $this->runInternal($view, $newVariables, false, false, $this->isRunFast);
     }
@@ -961,11 +981,8 @@ class BladeOne
             if (!$this->isCompiled) {
                 return $this->evaluateText($result, $variables);
             }
-        } else {
-            // running fast, we don't compile neither we check or read the original template.
-            if ($view) {
-                $this->fileName = $view;
-            }
+        } elseif ($view) {
+            $this->fileName = $view;
         }
         $this->isRunFast = $runFast;
         return $this->evaluatePath($this->getCompiledFile(), $variables);
@@ -1086,11 +1103,11 @@ class BladeOne
      */
     public function getCsrfToken($fullToken = false, $tokenId = '_token')
     {
-        if ($this->csrf_token == "") {
+        if ($this->csrf_token == '') {
             $this->regenerateToken($tokenId);
         }
         if ($fullToken) {
-            return $this->csrf_token . "|" . $this->ipClient();
+            return $this->csrf_token . '|' . $this->ipClient();
         }
         return $this->csrf_token;
     }
@@ -1106,17 +1123,16 @@ class BladeOne
         try {
             $this->csrf_token = \bin2hex(\random_bytes(10));
         } catch (Exception $e) {
-            $this->csrf_token = "123456789012345678901234567890"; // unable to generates a random token.
+            $this->csrf_token = '123456789012345678901234567890'; // unable to generates a random token.
         }
-        @$_SESSION[$tokenId] = $this->csrf_token . "|" . $this->ipClient();
+        @$_SESSION[$tokenId] = $this->csrf_token . '|' . $this->ipClient();
     }
 
     public function ipClient()
     {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            if (\preg_match("/^([d]{1,3}).([d]{1,3}).([d]{1,3}).([d]{1,3})$/", $_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                return $_SERVER['HTTP_X_FORWARDED_FOR'];
-            }
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])
+            && \preg_match('/^([d]{1,3}).([d]{1,3}).([d]{1,3}).([d]{1,3})$/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
         return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
     }
@@ -1137,16 +1153,16 @@ class BladeOne
      */
     public function csrfIsValid($alwaysRegenerate = false, $tokenId = '_token')
     {
-        if (@$_SERVER['REQUEST_METHOD'] == 'POST' && $alwaysRegenerate === false) {
+        if (@$_SERVER['REQUEST_METHOD'] === 'POST' && $alwaysRegenerate === false) {
             $this->csrf_token = @$_POST[$tokenId]; // ping pong the token.
-            return $this->csrf_token . "|" . $this->ipClient() == @$_SESSION[$tokenId];
-        } else {
-            if ($this->csrf_token == ""  || $alwaysRegenerate) {
-                // if not token then we generate a new one
-                $this->regenerateToken($tokenId);
-            }
-            return true;
+            return $this->csrf_token . '|' . $this->ipClient() === @$_SESSION[$tokenId];
         }
+
+        if ($this->csrf_token == '' || $alwaysRegenerate) {
+            // if not token then we generate a new one
+            $this->regenerateToken($tokenId);
+        }
+        return true;
     }
 
     /**
@@ -1204,7 +1220,7 @@ class BladeOne
             echo '</pre>';
         } else {
             /** @noinspection BadExpressionStatementJS */
-            echo "<script>console.log(" . \json_encode($object) . ")</script>";
+            echo '<script>console.log(' . \json_encode($object) . ')</script>';
         }
     }
 
@@ -1266,9 +1282,9 @@ class BladeOne
     {
         if (isset($this->sections[$section])) {
             return \str_replace($this->PARENTKEY, $default, $this->sections[$section]);
-        } else {
-            return $default;
         }
+
+        return $default;
     }
 
     /**
@@ -1490,15 +1506,10 @@ class BladeOne
                 $data = ['key' => $key, $iterator => $value];
                 $result .= $this->runChild($view, $data);
             }
+        } elseif (static::startsWith($empty, 'raw|')) {
+            $result = \substr($empty, 4);
         } else {
-            // If there is no data in the array, we will render the contents of the empty
-            // view. Alternatively, the "empty view" could be a raw string that begins
-            // with "raw|" for convenience and to let this know that it is a string.
-            if (static::startsWith($empty, 'raw|')) {
-                $result = \substr($empty, 4);
-            } else {
-                $result = $this->run($empty, []);
-            }
+            $result = $this->run($empty, []);
         }
         return $result;
     }
@@ -1518,7 +1529,7 @@ class BladeOne
         $runFast = $mode & 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
         $this->sections = [];
         if ($mode == 3) {
-            $this->showError("run", "we can't force and run fast at the same time", true);
+            $this->showError('run', "we can't force and run fast at the same time", true);
         }
         return  $this->runInternal($view, $variables, $forced, true, $runFast);
     }
@@ -1586,14 +1597,12 @@ class BladeOne
      */
     public function slot($name, $content = null)
     {
-        if (\count(\func_get_args()) == 2) {
+        if (\count(\func_get_args()) === 2) {
             $this->slots[$this->currentComponent()][$name] = $content;
-        } else {
-            if (\ob_start()) {
-                $this->slots[$this->currentComponent()][$name] = '';
+        } elseif (\ob_start()) {
+            $this->slots[$this->currentComponent()][$name] = '';
 
-                $this->slotStack[$this->currentComponent()][] = $name;
-            }
+            $this->slotStack[$this->currentComponent()][] = $name;
         }
     }
 
@@ -1704,7 +1713,7 @@ class BladeOne
             $part = \str_replace($base, '', $currentUrl);
             $numf = \substr_count($part, '/') - 1;
             $numf = ($numf > 10) ? 10 : $numf; // avoid overflow
-            $this->relativePath = ($numf < 0) ? "" : \str_repeat('../', $numf);
+            $this->relativePath = ($numf < 0) ? '' : \str_repeat('../', $numf);
         } else {
             $this->relativePath = '';
         }
@@ -1806,7 +1815,7 @@ class BladeOne
     {
         if ($this->firstCaseInSwitch) {
             $this->firstCaseInSwitch = false;
-            return "case " . $expression . ": ?>";
+            return 'case ' . $expression . ': ?>';
         }
         return $this->phpTag . "case $expression: ?>";
     }
@@ -1833,18 +1842,18 @@ class BladeOne
     protected function compileDefault()
     {
         if ($this->firstCaseInSwitch) {
-            return $this->showError("@default", "@switch without any @case", true);
+            return $this->showError('@default', '@switch without any @case', true);
         }
-        return $this->phpTag . "default: ?>";
+        return $this->phpTag . 'default: ?>';
     }
 
     protected function compileEndSwitch()
     {
-        $this->switchCount = $this->switchCount - 1;
+        --$this->switchCount;
         if ($this->switchCount < 0) {
-            return $this->showError("@endswitch", "Missing @switch", true);
+            return $this->showError('@endswitch', 'Missing @switch', true);
         }
-        return $this->phpTag . "} // end switch ?>";
+        return $this->phpTag . '} // end switch ?>';
     }
 
     /**
@@ -1878,11 +1887,11 @@ class BladeOne
         if (!$text || strlen($text)<2) {
             return $text;
         }
-        if (substr($text, 0, 1) === '"' && substr($text, -1) === '"') {
-            return substr($text, 1, strlen($text) - 2);
+        if (strpos($text, '"') === 0 && substr($text, -1) === '"') {
+            return substr($text, 1, -1);
         }
-        if (substr($text, 0, 1) === "'" && substr($text, -1) === "'") {
-            return substr($text, 1, strlen($text) - 2);
+        if (strpos($text, "'") === 0 && substr($text, -1) === "'") {
+            return substr($text, 1, -1);
         }
         return $text;
     }
@@ -1916,10 +1925,10 @@ class BladeOne
         if (!$text || strlen($text)<2) {
             return false;
         }
-        if (substr($text, 0, 1) === '"' && substr($text, -1) === '"') {
+        if ($text[0] === '"' && substr($text, -1) === '"') {
             return true;
         }
-        return  (substr($text, 0, 1) === "'" && substr($text, -1) === "'");
+        return  ($text[0] === "'" && substr($text, -1) === "'");
     }
 
     /**
@@ -1933,7 +1942,7 @@ class BladeOne
         if (!$text || strlen($text)<2) {
             return false;
         }
-        return substr($text, 0, 1) === '$';
+        return $text[0] === '$';
     }
     /**
      * Execute the user defined extensions.
@@ -1944,7 +1953,7 @@ class BladeOne
     protected function compileExtensions($value)
     {
         foreach ($this->extensions as $compiler) {
-            $value = \call_user_func($compiler, $value, $this);
+            $value = $compiler($value, $this);
         }
         return $value;
     }
@@ -1987,7 +1996,7 @@ class BladeOne
             'compileEscapedEchos' => \strlen(\stripcslashes($this->escapedTags[0])),
             'compileRegularEchos' => \strlen(\stripcslashes($this->contentTags[0])),
         ];
-        \uksort($methods, function ($method1, $method2) use ($methods) {
+        \uksort($methods, static function ($method1, $method2) use ($methods) {
             // Ensure the longest tags are processed first
             if ($methods[$method1] > $methods[$method2]) {
                 return -1;
@@ -2052,19 +2061,17 @@ class BladeOne
                             $this->stripParentheses(static::get($match, 3))
                         );
                     }
+                } elseif (\method_exists($this, $method = 'compile' . \ucfirst($match[1]))) {
+                    // it calls the function compile<name of the tag>
+                    $match[0] = $this->$method(static::get($match, 3));
                 } else {
-                    if (\method_exists($this, $method = 'compile' . \ucfirst($match[1]))) {
-                        // it calls the function compile<name of the tag>
-                        $match[0] = $this->$method(static::get($match, 3));
-                    } else {
-                        /*echo "<pre>";
-                        var_dump($match);
-                        echo "</pre>";
-                        echo "operation not defined!";
-                        */
-                        //todo: $this->showError("@compile", "Operation not defined:@".$match[1], true);
-                        return $match[0];
-                    }
+                    /*echo "<pre>";
+                    var_dump($match);
+                    echo "</pre>";
+                    echo "operation not defined!";
+                    */
+                    //todo: $this->showError("@compile", "Operation not defined:@".$match[1], true);
+                    return $match[0];
                 }
             }
             return isset($match[3]) ? $match[0] : $match[0] . $match[2];
@@ -2077,9 +2084,9 @@ class BladeOne
     {
         if (isset($match[3])) {
             return $this->phpTag.'echo '.$this->fixNamespaceClass($match[1]). $match[3].'; ?>';
-        } else {
-            return $this->phpTag.'echo '.$this->fixNamespaceClass($match[1]).'(); ?>';
         }
+
+        return $this->phpTag.'echo '.$this->fixNamespaceClass($match[1]).'(); ?>';
     }
 
     /**
@@ -2092,12 +2099,12 @@ class BladeOne
     public static function contains($haystack, $needles)
     {
         foreach ((array)$needles as $needle) {
-            if (\function_exists('mb_strpos')) {
-                if ($needle != '' && \mb_strpos($haystack, $needle) !== false) {
-                    return true;
-                }
-            } else {
-                if ($needle != '' && \strpos($haystack, $needle) !== false) {
+            if ($needle != '') {
+                if (\function_exists('mb_strpos')) {
+                    if (\mb_strpos($haystack, $needle) !== false) {
+                        return true;
+                    }
+                } elseif (\strpos($haystack, $needle) !== false) {
                     return true;
                 }
             }
@@ -2121,8 +2128,9 @@ class BladeOne
         }
         $chars = str_split($text);
         $parts = [];
-        $nextpart = "";
+        $nextpart = '';
         $strL = count($chars);
+        /** @noinspection ForeachInvariantsInspection */
         for ($i = 0; $i < $strL; $i++) {
             $char = $chars[$i];
             if ($char === '"' || $char === "'") {
@@ -2135,10 +2143,10 @@ class BladeOne
             }
             if ($char === $separator) {
                 $parts[] = substr($nextpart, 0, -1);
-                $nextpart = "";
+                $nextpart = '';
             }
         }
-        if (strlen($nextpart) > 0) {
+        if ($nextpart !== '') {
             $parts[] = $nextpart;
         }
         $result = [];
@@ -2324,7 +2332,7 @@ class BladeOne
         //$segments = \explode('=', \preg_replace("/[\(\)\\\']/", '', $expression));
         $segments = \explode('=', \preg_replace("/[()\\\']/", '', $expression));
         $value = (\count($segments) >= 2) ? ' =@' . $segments[1] : '++';
-        return $this->phpTag . \trim($segments[0]) . $value . "; ?>";
+        return $this->phpTag . \trim($segments[0]) . $value . '; ?>';
     }
 
     /**
@@ -2379,10 +2387,10 @@ class BladeOne
     {
         $role = $this->stripParentheses($expression);
         if ($role == '') {
-            return $this->phpTag . "if(isset(\$this->currentUser)): ?>";
-        } else {
-            return $this->phpTag . "if(isset(\$this->currentUser) && \$this->currentRole=={$role}): ?>";
+            return $this->phpTag . 'if(isset($this->currentUser)): ?>';
         }
+
+        return $this->phpTag . "if(isset(\$this->currentUser) && \$this->currentRole=={$role}): ?>";
     }
 
     /**
@@ -2395,10 +2403,10 @@ class BladeOne
     {
         $role = $this->stripParentheses($expression);
         if ($role == '') {
-            return $this->phpTag . "else: ?>";
-        } else {
-            return $this->phpTag . "elseif(isset(\$this->currentUser) && \$this->currentRole=={$role}): ?>";
+            return $this->phpTag . 'else: ?>';
         }
+
+        return $this->phpTag . "elseif(isset(\$this->currentUser) && \$this->currentRole=={$role}): ?>";
     }
 
     /**
@@ -2428,9 +2436,9 @@ class BladeOne
         $v = $this->stripParentheses($expression);
         if ($v) {
             return $this->phpTag . 'elseif (call_user_func($this->authCallBack,' . $v . ')): ?>';
-        } else {
-            return $this->phpTag . 'else: ?>';
         }
+
+        return $this->phpTag . 'else: ?>';
     }
 
     protected function compileCannot($expression)
@@ -2450,9 +2458,9 @@ class BladeOne
         $v = $this->stripParentheses($expression);
         if ($v) {
             return $this->phpTag . 'elseif (!call_user_func($this->authCallBack,' . $v . ')): ?>';
-        } else {
-            return $this->phpTag . 'else: ?>';
         }
+
+        return $this->phpTag . 'else: ?>';
     }
 
     /**
@@ -2478,10 +2486,9 @@ class BladeOne
     {
         $role = $this->stripParentheses($expression);
         if ($role == '') {
-            return $this->phpTag . "else: ?>";
-        } else {
-            return $this->phpTag . 'elseif (call_user_func($this->authAnyCallBack,' . $role . ')): ?>';
+            return $this->phpTag . 'else: ?>';
         }
+        return $this->phpTag . 'elseif (call_user_func($this->authAnyCallBack,' . $role . ')): ?>';
     }
 
     /**
@@ -2493,15 +2500,15 @@ class BladeOne
     protected function compileGuest($expression = null)
     {
         if ($expression === null) {
-            return $this->phpTag . "if(!isset(\$this->currentUser)): ?>";
-        } else {
-            $role = $this->stripParentheses($expression);
-            if ($role == "") {
-                return $this->phpTag . "if(!isset(\$this->currentUser)): ?>";
-            } else {
-                return $this->phpTag . "if(!isset(\$this->currentUser) || \$this->currentRole!={$role}): ?>";
-            }
+            return $this->phpTag . 'if(!isset($this->currentUser)): ?>';
         }
+
+        $role = $this->stripParentheses($expression);
+        if ($role == '') {
+            return $this->phpTag . 'if(!isset($this->currentUser)): ?>';
+        }
+
+        return $this->phpTag . "if(!isset(\$this->currentUser) || \$this->currentRole!={$role}): ?>";
     }
 
     /**
@@ -2514,10 +2521,10 @@ class BladeOne
     {
         $role = $this->stripParentheses($expression);
         if ($role == '') {
-            return $this->phpTag . "else: ?>";
-        } else {
-            return $this->phpTag . "elseif(!isset(\$this->currentUser) || \$this->currentRole!={$role}): ?>";
+            return $this->phpTag . 'else: ?>';
         }
+
+        return $this->phpTag . "elseif(!isset(\$this->currentUser) || \$this->currentRole!={$role}): ?>";
     }
 
     /**
@@ -2729,12 +2736,11 @@ class BladeOne
      */
     protected function compileEmpty($expression = '')
     {
-        if (($expression == '')) {
+        if ($expression == '') {
             $empty = '$__empty_' . $this->forelseCounter--;
             return $this->phpTag . "endforeach; if ({$empty}): ?>";
-        } else {
-            return $this->phpTag . "if (empty{$expression}): ?>";
         }
+        return $this->phpTag . "if (empty{$expression}): ?>";
     }
     //</editor-fold>
     //<editor-fold desc="Array Functions">
@@ -2904,7 +2910,7 @@ class BladeOne
     protected function compileInclude($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $replace = $this->phpTag . 'echo $this->runChild(' . $expression . '); ?>';
+        return $this->phpTag . 'echo $this->runChild(' . $expression . '); ?>';
     }
 
     /**
@@ -2940,9 +2946,9 @@ class BladeOne
         $templateName = (empty($templateName)) ? $this->fileName : $templateName;
         if ($this->getMode() == self::MODE_DEBUG) {
             return $this->compiledPath . '/' . $templateName . $this->compileExtension;
-        } else {
-            return $this->compiledPath . '/' . \sha1($templateName) . $this->compileExtension;
         }
+
+        return $this->compiledPath . '/' . \sha1($templateName) . $this->compileExtension;
     }
 
     /**
@@ -2993,7 +2999,7 @@ class BladeOne
                 $ok = @\mkdir($dir, 0777, true);
                 if ($ok === false) {
                     $this->showError(
-                        "Compiling",
+                        'Compiling',
                         "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.",
                         true
                     );
@@ -3008,7 +3014,7 @@ class BladeOne
             $ok = @\file_put_contents($compiled, $contents);
             if ($ok === false) {
                 $this->showError(
-                    "Compiling",
+                    'Compiling',
                     "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission"
                 );
                 return false;
@@ -3035,12 +3041,12 @@ class BladeOne
         if ($c == 1) {
             // its in the root of the template folder.
             return $this->locateTemplate($templateName . $this->fileExtension);
-        } else {
-            $file = $arr[$c - 1];
-            \array_splice($arr, $c - 1, $c - 1); // delete the last element
-            $path = \implode('/', $arr);
-            return $this->locateTemplate($path . '/' . $file . $this->fileExtension);
         }
+
+        $file = $arr[$c - 1];
+        \array_splice($arr, $c - 1, $c - 1); // delete the last element
+        $path = \implode('/', $arr);
+        return $this->locateTemplate($path . '/' . $file . $this->fileExtension);
     }
 
     /**
@@ -3090,9 +3096,9 @@ class BladeOne
         $template = $this->getTemplateFile($fileName);
         if (!\file_exists($template)) {
             if ($this->mode == self::MODE_DEBUG) {
-                $this->showError("Read file", "Template not found :" . $this->fileName . " on file: $template", true);
+                $this->showError('Read file', 'Template not found :' . $this->fileName . " on file: $template", true);
             } else {
-                $this->showError("Read file", "Template not found :" . $this->fileName, true);
+                $this->showError('Read file', 'Template not found :' . $this->fileName, true);
             }
         }
         // If the compiled file doesn't exist we will indicate that the view is expired
@@ -3112,7 +3118,7 @@ class BladeOne
      */
     protected function compileIncludeIf($expression)
     {
-        return $replace = $this->phpTag . 'if ($this->templateExist' . $expression . ') echo $this->runChild' . $expression . '; ?>';
+        return $this->phpTag . 'if ($this->templateExist' . $expression . ') echo $this->runChild' . $expression . '; ?>';
     }
 
     /**
@@ -3124,7 +3130,7 @@ class BladeOne
     protected function compileIncludeWhen($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $replace = $this->phpTag . 'echo $this->includeWhen(' . $expression . '); ?>';
+        return $this->phpTag . 'echo $this->includeWhen(' . $expression . '); ?>';
     }
 
     /**
@@ -3136,7 +3142,7 @@ class BladeOne
     protected function compileIncludeFirst($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $replace = $this->phpTag . 'echo $this->includeFirst(' . $expression . '); ?>';
+        return $this->phpTag . 'echo $this->includeFirst(' . $expression . '); ?>';
     }
 
     /**
@@ -3297,11 +3303,11 @@ class BladeOne
     protected function injectClass($className, $variableName = null)
     {
         if (isset($this->injectResolver)) {
-            return \call_user_func_array($this->injectResolver, [$className, $variableName]);
-        } else {
-            $fullClassName = $className . "\\" . $variableName;
-            return new $fullClassName();
+            return call_user_func($this->injectResolver, $className, $variableName);
         }
+
+        $fullClassName = $className . "\\" . $variableName;
+        return new $fullClassName();
     }
     //</editor-fold>
     
@@ -3320,9 +3326,9 @@ class BladeOne
         if ((!\array_key_exists($phrase, static::$dictionary))) {
             $this->missingTranslation($phrase);
             return $phrase;
-        } else {
-            return static::$dictionary[$phrase];
         }
+
+        return static::$dictionary[$phrase];
     }
 
     /**
@@ -3338,7 +3344,7 @@ class BladeOne
         $argv = \func_get_args();
         $r = $this->_e($phrase);
         $argv[0] = $r; // replace the first argument with the translation.
-        $result = @\call_user_func_array("sprintf", $argv);
+        $result = @sprintf(...$argv);
         $result = ($result === false) ? $r : $result;
         return $result;
     }
@@ -3358,9 +3364,9 @@ class BladeOne
         if ((!\array_key_exists($phrase, static::$dictionary))) {
             $this->missingTranslation($phrase);
             return ($num <= 1) ? $phrase : $phrases;
-        } else {
-            return ($num <= 1) ? $this->_e($phrase) : $this->_e($phrases);
         }
+
+        return ($num <= 1) ? $this->_e($phrase) : $this->_e($phrases);
     }
 
     //<editor-fold desc="compile">

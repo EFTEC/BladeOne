@@ -1218,6 +1218,10 @@ You could download it or add it via Composer
 
 
 ## Version
+- 2020-04-22 3.40
+    * Lots of cleanup. 
+    * This library will never ever pass codesniffing (we have a method called _e for a purpose).  
+    * It adds a build-in call automatically the trait's constructor feature.  
 - 2020-04-21 3.39
     * fix method isQuoted() when the string is fewer than 2 chars.
     * new method isVariablePHP()
