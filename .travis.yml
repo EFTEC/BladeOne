@@ -10,7 +10,7 @@ matrix:
 
   include:
     - php: '7.2'
-      env: SNIFF=1
+      env: SNIFF=0
 
 before_install:
   # Install PHP CodeSniffer.
