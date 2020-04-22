@@ -34,6 +34,24 @@ I will try to answer all and every one of the question (in my limited time).
 
 
 
+## Manual
+
+* [BladeOne Manual](https://github.com/EFTEC/BladeOne/wiki/BladeOne-Manual)    
+* [Template tags (views)](https://github.com/EFTEC/BladeOne/wiki/Template-tags)    
+    * [Template variables](https://github.com/EFTEC/BladeOne/wiki/Template-variables)     
+    * [Template inheritance](https://github.com/EFTEC/BladeOne/wiki/Template-inheritance)      
+    * [Template stack](https://github.com/EFTEC/BladeOne/wiki/Template-stack)
+    * [Template asset links](https://github.com/EFTEC/BladeOne/wiki/Template-Asset-Links)
+    * [Template calling methods](https://github.com/EFTEC/BladeOne/wiki/Template-calling-methods) 
+    * [Template logic](https://github.com/EFTEC/BladeOne/wiki/Template-logic)    
+    * [Template loop](https://github.com/EFTEC/BladeOne/wiki/Template-loop)    
+* [Methods of the class](https://github.com/EFTEC/BladeOne/wiki/Methods-of-the-class)   
+* [Extending the class](https://github.com/EFTEC/BladeOne/wiki/Extending-the-class)   
+* [Differences between Blade and BladeOne](https://github.com/EFTEC/BladeOne/wiki/Differences-between-Blade-and-BladeOne)   
+* [Changelog](https://github.com/EFTEC/BladeOne/wiki/Changelog)   
+* [Changes between 2.x and 3.0 and TODO](https://github.com/EFTEC/BladeOne/wiki/Changes-between-2.x-and-3.0-and-TODO)   
+* [Code Protection (Sourceguardian and similars)](https://github.com/EFTEC/BladeOne/wiki/Code-Protection-(Sourceguardian-and-similars))   
+
 
 
 ## Laravel blade tutorial
