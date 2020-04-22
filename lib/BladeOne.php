@@ -2158,7 +2158,16 @@ class BladeOne
         }
         return $result;
     }
-    
+
+    /**
+     * This method removes the parenthesis of the expression and parse the arguments.
+     * @param string $expression
+     * @return array
+     */
+    protected function getArgs($expression)
+    {
+        return  $this->parseArgs($this->stripParentheses($expression), ' ');
+    }
 
 
     /**

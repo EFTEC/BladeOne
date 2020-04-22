@@ -1215,21 +1215,144 @@ You could download it or add it via Composer
 
 > composer require eftec/bladeonehtml
 
+## Extending the class 
+
+There are several ways to add more tags and extending the class with new functionalities.   
+
+The official way to extend the class is creating a new PHP trait as follow:
+
+
+
+```php
+trait TraitExample
+{
+	// our code
+}
+```
+
+And we need to define the next class
+
+```php
+class ClassUsingTraitExample extends BladeOne
+{
+    use TraitExample;
+}
+$blade=new ClassUsingTraitExample(); // instead of $blade=new BladeOne();
+```
+
+### Adding a constructor to the trait
+
+To add a constructor to each trait, we must create a new public function without arguments and with the name of the trait.
+
+```php
+trait TraitExample
+{
+    public $fieldTrait; // example field
+    /**
+     * Constructor. It must has the name of the trait, it must be public and it must has zero arguments.
+     */
+    public function TraitExample()
+    {
+        $this->fieldTrait='loaded';
+    }
+}
+```
+
+
+
+## Adding a new tag (classic)
+
+It is an example of a new method. The method must be public and called "compile"+ name of the new tag
+
+You can see an example in [tests/OtherTest.php](tests/OtherTest.php)
+
+
+
+```php
+trait TraitExample
+{
+    /**
+     * We create the new tags @hello <br>
+     * The name of the method must starts with "compile"<br>
+     * <b>Example:</b><br>
+     * <pre>
+     * @hello()
+     * @hello("name")
+     * </pre>
+     *
+     * @param null|string $expression expects a value like null, (), ("hello") or ($somevar)
+     * @return string returns a fragment of code (php and html)
+     */
+    public function compileHello($expression=null)
+    {
+        if ($expression===null || $expression==='()') {
+            return "<?php echo '--empty--'; ?>";
+        }
+        return "<?php echo 'Hello '.$expression; ?>";
+    }
+}
+```
+
+The tag could be called in the view as follow
+
+```html
+@hello()
+@hello("name")
+```
+### Adding a new tag (named argument)
+
+
+
+```php
+trait TraitExample
+{
+    /**
+     * We create the new tags @ hellonamed <br>
+     * The name of the method must starts with "compile"<br>
+     * <b>Example:</b><br>
+     * <pre>
+     * @hellonamed()
+     * @hellonamed(name="name")
+     * </pre>
+     *
+     * @param null|string $expression expects a value like null, (), ("hello") or ($somevar)
+     * @return string returns a fragment of code (php and html)
+     */
+    public function compileHelloNamed($expression)
+    {
+        $args = $this->getArgs($expression); // args separates the arguments by name
+        $name=isset($args['name']) ? $args['name'] : '--empty--';
+        return "<?php echo 'Hello '.$name; ?>";
+    }
+
+}
+```
+
+The tag could be called in the view as follow
+
+```html
+@hellonamed()
+@hellonamed(name="name")
+```
+
+
 
 
 ## Version
+
 - 2020-04-22 3.40
     * Lots of cleanup. 
+    * new method **getArgs**() (protected). It is used for named parameters.
     * This library will never ever pass codesniffing (we have a method called _e for a purpose).  
-    * It adds a build-in call automatically the trait's constructor feature.  
+    * It adds a constructor feature for every trait.  
 - 2020-04-21 3.39
-    * fix method isQuoted() when the string is fewer than 2 chars.
-    * new method isVariablePHP()
+    * fix method **isQuoted**() when the string is fewer than 2 chars.
+    * new method **isVariablePHP**()
 - 2020-04-20 3.38.1   
-    * fix in method parseArgs() when it returns a single array  
+    * fix in method **parseArgs()** when it returns a single array  
 - 2020-04-20 3.38  
     - new feature: named arguments (the method must support it to use)     
-    - new method wrapPHP() used internally   
+    - new method **wrapPHP()** used internally   
     - new method enq() It's equals than e() but it doesn't encode quotes    
     - new method stripQuotes() It removes quotes from a string "aaa"=>aaa, 'aaa'=>aaa    
     - new method addInsideQuote() It adds a string inside a quote (if any)    
