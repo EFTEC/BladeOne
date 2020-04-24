@@ -188,12 +188,12 @@ class BladeOne
         $this->compiledPath = $compiledPath;
         $this->setMode($mode);
         $this->authCallBack = function ($action = null, /** @noinspection PhpUnusedParameterInspection */ $subject = null) {
-            return \in_array($action, $this->currentPermission);
+            return \in_array($action, $this->currentPermission, true);
         };
 
         $this->authAnyCallBack = function ($array = []) {
             foreach ($array as $permission) {
-                if (\in_array($permission, $this->currentPermission)) {
+                if (\in_array($permission, $this->currentPermission, true)) {
                     return true;
                 }
             }
@@ -1515,10 +1515,10 @@ class BladeOne
     }
 
     /**
-     * run the blade engine. It returns the result of the code.
+     * Run the blade engine. It returns the result of the code.
      *
-     * @param string $view
-     * @param array $variables
+     * @param string $view The name of the cache. Ex: "folder.folder.view" ("/folder/folder/view.blade")
+     * @param array $variables An associative arrays with the values to display.
      * @return string
      * @throws Exception
      */
