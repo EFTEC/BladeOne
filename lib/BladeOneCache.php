@@ -31,7 +31,7 @@ use function time;
  * </code>
  *
  * @package  BladeOneCache
- * @version  1.5 2020-04-24
+ * @version  3.41.1 2020-04-25
  * @link     https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
@@ -146,9 +146,9 @@ trait BladeOneCache
         $this->cachePageRunning=true;
         if ($this->cachePageExpired($view, $ttl)) {
             $this->cacheStart('_page_', $ttl);
-            echo $this->run($view, $variables); // if no cache, then it runs normally.
-            $this->cacheEnd(); // and it stores as a cache paged.
-            $content='';
+            $content=$this->run($view, $variables); // if no cache, then it runs normally.
+            $this->fileName=$view; // sometimes the filename is replaced (@include), so we restore it
+            $this->cacheEnd($content); // and it stores as a cache paged.
         } else {
             $content = $this->getFile($this->getCompiledFileCache($view));
         }
@@ -236,10 +236,10 @@ trait BladeOneCache
         }
     }
 
-    public function cacheEnd()
+    public function cacheEnd($txt = null)
     {
         if (!$this->cacheRunning) {
-            $txt = substr(ob_get_contents(), $this->curCachePosition);
+            $txt = ($txt !== null) ? $txt : substr(ob_get_contents(), $this->curCachePosition) ;
             if ($this->cachePageRunning) {
                 $compiledFile = $this->getCompiledFileCache($this->fileName);
             } else {
