@@ -16,6 +16,7 @@ class myBladeCache extends BladeOne
 }
 
 $blade=new myBladeCache();
+$blade->setCacheLog('cachelog.log');
 $blade->setCacheStrategy('getpost');
 
 define('BLADEONE_MODE', 0); // (optional) 1=forced (test),2=run fast (production), 0=automatic, default value.

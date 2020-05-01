@@ -6,9 +6,16 @@
 
 namespace eftec\bladeone;
 
+use function fclose;
 use function file_put_contents;
 use function filemtime;
+use function filesize;
+use function fopen;
+use function fwrite;
+use function is_array;
+use function is_object;
 use function ob_get_contents;
+use function print_r;
 use function strlen;
 use function substr;
 use function time;
@@ -31,17 +38,18 @@ use function time;
  * </code>
  *
  * @package  BladeOneCache
- * @version  3.41.1 2020-04-25
+ * @version  3.42 2020-04-25
  * @link     https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  */
 trait BladeOneCache
 {
     protected $curCacheId = 0;
-    protected $curCacheDuration = '';
+    protected $curCacheDuration = 0;
     protected $curCachePosition = 0;
     protected $cacheRunning = false;
-    protected $cachePageRunning=false;
+    protected $cachePageRunning = false;
+    protected $cacheLog;
     /**
      * @var array avoids to compare the file different times. It also avoids race conditions.
      */
@@ -60,9 +68,50 @@ trait BladeOneCache
     }
 
     /**
+     * It sets the cache log. If not cache log then it does not generates a log file<br>
+     * The cache log stores each time a template is creates or expired.<br>
+     *
+     * @param string $file
+     */
+    public function setCacheLog($file)
+    {
+        $this->cacheLog=$file;
+    }
+    
+    public function writeCacheLog($txt, $nivel)
+    {
+        if (!$this->cacheLog) {
+            return; // if there is not a file assigned then it skips saving.
+        }
+        $fz = @filesize($this->cacheLog);
+        if (is_object($txt) || is_array($txt)) {
+            $txt = print_r($txt, true);
+        }
+        // Rewrite file if more than 100000 bytes
+        $mode=($fz > 100000) ? 'w':'a';
+        $fp = fopen($this->cacheLog, $mode);
+        if ($fp === false) {
+            return;
+        }
+        switch ($nivel) {
+            case 1:
+                $txtNivel='expired';
+                break;
+            case 2:
+                $txtNivel='new';
+                break;
+            default:
+                $txtNivel='other';
+        }
+        $txtarg=json_encode($this->cacheUniqueGUID(false));
+        fwrite($fp, date('c') . "\t$txt\t$txtNivel\t$txtarg\n");
+        fclose($fp);
+    }
+
+    /**
      * It sets the strategy of the cache page.
      *
-     * @param null|string $cacheStrategy=['get','post','getpost','request',null][$i]
+     * @param null|string $cacheStrategy =['get','post','getpost','request',null][$i]
      */
     public function setCacheStrategy($cacheStrategy)
     {
@@ -75,29 +124,33 @@ trait BladeOneCache
      * <b>post</b>= parameters sends via post<br>
      * <b>getpost</b> = a mix between get and post<br>
      * <b>request</b> = get, post and cookies (including sessions)<br>
+     * MD5 could generate colisions (2^64 = 18,446,744,073,709,551,616) but the end hash is the sum of the hash of
+     * the page + this GUID.
      *
+     * @param bool $serialize if true then it serializes using md5
      * @return string
      */
-    private function cacheUniqueGUID()
+    private function cacheUniqueGUID($serialize = true)
     {
         switch ($this->cacheStrategy) {
             case 'get':
-                $r = md5(serialize($_GET));
+                $r = serialize($_GET);
                 break;
             case 'post':
-                $r = md5(serialize($_POST));
+                $r = serialize($_POST);
                 break;
             case 'getpost':
                 $arr = array_merge($_GET, $_POST);
-                $r = md5(serialize($arr));
+                $r = serialize($arr);
                 break;
             case 'request':
-                $r = md5(serialize($_REQUEST));
+                $r = serialize($_REQUEST);
                 break;
             default:
                 $r = null;
         }
-        return $r;
+        
+        return $serialize===true ? md5($r): $r;
     }
 
     public function compileCache($expression)
@@ -126,9 +179,10 @@ trait BladeOneCache
      */
     private function getCompiledFileCache($view)
     {
-        $id=$this->cacheUniqueGUID();
-        if ($id!==null) {
-            return str_replace($this->compileExtension, '_cache' . $id.$this->compileExtension, $this->getCompiledFile($view));
+        $id = $this->cacheUniqueGUID();
+        if ($id !== null) {
+            return str_replace($this->compileExtension, '_cache' . $id
+                . $this->compileExtension, $this->getCompiledFile($view));
         }
         return $this->getCompiledFile($view);
     }
@@ -143,47 +197,49 @@ trait BladeOneCache
      */
     public function runCache($view, $variables = [], $ttl = 86400)
     {
-        $this->cachePageRunning=true;
-        if ($this->cachePageExpired($view, $ttl)) {
+        $this->cachePageRunning = true;
+        $cacheStatus=$this->cachePageExpired($view, $ttl);
+        if ($cacheStatus!==0) {
+            $this->writeCacheLog($view, $cacheStatus);
             $this->cacheStart('_page_', $ttl);
-            $content=$this->run($view, $variables); // if no cache, then it runs normally.
-            $this->fileName=$view; // sometimes the filename is replaced (@include), so we restore it
+            $content = $this->run($view, $variables); // if no cache, then it runs normally.
+            $this->fileName = $view; // sometimes the filename is replaced (@include), so we restore it
             $this->cacheEnd($content); // and it stores as a cache paged.
         } else {
             $content = $this->getFile($this->getCompiledFileCache($view));
         }
-        $this->cachePageRunning=false;
+        $this->cachePageRunning = false;
         return $content;
     }
 
     /**
      * Returns true if the block cache expired (or doesn't exist), otherwise false.
      *
-     * @param string $templateName  name of the template to use (such hello for template hello.blade.php)
-     * @param string $id            (id of cache, optional, if not id then it adds automatically a number)
-     * @param int    $cacheDuration (duration of the cache in seconds)
-     * @return bool (return if the cache expired)
+     * @param string $templateName name of the template to use (such hello for template hello.blade.php)
+     * @param string $id (id of cache, optional, if not id then it adds automatically a number)
+     * @param int $cacheDuration (duration of the cache in seconds)
+     * @return int 0=cache exists, 1= cache expired, 2=not exists, string= the cache file (if any)
      */
     public function cacheExpired($templateName, $id, $cacheDuration)
     {
         if ($this->getMode() & 1) {
-            return true; // forced mode, hence it always expires. (fast mode is ignored).
+            return 2; // forced mode, hence it always expires. (fast mode is ignored).
         }
         $compiledFile = $this->getCompiledFile($templateName) . '_cache' . $id;
         return $this->cacheExpiredInt($compiledFile, $cacheDuration);
     }
-    
+
     /**
      * It returns true if the whole page expired.
      *
      * @param string $templateName
-     * @param int $cacheDuration
-     * @return bool
+     * @param int $cacheDuration is seconds.
+     * @return int 0=cache exists, 1= cache expired, 2=not exists, string= the cache content (if any)
      */
     public function cachePageExpired($templateName, $cacheDuration)
     {
         if ($this->getMode() & 1) {
-            return true; // forced mode, hence it always expires. (fast mode is ignored).
+            return 2; // forced mode, hence it always expires. (fast mode is ignored).
         }
         $compiledFile = $this->getCompiledFileCache($templateName);
         return $this->CacheExpiredInt($compiledFile, $cacheDuration);
@@ -192,9 +248,9 @@ trait BladeOneCache
     /**
      * This method is used by cacheExpired() and cachePageExpired()
      *
-     * @param $compiledFile
-     * @param $cacheDuration
-     * @return bool|mixed
+     * @param string $compiledFile
+     * @param int $cacheDuration is seconds.
+     * @return int|mixed 0=cache exists, 1= cache expired, 2=not exists, string= the cache content (if any)
      */
     private function cacheExpiredInt($compiledFile, $cacheDuration)
     {
@@ -205,15 +261,15 @@ trait BladeOneCache
         $date = @filemtime($compiledFile);
         if ($date) {
             if ($date + $cacheDuration < time()) {
-                $this->cacheExpired[$compiledFile] = true;
-                return true; // time-out.
+                $this->cacheExpired[$compiledFile] = 1;
+                return 2; // time-out.
             }
         } else {
-            $this->cacheExpired[$compiledFile] = true;
-            return true; // no file
+            $this->cacheExpired[$compiledFile] = 2;
+            return 1; // no file
         }
-        $this->cacheExpired[$compiledFile] = false;
-        return false; // cache active.
+        $this->cacheExpired[$compiledFile] = 0;
+        return 0; // cache active.
     }
 
     public function cacheStart($id = '', $cacheDuration = 86400)
@@ -226,8 +282,8 @@ trait BladeOneCache
         } else {
             $compiledFile = $this->getCompiledFile() . '_cache' . $this->curCacheId;
         }
-        
-        if ($this->cacheExpired('', $id, $cacheDuration)) {
+
+        if ($this->cacheExpired('', $id, $cacheDuration) !==0) {
             $this->cacheRunning = false;
         } else {
             $this->cacheRunning = true;
@@ -239,7 +295,7 @@ trait BladeOneCache
     public function cacheEnd($txt = null)
     {
         if (!$this->cacheRunning) {
-            $txt = ($txt !== null) ? $txt : substr(ob_get_contents(), $this->curCachePosition) ;
+            $txt = ($txt !== null) ? $txt : substr(ob_get_contents(), $this->curCachePosition);
             if ($this->cachePageRunning) {
                 $compiledFile = $this->getCompiledFileCache($this->fileName);
             } else {

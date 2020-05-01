@@ -1,4 +1,5 @@
-<?php /** @noinspection TypeUnsafeComparisonInspection */
+<?php /** @noinspection UnknownInspectionInspection */
+/** @noinspection TypeUnsafeComparisonInspection */
 /** @noinspection NonSecureExtractUsageInspection */
 /** @noinspection PregQuoteUsageInspection */
 /** @noinspection NotOptimalRegularExpressionsInspection */
