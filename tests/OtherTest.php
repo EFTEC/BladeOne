@@ -97,11 +97,10 @@ class OtherTest extends AbstractBladeTestCase
     }
     public function test2()
     {
-        $arr=$this->blade->parseArgs('a1=1 a2="2" a3=\'3\' a4=$aaa a5=function() a6=\'aaa bbb\'', ' ');
-        $compare=['a1'=>'1','a2'=>'"2"','a3'=>"'3'",'a4'=>'$aaa','a5'=>'function()','a6'=>"'aaa bbb'"];
-
-
+        $arr=$this->blade->parseArgs('a1=1 a2="2" a3=\'3\' a4=$aaa a5=function() a6=\'aaa bbb\' a7', ' ');
+        $compare=['a1'=>'1','a2'=>'"2"','a3'=>"'3'",'a4'=>'$aaa','a5'=>'function()','a6'=>"'aaa bbb'",'a7'=>null];
         $this->assertEquals($compare, $arr);
+        
         $this->assertEquals(true, $this->blade->isQuoted("'aaa'"));
         $this->assertEquals(false, $this->blade->isQuoted("aaa'"));
         $this->assertEquals(true, $this->blade->isQuoted('"aaa"'));

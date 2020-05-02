@@ -15,7 +15,7 @@
 <hr>
 <a href="?id=2">go to ?id=2</a><br>
 <a href="?id=3">go to ?id=3</a><br>
-
+<a href="?id=3&p=3">go to ?id=3&p=3</a><br>
 
 </body>
 </html>

@@ -27,10 +27,10 @@ use InvalidArgumentException;
  *
  * @package   BladeOne
  * @author    Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @copyright Copyright (c) 2016-2019 Jorge Patricio Castro Castillo MIT License.
+ * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.40
+ * @version   3.43
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -2153,9 +2153,7 @@ class BladeOne
         $result = [];
         foreach ($parts as $part) {
             $r = explode('=', $part, 2);
-            if (count($r) == 2) {
-                $result[trim($r[0])] = trim($r[1]);
-            }
+            $result[trim($r[0])] = count($r) === 2 ? trim($r[1]) : null;
         }
         return $result;
     }

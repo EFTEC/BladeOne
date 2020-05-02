@@ -58,6 +58,8 @@ trait BladeOneCache
      * @var string=['get','post','getpost','request',null][$i]
      */
     private $cacheStrategy;
+    /** @var array|null  */
+    private $cacheStrategyIndex;
 
     /**
      * @return null|string $cacheStrategy=['get','post','getpost','request',null][$i]
@@ -112,10 +114,12 @@ trait BladeOneCache
      * It sets the strategy of the cache page.
      *
      * @param null|string $cacheStrategy =['get','post','getpost','request',null][$i]
+     * @param array|null $index if null then it reads all indexes. If not, it reads a indexes.
      */
-    public function setCacheStrategy($cacheStrategy)
+    public function setCacheStrategy($cacheStrategy, $index = null)
     {
         $this->cacheStrategy = $cacheStrategy;
+        $this->cacheStrategyIndex = $index;
     }
 
     /**
@@ -134,22 +138,32 @@ trait BladeOneCache
     {
         switch ($this->cacheStrategy) {
             case 'get':
-                $r = serialize($_GET);
+                $r = $_GET;
                 break;
             case 'post':
-                $r = serialize($_POST);
+                $r = $_POST;
                 break;
             case 'getpost':
                 $arr = array_merge($_GET, $_POST);
-                $r = serialize($arr);
+                $r = $arr;
                 break;
             case 'request':
-                $r = serialize($_REQUEST);
+                $r = $_REQUEST;
                 break;
             default:
                 $r = null;
         }
-        
+        if ($this->cacheStrategyIndex === null || !is_array($r)) {
+            $r= serialize($r);
+        } else {
+            $copy=[];
+            foreach ($r as $key => $item) {
+                if (in_array($key, $this->cacheStrategyIndex, true)) {
+                    $copy[$key]=$item;
+                }
+            }
+            $r=serialize($copy);
+        }
         return $serialize===true ? md5($r): $r;
     }
 
