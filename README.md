@@ -19,6 +19,21 @@ NOTE: So far it's apparently the only one project that it's updated with the lat
 
 Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 7 (2020 Марта) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.
 
+## Comparison with Twig
+
+> (spoiler) Twig is slower. 😊         
+
+|          | First Time Time | First Time Memory | Overload First Time | Second Time | Second Time Memory |
+|----------|-----------------|-------------------|---------------------|-------------|--------------------|
+| BladeOne | 1962ms          | 2024kb            | 263                 | 1917ms      | 2024kb             |
+| Twig     | 3734ms          | 2564kb            | 123                 | 3604ms      | 2327kb             |
+
+What it was tested?.  It was tested two features (that are the most used):   It was tested with an array with 
+1000 elements and tested many times.
+
+[Comparison with Twig](https://github.com/EFTEC/BladeOne/wiki/Comparison-with-Twig)
+
+
 
 ## NOTE about questions, reports, doubts or suggesting:
 

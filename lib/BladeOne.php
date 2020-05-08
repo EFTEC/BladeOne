@@ -1,17 +1,21 @@
-<?php /** @noinspection UnknownInspectionInspection */
-/** @noinspection TypeUnsafeComparisonInspection */
-/** @noinspection NonSecureExtractUsageInspection */
-/** @noinspection PregQuoteUsageInspection */
-/** @noinspection NotOptimalRegularExpressionsInspection */
-/** @noinspection SubStrUsedAsStrPosInspection */
-/** @noinspection ThrowRawExceptionInspection */
-/** @noinspection Annotator */
-/** @noinspection IsNullFunctionUsageInspection */
-/** @noinspection CallableParameterUseCaseInTypeContextInspection */
-/** @noinspection PhpUnused */
-/** @noinspection PhpFullyQualifiedNameUsageInspection */
-/** @noinspection PhpComposerExtensionStubsInspection */
-/** @noinspection Php */
+<?php
+/** @noinspection SyntaxError
+ * @noinspection ForgottenDebugOutputInspection
+ * @noinspection UnknownInspectionInspection
+ * @noinspection TypeUnsafeComparisonInspection
+ * @noinspection NonSecureExtractUsageInspection
+ * @noinspection PregQuoteUsageInspection
+ * @noinspection NotOptimalRegularExpressionsInspection
+ * @noinspection SubStrUsedAsStrPosInspection
+ * @noinspection ThrowRawExceptionInspection
+ * @noinspection Annotator
+ * @noinspection IsNullFunctionUsageInspection
+ * @noinspection CallableParameterUseCaseInTypeContextInspection
+ * @noinspection PhpUnused
+ * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpComposerExtensionStubsInspection
+ * @noinspection Php
+ */
 namespace eftec\bladeone;
 
 use ArrayAccess;
@@ -30,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.43
+ * @version   3.44
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -45,8 +49,9 @@ class BladeOne
     const MODE_FAST = 2;
     /** @var int DEBUG MODE, the file is always compiled and the filename is identifiable. */
     const MODE_DEBUG = 5;
-    /** @var string PHP tag. You could use <?php or <? (if shorttag is active in php.ini) */
+    /** @var string PHP tag. You could use < ?php or < ? (if shorttag is active in php.ini) */
     public $phpTag = '<?php ';
+    public $phpTagEcho = '<?php echo '; // hello hello hello.
     /** @var string $currentUser Current user. Example: john */
     public $currentUser;
     /** @var string $currentRole Current role. Example: admin */
@@ -125,7 +130,8 @@ class BladeOne
     /** @var array Array of opening and closing tags for escaped echos. */
     protected $escapedTags = ['{{{', '}}}'];
     /** @var string The "regular" / legacy echo string format. */
-    protected $echoFormat = 'static::e(%s)';
+    protected $echoFormat = '\htmlentities(%s, ENT_QUOTES, \'UTF-8\', false)';
+    protected $echoFormatOld = 'static::e(%s)'; // stored for historical purpose.
     /** @var array Lines that will be added at the footer of the template */
     protected $footer = [];
     /** @var string Placeholder to temporary mark the position of verbatim blocks. */
@@ -262,10 +268,9 @@ class BladeOne
      */
     public static function e($value)
     {
-        if (\is_array($value) || \is_object($value)) {
-            return \htmlentities(\print_r($value, true), ENT_QUOTES, 'UTF-8', false);
-        }
-        return \htmlentities($value, ENT_QUOTES, 'UTF-8', false);
+        return (\is_array($value) || \is_object($value))
+            ? \htmlentities(\print_r($value, true), ENT_QUOTES, 'UTF-8', false)
+            : \htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
     /**
      * Escape HTML entities in a string.
@@ -301,10 +306,10 @@ class BladeOne
     {
         if (strpos($input, '(') !== false && !$this->isQuoted($input)) {
             if ($parse) {
-                return $quote .'<?php echo $this->e(' . $input . ');?>'. $quote;
+                return $quote .$this->phpTagEcho . '$this->e(' . $input . ');?>'. $quote;
             }
 
-            return $quote .'<?php echo ' . $input . ';?>'. $quote;
+            return $quote .$this->phpTagEcho . $input . ';?>'. $quote;
         }
         if (strpos($input, '$') === false) {
             if ($parse) {
@@ -314,9 +319,9 @@ class BladeOne
             return $input;
         }
         if ($parse) {
-            return $quote . '<?php echo $this->e(' . $input . ');?>' . $quote;
+            return $quote . $this->phpTagEcho . '$this->e(' . $input . ');?>' . $quote;
         }
-        return $quote . '<?php echo ' . $input . ';?>' . $quote;
+        return $quote . $this->phpTagEcho . $input . ';?>' . $quote;
     }
 
     protected static function convertArgCallBack($k, $v)
@@ -665,7 +670,7 @@ class BladeOne
     {
         return $this->phpTag . "\$this->startPush{$expression}; ?>";
     }
-    
+
     /**
      * Start injecting content into a push section.
      *
@@ -814,7 +819,7 @@ class BladeOne
         } else {
             $eachN=PHP_INT_MAX;
         }
-        
+
         if (($loopStack['index']+1) % $eachN === 0) {
             return $splitText;
         }
@@ -1435,10 +1440,10 @@ class BladeOne
         $this->loopsStack[] = [
             'index' => -1,
             'iteration' => 0,
-            'remaining' => isset($length) ? $length + 1 : null,
+            'remaining' => isset($length) ? $length+1  : null,
             'count' => $length,
             'first' => true,
-            'even' => false,
+            'even' => true,
             'odd' => false,
             'last' => isset($length) ? $length == 1 : null,
             'depth' => \count($this->loopsStack) + 1,
@@ -1449,11 +1454,13 @@ class BladeOne
     /**
      * Increment the top loop's indices.
      *
-     * @return void
+     * @return object
      */
     public function incrementLoopIndices()
     {
-        $loop = &$this->loopsStack[\count($this->loopsStack) - 1];
+        $c=\count($this->loopsStack) - 1;
+        $loop = &$this->loopsStack[$c];
+
         $loop['index']++;
         $loop['iteration']++;
         $loop['first'] = $loop['index'] == 0;
@@ -1463,6 +1470,7 @@ class BladeOne
             $loop['remaining']--;
             $loop['last'] = $loop['index'] == $loop['count'];
         }
+        return (object)$loop;
     }
 
     /**
@@ -1781,20 +1789,20 @@ class BladeOne
 
     protected function compileDump($expression)
     {
-        return $this->phpTag . " echo \$this->dump{$expression};?>";
+        return $this->phpTagEcho . " \$this->dump{$expression};?>";
     }
 
     protected function compileRelative($expression)
     {
-        return $this->phpTag . " echo \$this->relative{$expression};?>";
+        return $this->phpTagEcho . " \$this->relative{$expression};?>";
     }
     protected function compileMethod($expression)
     {
         $v = $this->stripParentheses($expression);
-        
+
         return "<input type='hidden' name='_method' value='{$this->phpTag}echo $v; " . "?>'/>";
     }
-    
+
     protected function compilecsrf($expression = null)
     {
         $expression=($expression === null)?"'_token'" : $expression;
@@ -1803,7 +1811,7 @@ class BladeOne
 
     protected function compileDd($expression)
     {
-        return $this->phpTag . " echo '<pre>'; var_dump$expression; echo '</pre>';?>";
+        return $this->phpTagEcho . " '<pre>'; var_dump$expression; echo '</pre>';?>";
     }
 
     /**
@@ -2080,14 +2088,14 @@ class BladeOne
         /* return \preg_replace_callback('/\B@(@?\w+)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value); */
         return preg_replace_callback('/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value);
     }
-    
+
     private function compileStatementClass($match)
     {
         if (isset($match[3])) {
-            return $this->phpTag.'echo '.$this->fixNamespaceClass($match[1]). $match[3].'; ?>';
+            return $this->phpTagEcho.$this->fixNamespaceClass($match[1]). $match[3].'; ?>';
         }
 
-        return $this->phpTag.'echo '.$this->fixNamespaceClass($match[1]).'(); ?>';
+        return $this->phpTagEcho.$this->fixNamespaceClass($match[1]).'(); ?>';
     }
 
     /**
@@ -2113,7 +2121,7 @@ class BladeOne
 
         return false;
     }
-    
+
 
     /**
      * It separates a string using a separator and excluding quotes and double quotes.
@@ -2252,7 +2260,7 @@ class BladeOne
             return $matches[1] ? \substr(
                 $matches[0],
                 1
-            ) : $this->phpTag . 'echo ' . $this->compileEchoDefaults($matches[2]) . '; ?>' . $whitespace;
+            ) : $this->phpTagEcho . $this->compileEchoDefaults($matches[2]) . '; ?>' . $whitespace;
         };
         return \preg_replace_callback($pattern, $callback, $value);
     }
@@ -2302,7 +2310,7 @@ class BladeOne
         $callback = function ($matches) {
             $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
             $wrapped = \sprintf($this->echoFormat, $this->compileEchoDefaults($matches[2]));
-            return $matches[1] ? \substr($matches[0], 1) : $this->phpTag . 'echo ' . $wrapped . '; ?>' . $whitespace;
+            return $matches[1] ? \substr($matches[0], 1) : $this->phpTagEcho . $wrapped . '; ?>' . $whitespace;
         };
         return \preg_replace_callback($pattern, $callback, $value);
     }
@@ -2318,7 +2326,12 @@ class BladeOne
         $pattern = \sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
         $callback = function ($matches) {
             $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
-            return $matches[1] ? $matches[0] : $this->phpTag . 'echo static::e(' . $this->compileEchoDefaults($matches[2]) . '); ?>' . $whitespace;
+
+            return $matches[1] ? $matches[0] : $this->phpTag
+                .\sprintf($this->echoFormat, $this->compileEchoDefaults($matches[2])).'; ?>'
+                . $whitespace;
+            //return $matches[1] ? $matches[0] : $this->phpTag
+            // . 'echo static::e(' . $this->compileEchoDefaults($matches[2]) . '); ? >' . $whitespace;
         };
         return \preg_replace_callback($pattern, $callback, $value);
     }
@@ -2331,7 +2344,7 @@ class BladeOne
      */
     protected function compileEach($expression)
     {
-        return $this->phpTag . "echo \$this->renderEach{$expression}; ?>";
+        return $this->phpTagEcho . "\$this->renderEach{$expression}; ?>";
     }
 
     protected function compileSet($expression)
@@ -2351,7 +2364,7 @@ class BladeOne
      */
     protected function compileYield($expression)
     {
-        return $this->phpTag . "echo \$this->yieldContent{$expression}; ?>";
+        return $this->phpTagEcho . "\$this->yieldContent{$expression}; ?>";
     }
 
     /**
@@ -2361,7 +2374,7 @@ class BladeOne
      */
     protected function compileShow()
     {
-        return $this->phpTag . 'echo $this->yieldSection(); ?>';
+        return $this->phpTagEcho . '$this->yieldSection(); ?>';
     }
 
     /**
@@ -2594,7 +2607,7 @@ class BladeOne
      */
     protected function compileUser()
     {
-        return $this->phpTag . "echo '" . $this->currentUser . "'; ?>";
+        return $this->phpTagEcho . "'" . $this->currentUser . "'; ?>";
     }
     //</editor-fold>
     //<editor-fold desc="file members">
@@ -2664,8 +2677,8 @@ class BladeOne
         \preg_match('/\( *(.*) * as *([^)]*)/', $expression, $matches);
         $iteratee = \trim($matches[1]);
         $iteration = \trim($matches[2]);
-        $initLoop = "\$__currentLoopData = {$iteratee}; \$this->addLoop(\$__currentLoopData);";
-        $iterateLoop = '$this->incrementLoopIndices(); $loop = $this->getFirstLoop();';
+        $initLoop = "\$__currentLoopData = {$iteratee}; \$this->addLoop(\$__currentLoopData);\$this->getFirstLoop();\n";
+        $iterateLoop = '$loop = $this->incrementLoopIndices(); ';
         return $this->phpTag . "{$initLoop} foreach(\$__currentLoopData as {$iteration}): {$iterateLoop} ?>";
     }
 
@@ -2677,7 +2690,7 @@ class BladeOne
      */
     protected function compileSplitForeach($expression)
     {
-        return $this->phpTag . 'echo $this::splitForeach' . $expression . '; ?>';
+        return $this->phpTagEcho . '$this::splitForeach' . $expression . '; ?>';
     }
 
     /**
@@ -2918,7 +2931,7 @@ class BladeOne
     protected function compileInclude($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $this->phpTag . 'echo $this->runChild(' . $expression . '); ?>';
+        return $this->phpTagEcho . '$this->runChild(' . $expression . '); ?>';
     }
 
     /**
@@ -3138,7 +3151,7 @@ class BladeOne
     protected function compileIncludeWhen($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $this->phpTag . 'echo $this->includeWhen(' . $expression . '); ?>';
+        return $this->phpTagEcho . '$this->includeWhen(' . $expression . '); ?>';
     }
 
     /**
@@ -3150,7 +3163,7 @@ class BladeOne
     protected function compileIncludeFirst($expression)
     {
         $expression = $this->stripParentheses($expression);
-        return $this->phpTag . 'echo $this->includeFirst(' . $expression . '); ?>';
+        return $this->phpTagEcho . '$this->includeFirst(' . $expression . '); ?>';
     }
 
     /**
@@ -3198,7 +3211,7 @@ class BladeOne
      */
     protected function compileStack($expression)
     {
-        return $this->phpTag . "echo \$this->yieldPushContent{$expression}; ?>";
+        return $this->phpTagEcho . "\$this->yieldPushContent{$expression}; ?>";
     }
 
     /**
@@ -3249,7 +3262,7 @@ class BladeOne
      */
     protected function compileEndComponent()
     {
-        return $this->phpTag . ' echo $this->renderComponent(); ?>';
+        return $this->phpTagEcho . '$this->renderComponent(); ?>';
     }
 
     /**
@@ -3275,7 +3288,7 @@ class BladeOne
 
     protected function compileAsset($expression)
     {
-        return $this->phpTag . " echo (isset(\$this->assetDict[$expression]))?\$this->assetDict[$expression]:\$this->baseUrl.'/'.{$expression}; ?>";
+        return $this->phpTagEcho . " (isset(\$this->assetDict[$expression]))?\$this->assetDict[$expression]:\$this->baseUrl.'/'.{$expression}; ?>";
     }
 
     protected function compileJSon($expression)
@@ -3283,7 +3296,7 @@ class BladeOne
         $parts = \explode(',', $this->stripParentheses($expression));
         $options = isset($parts[1]) ? \trim($parts[1]) : JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
         $depth = isset($parts[2]) ? \trim($parts[2]) : 512;
-        return $this->phpTag . " echo json_encode($parts[0], $options, $depth); ?>";
+        return $this->phpTagEcho . " json_encode($parts[0], $options, $depth); ?>";
     }
 
     protected function compileIsset($expression)
@@ -3318,7 +3331,7 @@ class BladeOne
         return new $fullClassName();
     }
     //</editor-fold>
-    
+
     // <editor-fold desc='language'>
 
     /**
@@ -3388,7 +3401,7 @@ class BladeOne
      */
     protected function compile_e($expression)
     {
-        return $this->phpTag . "echo \$this->_e{$expression}; ?>";
+        return $this->phpTagEcho . "\$this->_e{$expression}; ?>";
     }
 
     /**
@@ -3400,7 +3413,7 @@ class BladeOne
      */
     protected function compile_ef($expression)
     {
-        return $this->phpTag . "echo \$this->_ef{$expression}; ?>";
+        return $this->phpTagEcho . "\$this->_ef{$expression}; ?>";
     }
 
     /**
@@ -3412,7 +3425,7 @@ class BladeOne
      */
     protected function compile_n($expression)
     {
-        return $this->phpTag . "echo \$this->_n{$expression}; ?>";
+        return $this->phpTagEcho . "\$this->_n{$expression}; ?>";
     }
 
     //</editor-fold>
@@ -3438,6 +3451,6 @@ class BladeOne
         \fwrite($fp, $txt . "\n");
         \fclose($fp);
     }
-    
+
     // </editor-fold>
 }
