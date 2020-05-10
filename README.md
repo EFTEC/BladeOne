@@ -62,10 +62,13 @@ I will try to answer all and every one of the question (in my limited time).
     * [Template loop](https://github.com/EFTEC/BladeOne/wiki/Template-loop)    
 * [Methods of the class](https://github.com/EFTEC/BladeOne/wiki/Methods-of-the-class)   
 * [Extending the class](https://github.com/EFTEC/BladeOne/wiki/Extending-the-class)   
+* [Using BladeOne with YAF Yet Another Framework](https://github.com/EFTEC/BladeOne/wiki/Using--BladeOne-with-YAF)
 * [Differences between Blade and BladeOne](https://github.com/EFTEC/BladeOne/wiki/Differences-between-Blade-and-BladeOne)   
+* [Comparision with Twig (May-2020)](https://github.com/EFTEC/BladeOne/wiki/Comparison-with-Twig)
 * [Changelog](https://github.com/EFTEC/BladeOne/wiki/Changelog)   
 * [Changes between 2.x and 3.0 and TODO](https://github.com/EFTEC/BladeOne/wiki/Changes-between-2.x-and-3.0-and-TODO)   
 * [Code Protection (Sourceguardian and similars)](https://github.com/EFTEC/BladeOne/wiki/Code-Protection-(Sourceguardian-and-similars))   
+
 
 
 
