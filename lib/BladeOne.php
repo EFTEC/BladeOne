@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.44
+ * @version   3.44.1
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -72,6 +72,7 @@ class BladeOne
     protected $sections = [];
     /** @var string The template currently being compiled. For example "folder.template" */
     protected $fileName;
+    protected $notFoundPath;
     /** @var string File extension for the template files. */
     protected $fileExtension = '.blade.php';
     /** @var array The stack of in-progress sections. */
@@ -3078,11 +3079,14 @@ class BladeOne
      */
     private function locateTemplate($name)
     {
+        $this->notFoundPath='';
         foreach ($this->templatePath as $dir) {
             $path = $dir . '/' . $name;
             if (\file_exists($path)) {
                 return $path;
             }
+
+            $this->notFoundPath.=$path.",";
         }
         return '';
     }
@@ -3101,7 +3105,7 @@ class BladeOne
         if (\is_file($fullFileName)) {
             return \file_get_contents($fullFileName);
         }
-        $this->showError('getFile', "File does not exist at path {$fullFileName}", true);
+        $this->showError('getFile', "File does not exist at paths (separated by comma) [{$this->notFoundPath}] or permission denied", true);
         return '';
     }
 
