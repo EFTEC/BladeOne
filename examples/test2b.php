@@ -7,9 +7,10 @@ use eftec\bladeone\BladeOne;
 
 $views = __DIR__ . '/views';
 $compiledFolder = __DIR__ . '/compiled';
-$blade=new BladeOne($views,$compiledFolder,BladeOne::MODE_DEBUG);
+$blade=new BladeOne($views, $compiledFolder, BladeOne::MODE_DEBUG);
 
-function myFunction() {
+function myFunction()
+{
     echo "<br>Running the function <b>myFunction()</b><br>";
 }
 

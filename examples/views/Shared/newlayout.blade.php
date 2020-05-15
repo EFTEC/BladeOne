@@ -3,13 +3,13 @@
 </head>
 <body>
 <h1>Test</h1>
-
-    @@yield('footer')
+This example shows the use of @@extends, and @@yield<br><br>
+    @yield('header','<br>header content is missing<br>')
+    @yield('content')
     @yield('footer')
-    <hr>
-    @@yield('footermissing')
+    
     @yield('footermissing',$this->runChild("Test.footermising"))
-    <hr>
+    
 
 </body>
 </html>
