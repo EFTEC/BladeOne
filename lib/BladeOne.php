@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.44.1
+ * @version   3.44.2
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -1469,7 +1469,7 @@ class BladeOne
         $loop['odd']=!$loop['even'];
         if (isset($loop['count'])) {
             $loop['remaining']--;
-            $loop['last'] = $loop['index'] == $loop['count'];
+            $loop['last'] = $loop['index'] == $loop['count']-1;
         }
         return (object)$loop;
     }

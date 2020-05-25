@@ -54,7 +54,7 @@ BLADE;
         ,count:2,depth:1,parent:"."
         ,even:1,odd:,valuea"."
         Item_index:1,iteration:2,first:"."
-        ,last:,remaining:1,count:2,depth:1,parent:"."
+        ,last:1,remaining:1,count:2,depth:1,parent:"."
         ,even:,odd:1,valueb", $this->blade->runString($bladeSource, ['items' => ['a', 'b']]));
     }
     /**

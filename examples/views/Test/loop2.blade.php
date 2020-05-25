@@ -12,10 +12,15 @@
 <h1>Example of Loops</h1>
 @foreach ($users as $user)
     <hr>
+    first:{{$loop->first}}<br>
+    last:{{$loop->last}}<br>
     Name user:{{$user->name}}<br>
     <ul>
     @foreach ($user->posts as $post)
-        <li>{{$loop->parent->index}} {{$loop->index}} {{$loop->even}}: Subject:{{$post->subject}}</li>
+        <li>first:{{$loop->first}}<br>
+            last:{{$loop->last}}<br>
+            {{$loop->parent->index}}<br>
+            {{$loop->index}}<br> {{$loop->even}}: Subject:{{$post->subject}}</li>
 
     @endforeach
     </ul>
