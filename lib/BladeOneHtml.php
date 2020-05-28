@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpFullyQualifiedNameUsageInspection */
+<?php /** @noinspection HtmlUnknownTarget */
+/** @noinspection HtmlUnknownAttribute */
+/** @noinspection PhpFullyQualifiedNameUsageInspection */
 
 /** @noinspection PhpUnused */
 
@@ -24,7 +26,7 @@ namespace eftec\bladeone;
  * Note. The names of the tags are based in Java Server Faces (JSF)
  *
  * @package  BladeOneHtml
- * @version  1.9.1 2018-06-11 (1)
+ * @version  1.9.2 2020-05-28 (1)
  * @link     https://github.com/EFTEC/BladeOne
  * @author   Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
  * @deprecated use https://github.com/eftec/BladeOneHtml
@@ -37,7 +39,7 @@ trait BladeOneHtml
     //<editor-fold desc="compile function">
     protected function compileSelect($expression)
     {
-        \array_push($this->htmlItem, 'select');
+        $this->htmlItem[] = 'select';
         return $this->phpTag . "echo \$this->select{$expression}; ?>";
     }
 
@@ -53,20 +55,20 @@ trait BladeOneHtml
 
     protected function compileSelectGroup($expression)
     {
-        \array_push($this->htmlItem, 'selectgroup');
+        $this->htmlItem[] = 'selectgroup';
         $this->compilePush('');
         return $this->phpTag . "echo \$this->select{$expression}; ?>";
     }
 
     protected function compileRadio($expression)
     {
-        \array_push($this->htmlItem, 'radio');
+        $this->htmlItem[] = 'radio';
         return $this->phpTag . "echo \$this->radio{$expression}; ?>";
     }
 
     protected function compileCheckbox($expression)
     {
-        \array_push($this->htmlItem, 'checkbox');
+        $this->htmlItem[] = 'checkbox';
         return $this->phpTag . "echo \$this->checkbox{$expression}; ?>";
     }
 
@@ -184,11 +186,11 @@ trait BladeOneHtml
     {
         if (\strpos($extra, 'readonly') === false) {
             return "<select id='" . static::e($name) . "' name='" . static::e($name) . "' {$this->convertArg($extra)}>\n";
-        } else {
-            return "
-                <input id='" . static::e($name) . "' name='" . static::e($name) . "' type='hidden' value='" . static::e($value) . "' />
-                <select id='" . static::e($name) . "_disable' name='" . static::e($name) . "_disable' disabled {$this->convertArg($extra)}>\n";
         }
+
+        return "
+            <input id='" . static::e($name) . "' name='" . static::e($name) . "' type='hidden' value='" . static::e($value) . "' />
+            <select id='" . static::e($name) . "_disable' name='" . static::e($name) . "_disable' disabled {$this->convertArg($extra)}>\n";
     }
 
     public function link($url, $label, $extra = '')
@@ -212,11 +214,11 @@ trait BladeOneHtml
         }
         if (!\is_array($array[0])) {
             return \in_array($find, $array);
-        } else {
-            foreach ($array as $elem) {
-                if ($elem[$field] == $find) {
-                    return true;
-                }
+        }
+
+        foreach ($array as $elem) {
+            if ($elem[$field] == $find) {
+                return true;
             }
         }
         return false;
@@ -278,10 +280,10 @@ trait BladeOneHtml
                 }
             }
             return $this->input($id, $value, 'radio', $extra) . ' ' . $text;
-        } else {
-            \array_push($this->htmlCurrentId, $id);
-            return '';
         }
+
+        $this->htmlCurrentId[] = $id;
+        return '';
     }
 
     /**
@@ -289,7 +291,7 @@ trait BladeOneHtml
      * @param string      $value
      * @param string      $text
      * @param string|null $valueSelected
-     * @param string      $extra
+     * @param string|array      $extra
      * @return string
      */
     public function checkbox($id, $value = '', $text = '', $valueSelected = '', $extra = '')
@@ -304,10 +306,10 @@ trait BladeOneHtml
                 }
             }
             return $this->input($id, $value, 'checkbox', $extra) . ' ' . $text;
-        } else {
-            \array_push($this->htmlCurrentId, $id);
-            return '';
         }
+
+        $this->htmlCurrentId[] = $id;
+        return '';
     }
 
     /**
@@ -464,7 +466,7 @@ trait BladeOneHtml
         $wrapper = '',
         $extra = ''
     ) {
-        if (\count($arrValues) == 0) {
+        if (\count($arrValues) === 0) {
             return "";
         }
         if (\is_object($arrValues[0])) {
@@ -477,7 +479,7 @@ trait BladeOneHtml
                 $v = (array)$v;
             }
             $v3 = $v[$fieldThird];
-            if ($type == 'selectgroup') {
+            if ($type === 'selectgroup') {
                 if ($v3 != $oldV3) {
                     if ($oldV3 != "") {
                         $result .= "</optgroup>";
@@ -490,7 +492,7 @@ trait BladeOneHtml
                 $result .= $this->trio($type, $v[$fieldId], $v[$fieldText], $v3, $selectedItem, $wrapper, $extra);
             }
         }
-        if ($type == 'selectgroup' && $oldV3 != "") {
+        if ($type === 'selectgroup' && $oldV3 != "") {
             $result .= "</optgroup>";
         }
         return $result;
@@ -542,7 +544,7 @@ trait BladeOneHtml
 
     public function form($action, $method = 'post', $extra = '')
     {
-        return "<form $action='{$action}' method='{$method}' {$this->convertArg($extra)}>";
+        return "<form action='{$action}' method='{$method}' {$this->convertArg($extra)}>";
     }
 
     //</editor-fold>
