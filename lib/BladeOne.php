@@ -171,6 +171,8 @@ class BladeOne
     /** @var array Alias (with or without namespace) of the classes) */
     public $aliasClasses=[];
 
+    /** @var bool Raise an exception if an error has occurred, instead of messages */
+	protected $raiseException = false;
 
     //</editor-fold>
 
@@ -251,14 +253,18 @@ class BladeOne
      */
     public function showError($id, $text, $critic = false)
     {
-        \ob_get_clean();
-        echo "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
-        echo "BladeOne Error [{$id}]:<br>";
-        echo "<span style='color:white'>$text</span><br></div>\n";
-        if ($critic) {
-            die(1);
-        }
-        return '';
+	    if ($this->raiseException) {
+		    throw new BladeOneException("[{$id}] {$text}");
+	    } else {
+		    \ob_get_clean();
+		    echo "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
+		    echo "BladeOne Error [{$id}]:<br>";
+		    echo "<span style='color:white'>$text</span><br></div>\n";
+		    if ($critic) {
+			    die(1);
+		    }
+		    return '';
+	    }
     }
 
     /**
@@ -1543,6 +1549,18 @@ class BladeOne
         }
         return  $this->runInternal($view, $variables, $forced, true, $runFast);
     }
+
+	/**
+	 * Run the blade engine. It returns the result of the code.
+	 *
+	 * @param bool $raiseException Enable or disable exceptions raising
+	 * @return BladeOne
+	 */
+	public function useExceptions($raiseException = false)
+	{
+		$this->raiseException = !!$raiseException;
+		return $this;
+	}
 
     /**
      * Start a component rendering process.
