@@ -3,4 +3,9 @@
 @section('content')
     @show
 <hr>
+<ul>
+@foreach($countries as $country)
+    <li>{{$country}}</li>
+@endforeach
+</ul>    
 

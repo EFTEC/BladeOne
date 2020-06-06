@@ -16,11 +16,11 @@
  * @noinspection PhpComposerExtensionStubsInspection
  * @noinspection Php
  */
+
 namespace eftec\bladeone;
 
 use ArrayAccess;
 use BadMethodCallException;
-
 use Closure;
 use Countable;
 use Exception;
@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.44.3
+ * @version   3.45
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -72,6 +72,7 @@ class BladeOne
     protected $sections = [];
     /** @var string The template currently being compiled. For example "folder.template" */
     protected $fileName;
+    protected $currentView;
     protected $notFoundPath;
     /** @var string File extension for the template files. */
     protected $fileExtension = '.blade.php';
@@ -90,6 +91,10 @@ class BladeOne
         'Comments',
         'Echos',
     ];
+    /** @var string|null it allows to sets the stack  */
+    protected $viewStack = null;
+    /** @var array used by $this->composer() */
+    protected $composerStack=[];
     /** @var array The stack of in-progress push sections. */
     protected $pushStack = [];
     /** @var array All of the finished, captured push sections. */
@@ -169,7 +174,7 @@ class BladeOne
     /** @var array Hold dictionary of translations */
     public static $dictionary = [];
     /** @var array Alias (with or without namespace) of the classes) */
-    public $aliasClasses=[];
+    public $aliasClasses = [];
 
 
     //</editor-fold>
@@ -192,7 +197,7 @@ class BladeOne
         if ($compiledPath === null) {
             $compiledPath = \getcwd() . '/compiles';
         }
-        $this->templatePath = (is_array($templatePath)) ? $templatePath : [ $templatePath];
+        $this->templatePath = (is_array($templatePath)) ? $templatePath : [$templatePath];
         $this->compiledPath = $compiledPath;
         $this->setMode($mode);
         $this->authCallBack = function ($action = null, /** @noinspection PhpUnusedParameterInspection */ $subject = null) {
@@ -273,6 +278,7 @@ class BladeOne
             ? \htmlentities(\print_r($value, true), ENT_QUOTES, 'UTF-8', false)
             : \htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
+
     /**
      * Escape HTML entities in a string.
      *
@@ -307,10 +313,10 @@ class BladeOne
     {
         if (strpos($input, '(') !== false && !$this->isQuoted($input)) {
             if ($parse) {
-                return $quote .$this->phpTagEcho . '$this->e(' . $input . ');?>'. $quote;
+                return $quote . $this->phpTagEcho . '$this->e(' . $input . ');?>' . $quote;
             }
 
-            return $quote .$this->phpTagEcho . $input . ';?>'. $quote;
+            return $quote . $this->phpTagEcho . $input . ';?>' . $quote;
         }
         if (strpos($input, '$') === false) {
             if ($parse) {
@@ -430,9 +436,10 @@ class BladeOne
         if ($compiledPath === null) {
             $compiledPath = \getcwd() . '/compiles';
         }
-        $this->templatePath = (is_array($templatePath)) ? $templatePath : [ $templatePath];
+        $this->templatePath = (is_array($templatePath)) ? $templatePath : [$templatePath];
         $this->compiledPath = $compiledPath;
     }
+
     /**
      * @return array
      */
@@ -516,9 +523,10 @@ class BladeOne
 
         return \ob_get_clean();
     }
+
     protected function compileUse($expression)
     {
-        return $this->phpTag . 'use '.$this->stripParentheses($expression).'; ?>';
+        return $this->phpTag . 'use ' . $this->stripParentheses($expression) . '; ?>';
     }
 
     /**
@@ -807,21 +815,21 @@ class BladeOne
     public function splitForeach($each = 1, $splitText = ',', $splitEnd = '')
     {
         $loopStack = static::last($this->loopsStack); // array(7) { ["index"]=> int(0) ["remaining"]=> int(6) ["count"]=> int(5) ["first"]=> bool(true) ["last"]=> bool(false) ["depth"]=> int(1) ["parent"]=> NULL }
-        if (($loopStack['index']) == $loopStack['count']-1) {
+        if (($loopStack['index']) == $loopStack['count'] - 1) {
             return $splitEnd;
         }
-        $eachN=0;
+        $eachN = 0;
         if (is_numeric($each)) {
-            $eachN=$each;
-        } elseif (strlen($each)>1) {
-            if ($each[0] ==='c') {
-                $eachN=$loopStack['count']/substr($each, 1);
+            $eachN = $each;
+        } elseif (strlen($each) > 1) {
+            if ($each[0] === 'c') {
+                $eachN = $loopStack['count'] / substr($each, 1);
             }
         } else {
-            $eachN=PHP_INT_MAX;
+            $eachN = PHP_INT_MAX;
         }
 
-        if (($loopStack['index']+1) % $eachN === 0) {
+        if (($loopStack['index'] + 1) % $eachN === 0) {
             return $splitText;
         }
         return '';
@@ -969,14 +977,18 @@ class BladeOne
      */
     private function runInternal($view, $variables = [], $forced = false, $isParent = true, $runFast = false)
     {
-        if ($isParent) {
-            if (\count($this->variablesGlobal) > 0) {
-                $this->variables = \array_merge($variables, $this->variablesGlobal);
-                $variables = $this->variables;
-            } else {
-                $this->variables = $variables;
-            }
+        $this->currentView=$view;
+        if (@\count($this->composerStack)) {
+            $this->evalComposer($view);
         }
+        if ($isParent && @\count($this->variablesGlobal) > 0) {
+            $this->variables = \array_merge($variables, $this->variablesGlobal);
+            $this->variablesGlobal=[]; // used so we delete it.
+        } else {
+            $this->variables = $variables;
+        }
+ 
+        
         if (!$runFast) {
             // a) if the compile is forced then we compile the original file, then save the file.
             // b) if the compile is not forced then we read the datetime of both file and we compared.
@@ -986,13 +998,13 @@ class BladeOne
             }
             $result = $this->compile($view, $forced);
             if (!$this->isCompiled) {
-                return $this->evaluateText($result, $variables);
+                return $this->evaluateText($result, $this->variables);
             }
         } elseif ($view) {
             $this->fileName = $view;
         }
         $this->isRunFast = $runFast;
-        return $this->evaluatePath($this->getCompiledFile(), $variables);
+        return $this->evaluatePath($this->getCompiledFile(), $this->variables);
     }
 
     /**
@@ -1103,7 +1115,7 @@ class BladeOne
      * Returns the current token. if there is not a token then it generates a new one.
      * It could require an open session.
      *
-     * @param bool   $fullToken It returns a token with the current ip.
+     * @param bool $fullToken It returns a token with the current ip.
      * @param string $tokenId [optional] Name of the token.
      *
      * @return string
@@ -1148,7 +1160,7 @@ class BladeOne
      * Validates if the csrf token is valid or not.<br>
      * It requires an open session.
      *
-     * @param bool   $alwaysRegenerate [optional] Default is false.<br>
+     * @param bool $alwaysRegenerate [optional] Default is false.<br>
      *                                 If <b>true</b> then it will generate a new token regardless
      *                                 of the method.<br>
      *                                 If <b>false</b>, then it will generate only if the method is POST.<br>
@@ -1268,14 +1280,47 @@ class BladeOne
     }
 
     /**
-     * Adds a global variable
+     * Adds a global variable. If <b>$varname</b> is an array then it merges all the values.
+     * <b>Example:</b>
+     * <pre>
+     * $this->share('variable',10.5);
+     * $this->share('variable2','hello');
+     * // or we could add the two variables as:
+     * $this->share(['variable'=>10.5,'variable2'=>'hello']);
+     * </pre>
      *
-     * @param $varname
-     * @param $value
+     * @param string|array $varname It is the name of the variable or it is an associative array
+     * @param mixed $value
+     * @return $this
      */
-    public function share($varname, $value)
+    public function share($varname, $value = null)
     {
-        $this->variablesGlobal[$varname] = $value;
+        if (is_array($varname)) {
+            $this->variablesGlobal=\array_merge($this->variablesGlobal, $varname);
+        } else {
+            $this->variablesGlobal[$varname] = $value;
+        }
+        return $this;
+    }
+
+    /**
+     * Adds a global variable. If <b>$varname</b> is an array then it merges all the values.
+     * <b>Example:</b>
+     * <pre>
+     * $this->share('variable',10.5);
+     * $this->share('variable2','hello');
+     * // or we could add the two variables as:
+     * $this->share(['variable'=>10.5,'variable2'=>'hello']);
+     * </pre>
+     *
+     * @param string|array $varname It is the name of the variable or it is an associative array
+     * @param mixed $value
+     * @return $this
+     * @see \eftec\bladeone\BladeOne::share
+     */
+    public function with($varname, $value = null)
+    {
+        return $this->share($varname, $value);
     }
 
     /**
@@ -1441,7 +1486,7 @@ class BladeOne
         $this->loopsStack[] = [
             'index' => -1,
             'iteration' => 0,
-            'remaining' => isset($length) ? $length+1  : null,
+            'remaining' => isset($length) ? $length + 1 : null,
             'count' => $length,
             'first' => true,
             'even' => true,
@@ -1459,17 +1504,17 @@ class BladeOne
      */
     public function incrementLoopIndices()
     {
-        $c=\count($this->loopsStack) - 1;
+        $c = \count($this->loopsStack) - 1;
         $loop = &$this->loopsStack[$c];
 
         $loop['index']++;
         $loop['iteration']++;
         $loop['first'] = $loop['index'] == 0;
-        $loop['even']=$loop['index'] % 2 ==0;
-        $loop['odd']=!$loop['even'];
+        $loop['even'] = $loop['index'] % 2 == 0;
+        $loop['odd'] = !$loop['even'];
         if (isset($loop['count'])) {
             $loop['remaining']--;
-            $loop['last'] = $loop['index'] == $loop['count']-1;
+            $loop['last'] = $loop['index'] == $loop['count'] - 1;
         }
         return (object)$loop;
     }
@@ -1525,23 +1570,167 @@ class BladeOne
     }
 
     /**
+     * It sets the current view<br>
+     * This value is cleared when it is used (method run).<br>
+     * <b>Example:<b><br>
+     * <pre>
+     * $this->setView('folder.view')->share(['var1'=>20])->run(); // or $this->run('folder.view',['var1'=>20]);
+     * </pre>
+     *
+     * @param string $view
+     * @return BladeOne
+     */
+    public function setView($view)
+    {
+        $this->viewStack = $view;
+        return $this;
+    }
+    
+
+    /**
+     * It injects a function, an instance, or a method class when a view is called.<br>
+     * It could be stacked.   If it sets null then it clears all definitions.
+     * <b>Example:<b><br>
+     * <pre>
+     * $this->composer('folder.view',function($bladeOne) { $bladeOne->share('newvalue','hi there'); });
+     * $this->composer('folder.view','namespace1\namespace2\SomeClass'); // SomeClass must exists and it must has the
+     *                                                                   // method 'composer'
+     * $this->composer('folder.*',$instance); // $instance must has the method called 'composer'
+     * $this->composer(); // clear all composer.
+     * </pre>
+     *
+     * @param string|array|null $view It could contains wildcards (*). Example: 'aa.bb.cc','*.bb.cc','aa.bb.*','*.bb.*'
+     *
+     * @param callable|string|null $functionOrClass
+     * @return BladeOne
+     */
+    public function composer($view = null, $functionOrClass = null)
+    {
+        if ($view===null && $functionOrClass===null) {
+            $this->composerStack=[];
+            return $this;
+        }
+        if (is_array($view)) {
+            foreach ($view as $v) {
+                $this->composerStack[$v]=$functionOrClass;
+            }
+        } else {
+            $this->composerStack[$view]=$functionOrClass;
+        }
+        
+        return $this;
+    }
+    protected function methodExistsStatic($class, $method)
+    {
+        try {
+            $mc = new \ReflectionMethod($class, $method);
+            return $mc->isStatic();
+        } catch (\ReflectionException $e) {
+            return false;
+        }
+    }
+    
+    protected function evalComposer($view)
+    {
+        foreach ($this->composerStack as $viewKey => $fn) {
+            if ($this->wildCardComparison($view, $viewKey)) {
+                if (is_callable($fn)) {
+                    $fn($this);
+                } elseif ($this->methodExistsStatic($fn, 'composer')) {
+                    // if the method exists statically then $fn is the class and 'composer' is the name of the method
+                    $fn::composer($this);
+                } elseif (is_object($fn) || class_exists($fn)) {
+                    // if $fn is an object or it is a class and the class exists.
+                    $instance=(is_object($fn)) ? $fn : new $fn();
+                    if (method_exists($instance, 'composer')) {
+                        // and the method exists inside the instance.
+                        $instance->composer($this);
+                    } else {
+                        if ($this->mode === self::MODE_DEBUG) {
+                            throw new \RuntimeException('BladeOne: composer() added an incorrect method [$fn]');
+                        }
+                        throw new \RuntimeException('BladeOne: composer() added an incorrect method');
+                    }
+                } else {
+                    throw new \RuntimeException('BladeOne: composer() added an incorrect method');
+                }
+            }
+        }
+    }
+    /**
+     * It compares with wildcards (*) and returns true if both strings are equals<br>
+     * The wildcards only works at the beginning and/or at the end of the string.<br>
+     * <b>Example:<b><br>
+     * <pre>
+     * Text::wildCardComparison('abcdef','abc*'); // true
+     * Text::wildCardComparison('abcdef','*def'); // true
+     * Text::wildCardComparison('abcdef','*abc*'); // true
+     * Text::wildCardComparison('abcdef','*cde*'); // true
+     * Text::wildCardComparison('abcdef','*cde'); // false
+     *
+     * </pre>
+     *
+     * @param string $text
+     * @param string|null $textWithWildcard
+     *
+     * @return bool
+     */
+    protected function wildCardComparison($text, $textWithWildcard)
+    {
+        if (($textWithWildcard===null && $textWithWildcard==='')
+            || $textWithWildcard==='**'
+            || strpos($textWithWildcard, '*')===false) {
+            // if the text with wildcard is null or empty or it contains two ** or it contains no * then..
+            return $text==$textWithWildcard;
+        }
+        $c0=$textWithWildcard[0];
+        $c1=substr($textWithWildcard, -1);
+        $textWithWildcardClean=str_replace('*', '', $textWithWildcard);
+        $p0=strpos($text, $textWithWildcardClean);
+        if ($p0===false) {
+            // no matches.
+            return false;
+        }
+        if ($c0==='*' && $c1==='*') {
+            // $textWithWildcard='*asasasas*'
+            return true;
+        }
+        if ($c1==='*') {
+            // $textWithWildcard='asasasas*'
+            return $p0===0;
+        }
+        // $textWithWildcard='*asasasas'
+        $len = strlen($textWithWildcardClean);
+        return (substr($text, -$len) === $textWithWildcardClean);
+    }
+
+    /**
      * Run the blade engine. It returns the result of the code.
      *
-     * @param string $view The name of the cache. Ex: "folder.folder.view" ("/folder/folder/view.blade")
+     * @param string|null $view The name of the cache. Ex: "folder.folder.view" ("/folder/folder/view.blade")
      * @param array $variables An associative arrays with the values to display.
      * @return string
      * @throws Exception
      */
-    public function run($view, $variables = [])
+    public function run($view = null, $variables = [])
     {
         $mode = $this->getMode();
+        
+        if ($view===null) {
+            $view=$this->viewStack;
+        }
+        $this->viewStack = null;
+        if ($view===null) {
+            throw new \RuntimeException('BladeOne: view not set');
+        }
+        
         $forced = $mode & 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
         $runFast = $mode & 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
         $this->sections = [];
         if ($mode == 3) {
             $this->showError('run', "we can't force and run fast at the same time", true);
         }
-        return  $this->runInternal($view, $variables, $forced, true, $runFast);
+        return $this->runInternal($view, $variables, $forced, true, $runFast);
     }
 
     /**
@@ -1797,6 +1986,7 @@ class BladeOne
     {
         return $this->phpTagEcho . " \$this->relative{$expression};?>";
     }
+
     protected function compileMethod($expression)
     {
         $v = $this->stripParentheses($expression);
@@ -1806,7 +1996,7 @@ class BladeOne
 
     protected function compilecsrf($expression = null)
     {
-        $expression=($expression === null)?"'_token'" : $expression;
+        $expression = ($expression === null) ? "'_token'" : $expression;
         return "<input type='hidden' name='{$this->phpTag} echo {$expression}; ?>' value='{$this->phpTag}echo \$this->csrf_token; " . "?>'/>";
     }
 
@@ -1894,7 +2084,7 @@ class BladeOne
      */
     public function stripQuotes($text)
     {
-        if (!$text || strlen($text)<2) {
+        if (!$text || strlen($text) < 2) {
             return $text;
         }
         if (strpos($text, '"') === 0 && substr($text, -1) === '"') {
@@ -1905,6 +2095,7 @@ class BladeOne
         }
         return $text;
     }
+
     /**
      * It adds a string inside a quoted string<br>
      * <b>example:</b><br>
@@ -1920,10 +2111,11 @@ class BladeOne
     public function addInsideQuote($quoted, $newFragment)
     {
         if ($this->isQuoted($quoted)) {
-            return substr($quoted, 0, -1).$newFragment.substr($quoted, -1);
+            return substr($quoted, 0, -1) . $newFragment . substr($quoted, -1);
         }
-        return $quoted.$newFragment;
+        return $quoted . $newFragment;
     }
+
     /**
      * Returns true if the text is surrounded by quotes (double or single quote)
      *
@@ -1932,13 +2124,13 @@ class BladeOne
      */
     public function isQuoted($text)
     {
-        if (!$text || strlen($text)<2) {
+        if (!$text || strlen($text) < 2) {
             return false;
         }
         if ($text[0] === '"' && substr($text, -1) === '"') {
             return true;
         }
-        return  ($text[0] === "'" && substr($text, -1) === "'");
+        return ($text[0] === "'" && substr($text, -1) === "'");
     }
 
     /**
@@ -1949,11 +2141,12 @@ class BladeOne
      */
     public function isVariablePHP($text)
     {
-        if (!$text || strlen($text)<2) {
+        if (!$text || strlen($text) < 2) {
             return false;
         }
         return $text[0] === '$';
     }
+
     /**
      * Execute the user defined extensions.
      *
@@ -2058,7 +2251,7 @@ class BladeOne
                 // @@escaped tag
                 $match[0] = isset($match[3]) ? $match[1] . $match[3] : $match[1];
             } else {
-                if (strpos($match[1], '::')!==false) {
+                if (strpos($match[1], '::') !== false) {
                     // Someclass::method
                     return $this->compileStatementClass($match);
                 }
@@ -2093,10 +2286,10 @@ class BladeOne
     private function compileStatementClass($match)
     {
         if (isset($match[3])) {
-            return $this->phpTagEcho.$this->fixNamespaceClass($match[1]). $match[3].'; ?>';
+            return $this->phpTagEcho . $this->fixNamespaceClass($match[1]) . $match[3] . '; ?>';
         }
 
-        return $this->phpTagEcho.$this->fixNamespaceClass($match[1]).'(); ?>';
+        return $this->phpTagEcho . $this->fixNamespaceClass($match[1]) . '(); ?>';
     }
 
     /**
@@ -2174,7 +2367,7 @@ class BladeOne
      */
     protected function getArgs($expression)
     {
-        return  $this->parseArgs($this->stripParentheses($expression), ' ');
+        return $this->parseArgs($this->stripParentheses($expression), ' ');
     }
 
 
@@ -2274,7 +2467,7 @@ class BladeOne
      */
     protected function compileEchoDefaults($value)
     {
-        $result= \preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', 'isset($1) ? $1 : $2', $value);
+        $result = \preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', 'isset($1) ? $1 : $2', $value);
         return $this->fixNamespaceClass($result);
     }
 
@@ -2289,14 +2482,14 @@ class BladeOne
      */
     private function fixNamespaceClass($text)
     {
-        if (strpos($text, '::')===false) {
+        if (strpos($text, '::') === false) {
             return $text;
         }
-        $classPart=explode('::', $text, 2);
+        $classPart = explode('::', $text, 2);
         if (isset($this->aliasClasses[$classPart[0]])) {
-            $classPart[0]=$this->aliasClasses[$classPart[0]];
+            $classPart[0] = $this->aliasClasses[$classPart[0]];
         }
-        return $classPart[0].'::'.$classPart[1];
+        return $classPart[0] . '::' . $classPart[1];
     }
 
     /**
@@ -2329,7 +2522,7 @@ class BladeOne
             $whitespace = empty($matches[3]) ? '' : $matches[3] . $matches[3];
 
             return $matches[1] ? $matches[0] : $this->phpTag
-                .\sprintf($this->echoFormat, $this->compileEchoDefaults($matches[2])).'; ?>'
+                . \sprintf($this->echoFormat, $this->compileEchoDefaults($matches[2])) . '; ?>'
                 . $whitespace;
             //return $matches[1] ? $matches[0] : $this->phpTag
             // . 'echo static::e(' . $this->compileEchoDefaults($matches[2]) . '); ? >' . $whitespace;
@@ -3079,14 +3272,14 @@ class BladeOne
      */
     private function locateTemplate($name)
     {
-        $this->notFoundPath='';
+        $this->notFoundPath = '';
         foreach ($this->templatePath as $dir) {
             $path = $dir . '/' . $name;
             if (\file_exists($path)) {
                 return $path;
             }
 
-            $this->notFoundPath.=$path.",";
+            $this->notFoundPath .= $path . ",";
         }
         return '';
     }
@@ -3180,7 +3373,7 @@ class BladeOne
     protected function compileCompileStamp($expression)
     {
         $expression = $this->stripQuotes($this->stripParentheses($expression));
-        $expression = ($expression==='')? 'Y-m-d H:i:s' : $expression;
+        $expression = ($expression === '') ? 'Y-m-d H:i:s' : $expression;
         return date($expression);
     }
 
@@ -3380,7 +3573,7 @@ class BladeOne
      *
      * @param string $phrase
      * @param string $phrases
-     * @param int    $num
+     * @param int $num
      *
      * @return string
      */
@@ -3450,7 +3643,7 @@ class BladeOne
             $txt = \print_r($txt, true);
         }
         // Rewrite file if more than 100000 bytes
-        $mode=($fz > 100000) ? 'w':'a';
+        $mode = ($fz > 100000) ? 'w' : 'a';
         $fp = \fopen($this->missingLog, $mode);
         \fwrite($fp, $txt . "\n");
         \fclose($fp);

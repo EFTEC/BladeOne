@@ -6,7 +6,7 @@
 
 use eftec\bladeone\BladeOne;
 
-include "../lib/BladeOne.php";
+include __DIR__."/../lib/BladeOne.php";
 
 $title='It is a title';
 $content='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
@@ -16,12 +16,17 @@ $content='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo
   Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt 
   mollit anim id est laborum.';
 
+$countries=['Chile','Canada','China','Cape Verde'];
 
-$bladeOne=new BladeOne(__DIR__.'/views', __DIR__.'/compiles', BladeOne::MODE_DEBUG);
+
+$bladeOne=new BladeOne(__DIR__.'/views', __DIR__.'/compiles');
 
 // This example uses the next files
 
 // views/layout/mylayout.blade.php
 // views/exampleextends/example.blade.php
 
-echo $bladeOne->run('exampleextends.example', ['title'=>$title,'content'=>$content]);
+echo $bladeOne->run('exampleextends.example', ['title'=>$title,'content'=>$content,'countries'=>$countries]);
+
+
+
