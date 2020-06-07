@@ -235,7 +235,7 @@ views/hello.blade.php:
 
 ### Explicit
 
-In this mode, it uses the folders **__DIR__/views** and **__DIR__/compiles**, also it uses the mode as MODE_AUTO.
+In this mode, it uses the folders ```__DIR__/views``` and ```__DIR__/compiles```, also it uses the mode as MODE_AUTO.
 
 ```php
 use eftec\bladeone\BladeOne;
