@@ -11,7 +11,7 @@ class MyBlade extends  bladeone\BladeOne {
 }
 $blade=new MyBlade($views,$compiledFolder);
 ```
-- Where MyBlade is a new class that extends the bladeone class and use the cache features.
+- Where MyBlade is a new class that extends the BladeOne class and use the cache features.
 
 
 
@@ -39,7 +39,7 @@ $blade=new MyBlade($views,$compiledFolder);
 
 ### function cacheExpired
 ```php
-if ($blade->cacheExpired('hellocache',1,5)) {   //'helloonecache' =template, =1 id cache, 5=duration (seconds)
+if ($blade->cacheExpired('hellocache',1,5)) {   // 'hellocache' = template, 1 = id cache, 5 = duration (seconds)
     // cache expired, so we should do some stuff (such as read from the database)
 }
 ``` 
