@@ -256,6 +256,41 @@ echo $blade->setView('hello')    // it sets the view to render
            ->run(); // it calls /views/hello.blade.php
 ```
 
+## Filter (Pipes)
+
+It is possible to modify the result by adding filters to the result.
+
+Let's say we have the next value $name='Jack Sparrow'
+
+```php
+$blade=new BladeOne();
+$blade->pipeEnable=true; // pipes are disable by default so it must be enable.
+echo $blade->run('template',['name'=>'Jack Sparrow']);
+```
+
+Our view could look like:
+
+```php
+ {{$name}}  or {!! $name !!} // Jack Sparrow
+```
+
+What if we want to show the name in uppercase?.
+
+We could do in our code $name=strtoupper('Jack Sparrow'). With Pipes, we could do the same as follow:
+
+```php
+ {{$name | strtoupper}} // JACK SPARROW 
+```
+
+We could also add arguments and chain methods.
+
+```php
+ {{$name | strtoupper | substr:0,5}} // JACK
+```
+
+You can find more information on https://github.com/EFTEC/BladeOne/wiki/Template-Pipes-(Filter)
+
+
 
 ## Security (optional)
 
