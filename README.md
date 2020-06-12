@@ -60,6 +60,7 @@ I will try to answer all and every one of the question (in my limited time).
     * [Template calling methods](https://github.com/EFTEC/BladeOne/wiki/Template-calling-methods) 
     * [Template logic](https://github.com/EFTEC/BladeOne/wiki/Template-logic)    
     * [Template loop](https://github.com/EFTEC/BladeOne/wiki/Template-loop)    
+    * [Template Pipes (Filter)](https://github.com/EFTEC/BladeOne/wiki/Template-Pipes-(Filter))    
 * [Methods of the class](https://github.com/EFTEC/BladeOne/wiki/Methods-of-the-class)   
 * [Injecting logic before the view (composer)](https://github.com/EFTEC/BladeOne/wiki/Injecting-logic-before-the-view-(composer))
 * [Extending the class](https://github.com/EFTEC/BladeOne/wiki/Extending-the-class)   

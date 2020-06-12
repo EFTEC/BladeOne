@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.45.1
+ * @version   3.46
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -92,7 +92,7 @@ class BladeOne
         'Echos',
     ];
     /** @var string|null it allows to sets the stack  */
-    protected $viewStack = null;
+    protected $viewStack;
     /** @var array used by $this->composer() */
     protected $composerStack=[];
     /** @var array The stack of in-progress push sections. */
@@ -170,6 +170,7 @@ class BladeOne
 
     /** @var string The path to the missing translations log file. If empty then every missing key is not saved. */
     public $missingLog = '';
+    public $pipeEnable=false;
 
     /** @var array Hold dictionary of translations */
     public static $dictionary = [];
@@ -264,6 +265,21 @@ class BladeOne
             die(1);
         }
         return '';
+    }
+
+    /**
+     * @param mixed|\DateTime $variable
+     * @param string|null $format
+     * @return string
+     */
+    public function format($variable, $format = null)
+    {
+        if ($variable instanceof \DateTime) {
+            $format=$format===null ?'Y/m/d' : $format;
+            return $variable->format($format);
+        }
+        $format=$format===null ?'%s' : $format;
+        return sprintf($format,$variable);
     }
 
     /**
@@ -2460,7 +2476,7 @@ class BladeOne
         };
         return \preg_replace_callback($pattern, $callback, $value);
     }
-
+    
     /**
      * Compile the default values for the echo statement.
      *
@@ -2470,7 +2486,63 @@ class BladeOne
     protected function compileEchoDefaults($value)
     {
         $result = \preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', 'isset($1) ? $1 : $2', $value);
-        return $this->fixNamespaceClass($result);
+        if (!$this->pipeEnable) {
+            return $this->fixNamespaceClass($result);
+        }
+        return $this->pipeDream($this->fixNamespaceClass($result));
+    }
+
+    /**
+     * It converts a string separated by pipes | into an filtered expression.<br>
+     * If the method exists (as directive), then it is used<br>
+     * If the method exists (in this class) then it is used<br>
+     * Otherwise, it uses a global function.<br>
+     * If you want to escape the "|", then you could use "/|"<br>
+     * <b>Note:</b> It only works if $this->pipeEnable=true and by default it is false<br>
+     * <b>Example:</b><br>
+     * <pre>
+     * $this->pipeDream('$name | strtolower | substr:0,4'); // strtolower(substr($name ,0,4)
+     * $this->pipeDream('$name| getMode') // $this->getMode($name)
+     * </pre>
+     *
+     * @param string $result
+     * @return string
+     * @\eftec\bladeone\BladeOne::$pipeEnable
+     */
+    protected function pipeDream($result)
+    {
+        $array= preg_split('~\\\\.(*SKIP)(*FAIL)|\|~s', $result);
+        $c=count($array)-1; // base zero.
+        if ($c===0) {
+            return $result;
+        }
+
+        $prev='';
+        for ($i=$c; $i>=1; $i--) {
+            $r=@explode(':', $array[$i], 2);
+            $fnName=trim($r[0]);
+            if (isset($this->customDirectives[$fnName])) {
+                $fnName='$this->customDirectives[\''.$fnName.'\']';
+            } elseif (method_exists($this, $fnName)) {
+                $fnName='$this->'.$fnName;
+            }
+            if ($i===1) {
+                $prev=$fnName.'('.$array[0];
+                if (count($r)===2) {
+                    $prev.=','.$r[1];
+                }
+                $prev.=')';
+            } else {
+                $prev=$fnName.'('.$prev;
+                if (count($r)===2) {
+                    if ($i===2) {
+                        $prev.=',';
+                    }
+                    $prev.=$r[1].')';
+                }
+            }
+        }
+        return $prev;
     }
 
     /**
@@ -2495,7 +2567,7 @@ class BladeOne
     }
 
     /**
-     * Compile the "regular" echo statements.
+     * Compile the "regular" echo statements. {{ }}
      *
      * @param string $value
      * @return string
@@ -2512,7 +2584,7 @@ class BladeOne
     }
 
     /**
-     * Compile the escaped echo statements.
+     * Compile the escaped echo statements. {!! !!}
      *
      * @param string $value
      * @return string
