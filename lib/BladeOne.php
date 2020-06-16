@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.46
+ * @version   3.46.1
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -279,7 +279,7 @@ class BladeOne
             return $variable->format($format);
         }
         $format=$format===null ?'%s' : $format;
-        return sprintf($format,$variable);
+        return sprintf($format, $variable);
     }
 
     /**
@@ -1920,10 +1920,15 @@ class BladeOne
      * The trailing slash is removed automatically if it's present.
      *
      * @param string $baseUrl Example http://www.web.com/folder  https://www.web.com/folder/anotherfolder
+     * @return BladeOne
      */
     public function setBaseUrl($baseUrl)
     {
         $this->baseUrl = \rtrim($baseUrl, '/'); // base with the url trimmed
+        if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
+            $this->relativePath = '';
+            return $this;
+        }
         $currentUrl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $base = \str_replace(['https://', 'http://'], '', $this->baseUrl);
         if (\strpos($currentUrl, $base) === 0) {
@@ -1934,6 +1939,7 @@ class BladeOne
         } else {
             $this->relativePath = '';
         }
+        return $this;
     }
 
     /**
