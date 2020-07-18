@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.46.1
+ * @version   3.46.2
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -160,7 +160,7 @@ class BladeOne
      * Indicates the compile mode.
      * if the constant BLADEONE_MODE is defined, then it is used instead of this field.
      *
-     * @var int MODE_*
+     * @var int=[BladeOne::MODE_AUTO,BladeOne::MODE_DEBUG,BladeOne::MODE_SLOW,BladeOne::MODE_FAST][$i]
      */
     protected $mode;
     /** @var int Indicates the number of open switches */
@@ -897,7 +897,7 @@ class BladeOne
     public function __call($name, $args)
     {
         if ($name === 'if') {
-            return $this->registerIfStatement(@$args[0], @$args[1]);
+            return $this->registerIfStatement(isset($args[0]) ? $args[0] : null, isset($args[1]) ? $args[1] : null);
         }
         throw new BadMethodCallException("function $name is not defined<br>");
     }
@@ -1189,8 +1189,8 @@ class BladeOne
     public function csrfIsValid($alwaysRegenerate = false, $tokenId = '_token')
     {
         if (@$_SERVER['REQUEST_METHOD'] === 'POST' && $alwaysRegenerate === false) {
-            $this->csrf_token = @$_POST[$tokenId]; // ping pong the token.
-            return $this->csrf_token . '|' . $this->ipClient() === @$_SESSION[$tokenId];
+            $this->csrf_token = isset($_POST[$tokenId]) ? $_POST[$tokenId] : null; // ping pong the token.
+            return $this->csrf_token . '|' . $this->ipClient() === (isset($_SESSION[$tokenId]) ? $_SESSION[$tokenId] : null);
         }
 
         if ($this->csrf_token == '' || $alwaysRegenerate) {
@@ -1207,7 +1207,8 @@ class BladeOne
      */
     public function yieldSection()
     {
-        return @$this->sections[$this->stopSection()];
+        $sc=$this->stopSection();
+        return isset($this->sections[$sc]) ? $this->sections[$sc] : null;
     }
 
     /**
@@ -3180,7 +3181,7 @@ class BladeOne
         // For example @if(something) @extends('aaa.bb') @endif()
         // If something is false then it's not rendered at the end (footer) of the script.
         $this->uidCounter++;
-        $data = $this->phpTag . 'if (@$_shouldextend[' . $this->uidCounter . ']) { echo $this->runChild(' . $expression . '); } ?>';
+        $data = $this->phpTag . 'if (isset($_shouldextend[' . $this->uidCounter . '])) { echo $this->runChild(' . $expression . '); } ?>';
         $this->footer[] = $data;
         return $this->phpTag . '$_shouldextend[' . $this->uidCounter . ']=1; ?>';
     }
@@ -3221,7 +3222,7 @@ class BladeOne
         $expression = $this->stripParentheses($expression);
         $ex = $this->stripParentheses($expression);
         $exp = \explode(',', $ex);
-        $file = $this->stripQuotes(@$exp[0]);
+        $file = $this->stripQuotes(isset($exp[0])? $exp[0] : null);
         $fileC = $this->getCompiledFile($file);
         if (!@\file_exists($fileC)) {
             // if the file doesn't exist then it's created
