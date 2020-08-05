@@ -2,7 +2,7 @@
   "name": "eftec/bladeone",
   "description": "The standalone version Blade Template Engine from Laravel in a single php file",
   "type": "library",
-  "version": "3.46.2",
+  "version": "3.46.3",
   "keywords": [
     "blade",
     "template",

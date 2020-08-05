@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.46.2
+ * @version   3.46.3
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -990,6 +990,7 @@ class BladeOne
      *                       version.
      * @return string
      * @throws Exception
+     * @noinspection PhpUnusedParameterInspection
      */
     private function runInternal($view, $variables = [], $forced = false, $isParent = true, $runFast = false)
     {
@@ -997,14 +998,12 @@ class BladeOne
         if (@\count($this->composerStack)) {
             $this->evalComposer($view);
         }
-        if ($isParent && @\count($this->variablesGlobal) > 0) {
+        if (@\count($this->variablesGlobal) > 0) {
             $this->variables = \array_merge($variables, $this->variablesGlobal);
             $this->variablesGlobal=[]; // used so we delete it.
         } else {
             $this->variables = $variables;
         }
- 
-        
         if (!$runFast) {
             // a) if the compile is forced then we compile the original file, then save the file.
             // b) if the compile is not forced then we read the datetime of both file and we compared.
