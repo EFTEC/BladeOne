@@ -127,7 +127,7 @@ class BladeOne
     /** @var string The main url of the system. Don't use raw $_SERVER values unless the value is sanitized */
     protected $baseUrl = '.';
     /** @var string|null The base domain of the system */
-    protected $baseDomain=null;
+    protected $baseDomain = null;
     /** @var string|null It stores the current canonical url. */
     protected $canonicalUrl = null;
     /** @var string|null It stores the current url including arguments */
@@ -2119,26 +2119,6 @@ class BladeOne
     }
 
     /**
-     * It returns the relative path to the base url or empty if not set<br>
-     * <b>Example:</b><br>
-     * <pre>
-     * // current url='http://domain.dom/page/subpage/web.php?aaa=2
-     * $this->setBaseUrl('http://domain.dom/');
-     * $this->getRelativePath(); // '../../'
-     * $this->setBaseUrl('http://domain.dom/');
-     * $this->getRelativePath(); // '../../'
-     * </pre>
-     * <b>Note:</b>The relative path is calculated when we set the base url.
-     *
-     * @return string
-     * @see \eftec\bladeone\BladeOne::setBaseUrl
-     */
-    public function getRelativePath()
-    {
-        return $this->relativePath;
-    }
-
-    /**
      * It sets the base url and it also calculates the relative path.<br>
      * The base url defines the "root" of the project, not always the level of the domain but it could be
      * any folder.<br>
@@ -2159,7 +2139,7 @@ class BladeOne
     public function setBaseUrl($baseUrl)
     {
         $this->baseUrl = \rtrim($baseUrl, '/'); // base with the url trimmed
-        $this->baseDomain= @parse_url($this->baseUrl)['host'];
+        $this->baseDomain = @parse_url($this->baseUrl)['host'];
         $currentUrl = $this->getCurrentUrlCalculated();
         if ($currentUrl === '') {
             $this->relativePath = '';
@@ -2182,9 +2162,10 @@ class BladeOne
      * <b>Note:</b> This information could be forged/faked by the end-user.<br>
      * <b>Note:</b> It returns empty '' if it is called in a command line interface / non-web.<br>
      * <b>Note:</b> It doesn't returns the user and password.<br>
+     * @param bool $noArgs if true then it excludes the arguments.
      * @return string
      */
-    public function getCurrentUrlCalculated()
+    public function getCurrentUrlCalculated($noArgs = false)
     {
         if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
             return '';
@@ -2193,12 +2174,32 @@ class BladeOne
         $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http");
         $port = $_SERVER['SERVER_PORT'];
         $port2 = (($link === 'http' && $port === '80') || ($link === 'https' && $port === '443')) ? '' : ':' . $port;
-
         $link .= "://$host{$port2}$_SERVER[REQUEST_URI]";
+        if ($noArgs) {
+            $link = @explode('?', $link)[0];
+        }
         return $link;
     }
 
-
+    /**
+     * It returns the relative path to the base url or empty if not set<br>
+     * <b>Example:</b><br>
+     * <pre>
+     * // current url='http://domain.dom/page/subpage/web.php?aaa=2
+     * $this->setBaseUrl('http://domain.dom/');
+     * $this->getRelativePath(); // '../../'
+     * $this->setBaseUrl('http://domain.dom/');
+     * $this->getRelativePath(); // '../../'
+     * </pre>
+     * <b>Note:</b>The relative path is calculated when we set the base url.
+     *
+     * @return string
+     * @see \eftec\bladeone\BladeOne::setBaseUrl
+     */
+    public function getRelativePath()
+    {
+        return $this->relativePath;
+    }
 
     /**
      * It gets the full current canonical url.<br>
@@ -2213,7 +2214,7 @@ class BladeOne
      */
     public function getCanonicalUrl()
     {
-        return $this->canonicalUrl !== null? $this->canonicalUrl : $this->getCurrentUrl();
+        return $this->canonicalUrl !== null ? $this->canonicalUrl : $this->getCurrentUrl();
     }
 
     /**
@@ -2237,11 +2238,16 @@ class BladeOne
      * <li>Otherwise, the url is calculated with the information sends by the user</li>
      * </ul>
      *
+     * @param bool $noArgs if true then it ignore the arguments.
      * @return string|null
      */
-    public function getCurrentUrl()
+    public function getCurrentUrl($noArgs = false)
     {
-        return $this->currentUrl !== null ? $this->currentUrl : $this->getCurrentUrlCalculated();
+        $link = $this->currentUrl !== null ? $this->currentUrl : $this->getCurrentUrlCalculated();
+        if ($noArgs) {
+            $link = @explode('?', $link)[0];
+        }
+        return $link;
     }
 
     /**
@@ -2425,6 +2431,28 @@ class BladeOne
         return ($num <= 1) ? $this->_e($phrase) : $this->_e($phrases);
     }
 
+    /**
+     * @param $expression
+     * @return string
+     * @see \eftec\bladeone\BladeOne::getCanonicalUrl
+     */
+    public function compileCanonical($expression = null)
+    {
+        return '<link rel="canonical" href="' . $this->phpTag
+            . ' echo $this->getCanonicalUrl();?>" />';
+    }
+
+    /**
+     * @param $expression
+     * @return string
+     * @see \eftec\bladeone\BladeOne::getBaseUrl()
+     */
+    public function compileBase($expression = null)
+    {
+        return '<base rel="canonical" href="' . $this->phpTag
+            . ' echo $this->getBaseUrl() ;?>" />';
+    }
+
     protected function compileUse($expression)
     {
         return $this->phpTag . 'use ' . $this->stripParentheses($expression) . '; ?>';
@@ -2436,6 +2464,8 @@ class BladeOne
         $this->firstCaseInSwitch = true;
         return $this->phpTag . "switch $expression {";
     }
+    //</editor-fold>
+    //<editor-fold desc="compile extras">
 
     protected function compileDump($expression)
     {
@@ -2446,8 +2476,6 @@ class BladeOne
     {
         return $this->phpTagEcho . " \$this->relative{$expression};?>";
     }
-    //</editor-fold>
-    //<editor-fold desc="compile extras">
 
     protected function compileMethod($expression)
     {
@@ -2465,27 +2493,6 @@ class BladeOne
     protected function compileDd($expression)
     {
         return $this->phpTagEcho . " '<pre>'; var_dump$expression; echo '</pre>';?>";
-    }
-
-    /**
-     * @param $expression
-     * @return string
-     * @see \eftec\bladeone\BladeOne::getCanonicalUrl
-     */
-    public function compileCanonical($expression=null)
-    {
-        return '<link rel="canonical" href="'.$this->phpTag
-            .' echo $this->getCanonicalUrl();?>" />';
-    }
-
-    /**
-     * @param $expression
-     * @return string
-     * @see \eftec\bladeone\BladeOne::getBaseUrl()
-     */
-    public function compileBase($expression=null) {
-        return '<base rel="canonical" href="'.$this->phpTag
-            .' echo $this->getBaseUrl() ;?>" />';
     }
 
     /**
