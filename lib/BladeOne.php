@@ -2472,10 +2472,20 @@ class BladeOne
      * @return string
      * @see \eftec\bladeone\BladeOne::getCanonicalUrl
      */
-    public function compileCanonical($expression)
+    public function compileCanonical($expression=null)
     {
         return '<link rel="canonical" href="'.$this->phpTag
-            .' echo isset($this->getCanonicalUrl())?$this->canonicalUrl:$this->currentUrl ;?>" />';
+            .' echo $this->getCanonicalUrl();?>" />';
+    }
+
+    /**
+     * @param $expression
+     * @return string
+     * @see \eftec\bladeone\BladeOne::getBaseUrl()
+     */
+    public function compileBase($expression=null) {
+        return '<base rel="canonical" href="'.$this->phpTag
+            .' echo $this->getBaseUrl() ;?>" />';
     }
 
     /**
