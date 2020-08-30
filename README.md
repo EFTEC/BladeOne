@@ -56,7 +56,7 @@ I will try to answer all and every one of the question (in my limited time).
     * [Template variables](https://github.com/EFTEC/BladeOne/wiki/Template-variables)     
     * [Template inheritance](https://github.com/EFTEC/BladeOne/wiki/Template-inheritance)      
     * [Template stack](https://github.com/EFTEC/BladeOne/wiki/Template-stack)
-    * [Template asset links](https://github.com/EFTEC/BladeOne/wiki/Template-Asset-Links)
+    * [Template asset, relative, base, current and canonical links](https://github.com/EFTEC/BladeOne/wiki/Template-Asset,-Relative,-Base-and-Canonical-Links)
     * [Template calling methods](https://github.com/EFTEC/BladeOne/wiki/Template-calling-methods) 
     * [Template logic](https://github.com/EFTEC/BladeOne/wiki/Template-logic)    
     * [Template loop](https://github.com/EFTEC/BladeOne/wiki/Template-loop)    
