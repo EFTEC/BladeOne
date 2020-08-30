@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.46.3
+ * @version   3.47
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -49,9 +49,11 @@ class BladeOne
     const MODE_FAST = 2;
     /** @var int DEBUG MODE, the file is always compiled and the filename is identifiable. */
     const MODE_DEBUG = 5;
+    /** @var array Hold dictionary of translations */
+    public static $dictionary = [];
     /** @var string PHP tag. You could use < ?php or < ? (if shorttag is active in php.ini) */
-    public $phpTag = '<?php ';
-    public $phpTagEcho = '<?php echo '; // hello hello hello.
+    public $phpTag = '<?php '; // hello hello hello.
+    public $phpTagEcho = '<?php echo ';
     /** @var string $currentUser Current user. Example: john */
     public $currentUser;
     /** @var string $currentRole Current role. Example: admin */
@@ -66,6 +68,11 @@ class BladeOne
     public $errorCallBack;
     /** @var string security token */
     public $csrf_token = '';
+    /** @var string The path to the missing translations log file. If empty then every missing key is not saved. */
+    public $missingLog = '';
+    public $pipeEnable = false;
+    /** @var array Alias (with or without namespace) of the classes) */
+    public $aliasClasses = [];
     /** @var array All of the registered extensions. */
     protected $extensions = [];
     /** @var array All of the finished, captured sections. */
@@ -91,10 +98,10 @@ class BladeOne
         'Comments',
         'Echos',
     ];
-    /** @var string|null it allows to sets the stack  */
+    /** @var string|null it allows to sets the stack */
     protected $viewStack;
     /** @var array used by $this->composer() */
-    protected $composerStack=[];
+    protected $composerStack = [];
     /** @var array The stack of in-progress push sections. */
     protected $pushStack = [];
     /** @var array All of the finished, captured push sections. */
@@ -117,8 +124,14 @@ class BladeOne
     protected $conditions = [];
     /** @var int Unique counter. It's used for extends */
     protected $uidCounter = 0;
-    /** @var string The main url of the system. Don't use raw $_SERVER values unless sanitized */
+    /** @var string The main url of the system. Don't use raw $_SERVER values unless the value is sanitized */
     protected $baseUrl = '.';
+    /** @var string|null The base domain of the system */
+    protected $baseDomain=null;
+    /** @var string|null It stores the current canonical url. */
+    protected $canonicalUrl = null;
+    /** @var string|null It stores the current url including arguments */
+    protected $currentUrl = null;
     /** @var string it is a relative path calculated between baseUrl and the current url. Example ../../ */
     protected $relativePath = '';
     /** @var string[] Dictionary of assets */
@@ -130,14 +143,14 @@ class BladeOne
     /** @var bool */
     protected $isRunFast = false;
     /** @var array Array of opening and closing tags for raw echos. */
-    protected $rawTags = ['{!!', '!!}'];
+    protected $rawTags = ['{!!', '!!}']; // stored for historical purpose.
     /** @var array Array of opening and closing tags for regular echos. */
     protected $contentTags = ['{{', '}}'];
     /** @var array Array of opening and closing tags for escaped echos. */
     protected $escapedTags = ['{{{', '}}}'];
     /** @var string The "regular" / legacy echo string format. */
     protected $echoFormat = '\htmlentities(%s, ENT_QUOTES, \'UTF-8\', false)';
-    protected $echoFormatOld = 'static::e(%s)'; // stored for historical purpose.
+    protected $echoFormatOld = 'static::e(%s)';
     /** @var array Lines that will be added at the footer of the template */
     protected $footer = [];
     /** @var string Placeholder to temporary mark the position of verbatim blocks. */
@@ -167,15 +180,6 @@ class BladeOne
     private $switchCount = 0;
     /** @var bool Indicates if the switch is recently open */
     private $firstCaseInSwitch = true;
-
-    /** @var string The path to the missing translations log file. If empty then every missing key is not saved. */
-    public $missingLog = '';
-    public $pipeEnable=false;
-
-    /** @var array Hold dictionary of translations */
-    public static $dictionary = [];
-    /** @var array Alias (with or without namespace) of the classes) */
-    public $aliasClasses = [];
 
 
     //</editor-fold>
@@ -268,21 +272,6 @@ class BladeOne
     }
 
     /**
-     * @param mixed|\DateTime $variable
-     * @param string|null $format
-     * @return string
-     */
-    public function format($variable, $format = null)
-    {
-        if ($variable instanceof \DateTime) {
-            $format=$format===null ?'Y/m/d' : $format;
-            return $variable->format($format);
-        }
-        $format=$format===null ?'%s' : $format;
-        return sprintf($format, $variable);
-    }
-
-    /**
      * Escape HTML entities in a string.
      *
      * @param string $value
@@ -295,18 +284,24 @@ class BladeOne
             : \htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
 
+    protected static function convertArgCallBack($k, $v)
+    {
+        return $k . "='{$v}' ";
+    }
+
     /**
-     * Escape HTML entities in a string.
-     *
-     * @param string $value
+     * @param mixed|\DateTime $variable
+     * @param string|null $format
      * @return string
      */
-    public static function enq($value)
+    public function format($variable, $format = null)
     {
-        if (\is_array($value) || \is_object($value)) {
-            return \htmlentities(\print_r($value, true), ENT_NOQUOTES, 'UTF-8', false);
+        if ($variable instanceof \DateTime) {
+            $format = $format === null ? 'Y/m/d' : $format;
+            return $variable->format($format);
         }
-        return \htmlentities($value, ENT_NOQUOTES, 'UTF-8', false);
+        $format = $format === null ? '%s' : $format;
+        return sprintf($format, $variable);
     }
 
     /**
@@ -347,9 +342,35 @@ class BladeOne
         return $quote . $this->phpTagEcho . $input . ';?>' . $quote;
     }
 
-    protected static function convertArgCallBack($k, $v)
+    /**
+     * Returns true if the text is surrounded by quotes (double or single quote)
+     *
+     * @param string|null $text
+     * @return bool
+     */
+    public function isQuoted($text)
     {
-        return $k . "='{$v}' ";
+        if (!$text || strlen($text) < 2) {
+            return false;
+        }
+        if ($text[0] === '"' && substr($text, -1) === '"') {
+            return true;
+        }
+        return ($text[0] === "'" && substr($text, -1) === "'");
+    }
+
+    /**
+     * Escape HTML entities in a string.
+     *
+     * @param string $value
+     * @return string
+     */
+    public static function enq($value)
+    {
+        if (\is_array($value) || \is_object($value)) {
+            return \htmlentities(\print_r($value, true), ENT_NOQUOTES, 'UTF-8', false);
+        }
+        return \htmlentities($value, ENT_NOQUOTES, 'UTF-8', false);
     }
 
     /**
@@ -480,6 +501,8 @@ class BladeOne
     {
         $this->aliasClasses[$aliasName] = $classWithNS;
     }
+    //</editor-fold>
+    //<editor-fold desc="compile">
 
     /**
      * Authentication. Sets with a user,role and permission
@@ -494,8 +517,6 @@ class BladeOne
         $this->currentRole = $role;
         $this->currentPermission = $permission;
     }
-    //</editor-fold>
-    //<editor-fold desc="compile">
 
     /**
      * run the blade engine. It returns the result of the code.
@@ -538,11 +559,6 @@ class BladeOne
         }
 
         return \ob_get_clean();
-    }
-
-    protected function compileUse($expression)
-    {
-        return $this->phpTag . 'use ' . $this->stripParentheses($expression) . '; ?>';
     }
 
     /**
@@ -868,6 +884,17 @@ class BladeOne
     }
 
     /**
+     * Return the default value of the given value.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public static function value($value)
+    {
+        return $value instanceof Closure ? $value() : $value;
+    }
+
+    /**
      * Return the first element in an array passing a given truth test.
      *
      * @param array $array
@@ -994,13 +1021,13 @@ class BladeOne
      */
     private function runInternal($view, $variables = [], $forced = false, $isParent = true, $runFast = false)
     {
-        $this->currentView=$view;
+        $this->currentView = $view;
         if (@\count($this->composerStack)) {
             $this->evalComposer($view);
         }
         if (@\count($this->variablesGlobal) > 0) {
             $this->variables = \array_merge($variables, $this->variablesGlobal);
-            $this->variablesGlobal=[]; // used so we delete it.
+            $this->variablesGlobal = []; // used so we delete it.
         } else {
             $this->variables = $variables;
         }
@@ -1020,6 +1047,269 @@ class BladeOne
         }
         $this->isRunFast = $runFast;
         return $this->evaluatePath($this->getCompiledFile(), $this->variables);
+    }
+
+    protected function evalComposer($view)
+    {
+        foreach ($this->composerStack as $viewKey => $fn) {
+            if ($this->wildCardComparison($view, $viewKey)) {
+                if (is_callable($fn)) {
+                    $fn($this);
+                } elseif ($this->methodExistsStatic($fn, 'composer')) {
+                    // if the method exists statically then $fn is the class and 'composer' is the name of the method
+                    $fn::composer($this);
+                } elseif (is_object($fn) || class_exists($fn)) {
+                    // if $fn is an object or it is a class and the class exists.
+                    $instance = (is_object($fn)) ? $fn : new $fn();
+                    if (method_exists($instance, 'composer')) {
+                        // and the method exists inside the instance.
+                        $instance->composer($this);
+                    } else {
+                        if ($this->mode === self::MODE_DEBUG) {
+                            throw new \RuntimeException('BladeOne: composer() added an incorrect method [$fn]');
+                        }
+                        throw new \RuntimeException('BladeOne: composer() added an incorrect method');
+                    }
+                } else {
+                    throw new \RuntimeException('BladeOne: composer() added an incorrect method');
+                }
+            }
+        }
+    }
+
+    /**
+     * It compares with wildcards (*) and returns true if both strings are equals<br>
+     * The wildcards only works at the beginning and/or at the end of the string.<br>
+     * <b>Example:<b><br>
+     * <pre>
+     * Text::wildCardComparison('abcdef','abc*'); // true
+     * Text::wildCardComparison('abcdef','*def'); // true
+     * Text::wildCardComparison('abcdef','*abc*'); // true
+     * Text::wildCardComparison('abcdef','*cde*'); // true
+     * Text::wildCardComparison('abcdef','*cde'); // false
+     *
+     * </pre>
+     *
+     * @param string $text
+     * @param string|null $textWithWildcard
+     *
+     * @return bool
+     */
+    protected function wildCardComparison($text, $textWithWildcard)
+    {
+        if (($textWithWildcard === null && $textWithWildcard === '')
+            || strpos($textWithWildcard, '*') === false) {
+            // if the text with wildcard is null or empty or it contains two ** or it contains no * then..
+            return $text == $textWithWildcard;
+        }
+        if ($textWithWildcard === '*' || $textWithWildcard === '**') {
+            return true;
+        }
+        $c0 = $textWithWildcard[0];
+        $c1 = substr($textWithWildcard, -1);
+        $textWithWildcardClean = str_replace('*', '', $textWithWildcard);
+        $p0 = strpos($text, $textWithWildcardClean);
+        if ($p0 === false) {
+            // no matches.
+            return false;
+        }
+        if ($c0 === '*' && $c1 === '*') {
+            // $textWithWildcard='*asasasas*'
+            return true;
+        }
+        if ($c1 === '*') {
+            // $textWithWildcard='asasasas*'
+            return $p0 === 0;
+        }
+        // $textWithWildcard='*asasasas'
+        $len = strlen($textWithWildcardClean);
+        return (substr($text, -$len) === $textWithWildcardClean);
+    }
+
+    protected function methodExistsStatic($class, $method)
+    {
+        try {
+            $mc = new \ReflectionMethod($class, $method);
+            return $mc->isStatic();
+        } catch (\ReflectionException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Compile the view at the given path.
+     *
+     * @param string $templateName The name of the template. Example folder.template
+     * @param bool $forced If the compilation will be forced (always compile) or not.
+     * @return boolean|string True if the operation was correct, or false (if not exception)
+     *                             if it fails. It returns a string (the content compiled) if isCompiled=false
+     * @throws Exception
+     */
+    public function compile($templateName = null, $forced = false)
+    {
+        $compiled = $this->getCompiledFile($templateName);
+        $template = $this->getTemplateFile($templateName);
+        if (!$this->isCompiled) {
+            return $this->compileString($this->getFile($template));
+        }
+        if ($forced || $this->isExpired($templateName)) {
+            // compile the original file
+            $contents = $this->compileString($this->getFile($template));
+            $dir = \dirname($compiled);
+            if (!\file_exists($dir)) {
+                $ok = @\mkdir($dir, 0777, true);
+                if ($ok === false) {
+                    $this->showError(
+                        'Compiling',
+                        "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.",
+                        true
+                    );
+                    return false;
+                }
+            }
+            if ($this->optimize) {
+                // removes space and tabs and replaces by a single space
+                $contents = \preg_replace('/^ {2,}/m', ' ', $contents);
+                $contents = \preg_replace('/^\t{2,}/m', ' ', $contents);
+            }
+            $ok = @\file_put_contents($compiled, $contents);
+            if ($ok === false) {
+                $this->showError(
+                    'Compiling',
+                    "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission"
+                );
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Get the full path of the compiled file.
+     *
+     * @param string $templateName
+     * @return string
+     */
+    public function getCompiledFile($templateName = '')
+    {
+        $templateName = (empty($templateName)) ? $this->fileName : $templateName;
+        if ($this->getMode() == self::MODE_DEBUG) {
+            return $this->compiledPath . '/' . $templateName . $this->compileExtension;
+        }
+
+        return $this->compiledPath . '/' . \sha1($templateName) . $this->compileExtension;
+    }
+
+    /**
+     * Get the mode of the engine.See BladeOne::MODE_* constants
+     *
+     * @return int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
+     */
+    public function getMode()
+    {
+        if (\defined('BLADEONE_MODE')) {
+            $this->mode = BLADEONE_MODE;
+        }
+        return $this->mode;
+    }
+
+    /**
+     * Set the compile mode
+     *
+     * @param $mode int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
+     * @return void
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
+    }
+
+    /**
+     * Get the full path of the template file.
+     * <p>Example: getTemplateFile('.abc.def')</p>
+     *
+     * @param string $templateName template name. If not template is set then it uses the base template.
+     * @return string
+     */
+    public function getTemplateFile($templateName = '')
+    {
+        $templateName = (empty($templateName)) ? $this->fileName : $templateName;
+        if (\strpos($templateName, '/') !== false) {
+            return $this->locateTemplate($templateName); // it's a literal
+        }
+        $arr = \explode('.', $templateName);
+        $c = \count($arr);
+        if ($c == 1) {
+            // its in the root of the template folder.
+            return $this->locateTemplate($templateName . $this->fileExtension);
+        }
+
+        $file = $arr[$c - 1];
+        \array_splice($arr, $c - 1, $c - 1); // delete the last element
+        $path = \implode('/', $arr);
+        return $this->locateTemplate($path . '/' . $file . $this->fileExtension);
+    }
+
+    /**
+     * Find template file with the given name in all template paths in the order the paths were written
+     *
+     * @param string $name Filename of the template (without path)
+     * @return string template file
+     */
+    private function locateTemplate($name)
+    {
+        $this->notFoundPath = '';
+        foreach ($this->templatePath as $dir) {
+            $path = $dir . '/' . $name;
+            if (\file_exists($path)) {
+                return $path;
+            }
+
+            $this->notFoundPath .= $path . ",";
+        }
+        return '';
+    }
+
+    /**
+     * Get the contents of a file.
+     *
+     * @param string $fullFileName It gets the content of a filename or returns ''.
+     *
+     * @return string
+     */
+    public function getFile($fullFileName)
+    {
+        if (\is_file($fullFileName)) {
+            return \file_get_contents($fullFileName);
+        }
+        $this->showError('getFile', "File does not exist at paths (separated by comma) [{$this->notFoundPath}] or permission denied", true);
+        return '';
+    }
+
+    /**
+     * Determine if the view has expired.
+     *
+     * @param string|null $fileName
+     * @return bool
+     */
+    public function isExpired($fileName)
+    {
+        $compiled = $this->getCompiledFile($fileName);
+        $template = $this->getTemplateFile($fileName);
+        if (!\file_exists($template)) {
+            if ($this->mode == self::MODE_DEBUG) {
+                $this->showError('Read file', 'Template not found :' . $this->fileName . " on file: $template", true);
+            } else {
+                $this->showError('Read file', 'Template not found :' . $this->fileName, true);
+            }
+        }
+        // If the compiled file doesn't exist we will indicate that the view is expired
+        // so that it can be re-compiled. Else, we will verify the last modification
+        // of the views is less than the modification times of the compiled views.
+        if (!$this->compiledPath || !\file_exists($compiled)) {
+            return true;
+        }
+        return \filemtime($compiled) < \filemtime($template);
     }
 
     /**
@@ -1206,7 +1496,7 @@ class BladeOne
      */
     public function yieldSection()
     {
-        $sc=$this->stopSection();
+        $sc = $this->stopSection();
         return isset($this->sections[$sc]) ? $this->sections[$sc] : null;
     }
 
@@ -1308,15 +1598,11 @@ class BladeOne
      * @param string|array $varname It is the name of the variable or it is an associative array
      * @param mixed $value
      * @return $this
+     * @see \eftec\bladeone\BladeOne::share
      */
-    public function share($varname, $value = null)
+    public function with($varname, $value = null)
     {
-        if (is_array($varname)) {
-            $this->variablesGlobal=\array_merge($this->variablesGlobal, $varname);
-        } else {
-            $this->variablesGlobal[$varname] = $value;
-        }
-        return $this;
+        return $this->share($varname, $value);
     }
 
     /**
@@ -1332,11 +1618,15 @@ class BladeOne
      * @param string|array $varname It is the name of the variable or it is an associative array
      * @param mixed $value
      * @return $this
-     * @see \eftec\bladeone\BladeOne::share
      */
-    public function with($varname, $value = null)
+    public function share($varname, $value = null)
     {
-        return $this->share($varname, $value);
+        if (is_array($varname)) {
+            $this->variablesGlobal = \array_merge($this->variablesGlobal, $varname);
+        } else {
+            $this->variablesGlobal[$varname] = $value;
+        }
+        return $this;
     }
 
     /**
@@ -1586,6 +1876,35 @@ class BladeOne
     }
 
     /**
+     * Run the blade engine. It returns the result of the code.
+     *
+     * @param string|null $view The name of the cache. Ex: "folder.folder.view" ("/folder/folder/view.blade")
+     * @param array $variables An associative arrays with the values to display.
+     * @return string
+     * @throws Exception
+     */
+    public function run($view = null, $variables = [])
+    {
+        $mode = $this->getMode();
+
+        if ($view === null) {
+            $view = $this->viewStack;
+        }
+        $this->viewStack = null;
+        if ($view === null) {
+            throw new \RuntimeException('BladeOne: view not set');
+        }
+
+        $forced = $mode & 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
+        $runFast = $mode & 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
+        $this->sections = [];
+        if ($mode == 3) {
+            $this->showError('run', "we can't force and run fast at the same time", true);
+        }
+        return $this->runInternal($view, $variables, $forced, true, $runFast);
+    }
+
+    /**
      * It sets the current view<br>
      * This value is cleared when it is used (method run).<br>
      * <b>Example:<b><br>
@@ -1601,7 +1920,6 @@ class BladeOne
         $this->viewStack = $view;
         return $this;
     }
-    
 
     /**
      * It injects a function, an instance, or a method class when a view is called.<br>
@@ -1622,133 +1940,19 @@ class BladeOne
      */
     public function composer($view = null, $functionOrClass = null)
     {
-        if ($view===null && $functionOrClass===null) {
-            $this->composerStack=[];
+        if ($view === null && $functionOrClass === null) {
+            $this->composerStack = [];
             return $this;
         }
         if (is_array($view)) {
             foreach ($view as $v) {
-                $this->composerStack[$v]=$functionOrClass;
+                $this->composerStack[$v] = $functionOrClass;
             }
         } else {
-            $this->composerStack[$view]=$functionOrClass;
+            $this->composerStack[$view] = $functionOrClass;
         }
-        
-        return $this;
-    }
-    protected function methodExistsStatic($class, $method)
-    {
-        try {
-            $mc = new \ReflectionMethod($class, $method);
-            return $mc->isStatic();
-        } catch (\ReflectionException $e) {
-            return false;
-        }
-    }
-    
-    protected function evalComposer($view)
-    {
-        foreach ($this->composerStack as $viewKey => $fn) {
-            if ($this->wildCardComparison($view, $viewKey)) {
-                if (is_callable($fn)) {
-                    $fn($this);
-                } elseif ($this->methodExistsStatic($fn, 'composer')) {
-                    // if the method exists statically then $fn is the class and 'composer' is the name of the method
-                    $fn::composer($this);
-                } elseif (is_object($fn) || class_exists($fn)) {
-                    // if $fn is an object or it is a class and the class exists.
-                    $instance=(is_object($fn)) ? $fn : new $fn();
-                    if (method_exists($instance, 'composer')) {
-                        // and the method exists inside the instance.
-                        $instance->composer($this);
-                    } else {
-                        if ($this->mode === self::MODE_DEBUG) {
-                            throw new \RuntimeException('BladeOne: composer() added an incorrect method [$fn]');
-                        }
-                        throw new \RuntimeException('BladeOne: composer() added an incorrect method');
-                    }
-                } else {
-                    throw new \RuntimeException('BladeOne: composer() added an incorrect method');
-                }
-            }
-        }
-    }
-    /**
-     * It compares with wildcards (*) and returns true if both strings are equals<br>
-     * The wildcards only works at the beginning and/or at the end of the string.<br>
-     * <b>Example:<b><br>
-     * <pre>
-     * Text::wildCardComparison('abcdef','abc*'); // true
-     * Text::wildCardComparison('abcdef','*def'); // true
-     * Text::wildCardComparison('abcdef','*abc*'); // true
-     * Text::wildCardComparison('abcdef','*cde*'); // true
-     * Text::wildCardComparison('abcdef','*cde'); // false
-     *
-     * </pre>
-     *
-     * @param string $text
-     * @param string|null $textWithWildcard
-     *
-     * @return bool
-     */
-    protected function wildCardComparison($text, $textWithWildcard)
-    {
-        if (($textWithWildcard===null && $textWithWildcard==='')
-            || strpos($textWithWildcard, '*')===false) {
-            // if the text with wildcard is null or empty or it contains two ** or it contains no * then..
-            return $text==$textWithWildcard;
-        }
-        if ($textWithWildcard === '*' || $textWithWildcard === '**') {
-            return true;
-        }
-        $c0=$textWithWildcard[0];
-        $c1=substr($textWithWildcard, -1);
-        $textWithWildcardClean=str_replace('*', '', $textWithWildcard);
-        $p0=strpos($text, $textWithWildcardClean);
-        if ($p0===false) {
-            // no matches.
-            return false;
-        }
-        if ($c0==='*' && $c1==='*') {
-            // $textWithWildcard='*asasasas*'
-            return true;
-        }
-        if ($c1==='*') {
-            // $textWithWildcard='asasasas*'
-            return $p0===0;
-        }
-        // $textWithWildcard='*asasasas'
-        $len = strlen($textWithWildcardClean);
-        return (substr($text, -$len) === $textWithWildcardClean);
-    }
 
-    /**
-     * Run the blade engine. It returns the result of the code.
-     *
-     * @param string|null $view The name of the cache. Ex: "folder.folder.view" ("/folder/folder/view.blade")
-     * @param array $variables An associative arrays with the values to display.
-     * @return string
-     * @throws Exception
-     */
-    public function run($view = null, $variables = [])
-    {
-        $mode = $this->getMode();
-        
-        if ($view===null) {
-            $view=$this->viewStack;
-        }
-        $this->viewStack = null;
-        if ($view===null) {
-            throw new \RuntimeException('BladeOne: view not set');
-        }
-        
-        $forced = $mode & 1; // mode=1 forced:it recompiles no matter if the compiled file exists or not.
-        $runFast = $mode & 2; // mode=2 runfast: the code is not compiled neither checked and it runs directly the compiled
-        $this->sections = [];
-        if ($mode == 3) {
-            $this->showError('run', "we can't force and run fast at the same time", true);
-        }
-        return $this->runInternal($view, $variables, $forced, true, $runFast);
+        return $this;
     }
 
     /**
@@ -1905,7 +2109,7 @@ class BladeOne
     }
 
     /**
-     * Returns the current base url
+     * Returns the current base url without trailing slash.
      *
      * @return string
      */
@@ -1915,9 +2119,39 @@ class BladeOne
     }
 
     /**
+     * It returns the relative path to the base url or empty if not set<br>
+     * <b>Example:</b><br>
+     * <pre>
+     * // current url='http://domain.dom/page/subpage/web.php?aaa=2
+     * $this->setBaseUrl('http://domain.dom/');
+     * $this->getRelativePath(); // '../../'
+     * $this->setBaseUrl('http://domain.dom/');
+     * $this->getRelativePath(); // '../../'
+     * </pre>
+     * <b>Note:</b>The relative path is calculated when we set the base url.
+     *
+     * @return string
+     * @see \eftec\bladeone\BladeOne::setBaseUrl
+     */
+    public function getRelativePath()
+    {
+        return $this->relativePath;
+    }
+
+    /**
      * It sets the base url and it also calculates the relative path.<br>
-     * The base url is calculated to determine the relativity of the resources.<br>
-     * The trailing slash is removed automatically if it's present.
+     * The base url defines the "root" of the project, not always the level of the domain but it could be
+     * any folder.<br>
+     * This value is used to calculate the relativity of the resources but it is also used to set the domain.<br>
+     * <b>Note:</b> The trailing slash is removed automatically if it's present.<br>
+     * <b>Note:</b> We should not use arguments or name of the script.<br>
+     * <b>Examples:</b><br>
+     * <pre>
+     * $this->setBaseUrl('http://domain.dom/myblog');
+     * $this->setBaseUrl('http://domain.dom/corporate/erp');
+     * $this->setBaseUrl('http://domain.dom/blog.php?args=20'); // avoid this one.
+     * $this->setBaseUrl('http://another.dom');
+     * </pre>
      *
      * @param string $baseUrl Example http://www.web.com/folder  https://www.web.com/folder/anotherfolder
      * @return BladeOne
@@ -1925,20 +2159,102 @@ class BladeOne
     public function setBaseUrl($baseUrl)
     {
         $this->baseUrl = \rtrim($baseUrl, '/'); // base with the url trimmed
-        if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
+        $this->baseDomain= @parse_url($this->baseUrl)['host'];
+        $currentUrl = $this->getCurrentUrlCalculated();
+        if ($currentUrl === '') {
             $this->relativePath = '';
             return $this;
         }
-        $currentUrl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        $base = \str_replace(['https://', 'http://'], '', $this->baseUrl);
-        if (\strpos($currentUrl, $base) === 0) {
-            $part = \str_replace($base, '', $currentUrl);
+        if (\strpos($currentUrl, $this->baseUrl) === 0) {
+            $part = \str_replace($this->baseUrl, '', $currentUrl);
             $numf = \substr_count($part, '/') - 1;
             $numf = ($numf > 10) ? 10 : $numf; // avoid overflow
             $this->relativePath = ($numf < 0) ? '' : \str_repeat('../', $numf);
         } else {
             $this->relativePath = '';
         }
+        return $this;
+    }
+
+    /**
+     * It gets the full current url calculated with the information sends by the user.<br>
+     * <b>Note:</b> If we set baseurl, then it always uses the baseurl as domain (it's safe).<br>
+     * <b>Note:</b> This information could be forged/faked by the end-user.<br>
+     * <b>Note:</b> It returns empty '' if it is called in a command line interface / non-web.<br>
+     * <b>Note:</b> It doesn't returns the user and password.<br>
+     * @return string
+     */
+    public function getCurrentUrlCalculated()
+    {
+        if (!isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
+            return '';
+        }
+        $host = $this->baseDomain !== null ? $this->baseDomain : $_SERVER['HTTP_HOST']; // <-- it could be forged!
+        $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http");
+        $port = $_SERVER['SERVER_PORT'];
+        $port2 = (($link === 'http' && $port === '80') || ($link === 'https' && $port === '443')) ? '' : ':' . $port;
+
+        $link .= "://$host{$port2}$_SERVER[REQUEST_URI]";
+        return $link;
+    }
+
+
+
+    /**
+     * It gets the full current canonical url.<br>
+     * <b>Example:</b> https://www.mysite.com/aaa/bb/php.php?aa=bb
+     * <ul>
+     * <li>It returns the $this->canonicalUrl value if is not null</li>
+     * <li>Otherwise, it returns the $this->currentUrl if not null</li>
+     * <li>Otherwise, the url is calculated with the information sends by the user</li>
+     * </ul>
+     *
+     * @return string|null
+     */
+    public function getCanonicalUrl()
+    {
+        return $this->canonicalUrl !== null? $this->canonicalUrl : $this->getCurrentUrl();
+    }
+
+    /**
+     * It sets the full canonical url.<br>
+     * <b>Example:</b> https://www.mysite.com/aaa/bb/php.php?aa=bb
+     *
+     * @param string|null $canonUrl
+     * @return BladeOne
+     */
+    public function setCanonicalUrl($canonUrl = null)
+    {
+        $this->canonicalUrl = $canonUrl;
+        return $this;
+    }
+
+    /**
+     * It gets the full current url<br>
+     * <b>Example:</b> https://www.mysite.com/aaa/bb/php.php?aa=bb
+     * <ul>
+     * <li>It returns the $this->currentUrl if not null</li>
+     * <li>Otherwise, the url is calculated with the information sends by the user</li>
+     * </ul>
+     *
+     * @return string|null
+     */
+    public function getCurrentUrl()
+    {
+        return $this->currentUrl !== null ? $this->currentUrl : $this->getCurrentUrlCalculated();
+    }
+
+    /**
+     * It sets the full current url.<br>
+     * <b>Example:</b> https://www.mysite.com/aaa/bb/php.php?aa=bb
+     * <b>Note:</b> If the current url is not set, then the system could calculate the current url.
+     *
+     * @param string|null $currentUrl
+     * @return BladeOne
+     */
+    public function setCurrentUrl($currentUrl = null)
+    {
+        $this->currentUrl = $currentUrl;
         return $this;
     }
 
@@ -1984,6 +2300,9 @@ class BladeOne
         $this->errorCallBack = $fn;
     }
 
+    //</editor-fold>
+    //<editor-fold desc="push">
+
     /**
      * Get the entire loop stack.
      *
@@ -1992,6 +2311,123 @@ class BladeOne
     public function getLoopStack()
     {
         return $this->loopsStack;
+    }
+
+    /**
+     * It adds a string inside a quoted string<br>
+     * <b>example:</b><br>
+     * <pre>
+     * $this->addInsideQuote("'hello'"," world"); // 'hello world'
+     * $this->addInsideQuote("hello"," world"); // hello world
+     * </pre>
+     *
+     * @param $quoted
+     * @param $newFragment
+     * @return string
+     */
+    public function addInsideQuote($quoted, $newFragment)
+    {
+        if ($this->isQuoted($quoted)) {
+            return substr($quoted, 0, -1) . $newFragment . substr($quoted, -1);
+        }
+        return $quoted . $newFragment;
+    }
+
+    /**
+     * Return true if the string is a php variable (it starts with $)
+     *
+     * @param string|null $text
+     * @return bool
+     */
+    public function isVariablePHP($text)
+    {
+        if (!$text || strlen($text) < 2) {
+            return false;
+        }
+        return $text[0] === '$';
+    }
+
+    /**
+     * Its the same than @_e, however it parses the text (using sprintf).
+     * If the operation fails then, it returns the original expression without translation.
+     *
+     * @param $phrase
+     *
+     * @return string
+     */
+    public function _ef($phrase)
+    {
+        $argv = \func_get_args();
+        $r = $this->_e($phrase);
+        $argv[0] = $r; // replace the first argument with the translation.
+        $result = @sprintf(...$argv);
+        $result = ($result === false) ? $r : $result;
+        return $result;
+    }
+
+    /**
+     * Tries to translate the word if its in the array defined by BladeOneLang::$dictionary
+     * If the operation fails then, it returns the original expression without translation.
+     *
+     * @param $phrase
+     *
+     * @return string
+     */
+    public function _e($phrase)
+    {
+        if ((!\array_key_exists($phrase, static::$dictionary))) {
+            $this->missingTranslation($phrase);
+            return $phrase;
+        }
+
+        return static::$dictionary[$phrase];
+    }
+
+    /**
+     * Log a missing translation into the file $this->missingLog.<br>
+     * If the file is not defined, then it doesn't write the log.
+     *
+     * @param string $txt Message to write on.
+     */
+    private function missingTranslation($txt)
+    {
+        if (!$this->missingLog) {
+            return; // if there is not a file assigned then it skips saving.
+        }
+        $fz = @\filesize($this->missingLog);
+        if (\is_object($txt) || \is_array($txt)) {
+            $txt = \print_r($txt, true);
+        }
+        // Rewrite file if more than 100000 bytes
+        $mode = ($fz > 100000) ? 'w' : 'a';
+        $fp = \fopen($this->missingLog, $mode);
+        \fwrite($fp, $txt . "\n");
+        \fclose($fp);
+    }
+
+    /**
+     * if num is more than one then it returns the phrase in plural, otherwise the phrase in singular.
+     * Note: the translation should be as follow: $msg['Person']='Person' $msg=['Person']['p']='People'
+     *
+     * @param string $phrase
+     * @param string $phrases
+     * @param int $num
+     *
+     * @return string
+     */
+    public function _n($phrase, $phrases, $num = 0)
+    {
+        if ((!\array_key_exists($phrase, static::$dictionary))) {
+            $this->missingTranslation($phrase);
+            return ($num <= 1) ? $phrase : $phrases;
+        }
+
+        return ($num <= 1) ? $this->_e($phrase) : $this->_e($phrases);
+    }
+
+    protected function compileUse($expression)
+    {
+        return $this->phpTag . 'use ' . $this->stripParentheses($expression) . '; ?>';
     }
 
     protected function compileSwitch($expression)
@@ -2010,6 +2446,8 @@ class BladeOne
     {
         return $this->phpTagEcho . " \$this->relative{$expression};?>";
     }
+    //</editor-fold>
+    //<editor-fold desc="compile extras">
 
     protected function compileMethod($expression)
     {
@@ -2027,6 +2465,17 @@ class BladeOne
     protected function compileDd($expression)
     {
         return $this->phpTagEcho . " '<pre>'; var_dump$expression; echo '</pre>';?>";
+    }
+
+    /**
+     * @param $expression
+     * @return string
+     * @see \eftec\bladeone\BladeOne::getCanonicalUrl
+     */
+    public function compileCanonical($expression)
+    {
+        return '<link rel="canonical" href="'.$this->phpTag
+            .' echo isset($this->getCanonicalUrl())?$this->canonicalUrl:$this->currentUrl ;?>" />';
     }
 
     /**
@@ -2054,9 +2503,6 @@ class BladeOne
     {
         return $this->phpTag . "while{$expression}: ?>";
     }
-
-    //</editor-fold>
-    //<editor-fold desc="push">
 
     /**
      * default tag used for switch/case
@@ -2118,57 +2564,6 @@ class BladeOne
             return substr($text, 1, -1);
         }
         return $text;
-    }
-
-    /**
-     * It adds a string inside a quoted string<br>
-     * <b>example:</b><br>
-     * <pre>
-     * $this->addInsideQuote("'hello'"," world"); // 'hello world'
-     * $this->addInsideQuote("hello"," world"); // hello world
-     * </pre>
-     *
-     * @param $quoted
-     * @param $newFragment
-     * @return string
-     */
-    public function addInsideQuote($quoted, $newFragment)
-    {
-        if ($this->isQuoted($quoted)) {
-            return substr($quoted, 0, -1) . $newFragment . substr($quoted, -1);
-        }
-        return $quoted . $newFragment;
-    }
-
-    /**
-     * Returns true if the text is surrounded by quotes (double or single quote)
-     *
-     * @param string|null $text
-     * @return bool
-     */
-    public function isQuoted($text)
-    {
-        if (!$text || strlen($text) < 2) {
-            return false;
-        }
-        if ($text[0] === '"' && substr($text, -1) === '"') {
-            return true;
-        }
-        return ($text[0] === "'" && substr($text, -1) === "'");
-    }
-
-    /**
-     * Return true if the string is a php variable (it starts with $)
-     *
-     * @param string|null $text
-     * @return bool
-     */
-    public function isVariablePHP($text)
-    {
-        if (!$text || strlen($text) < 2) {
-            return false;
-        }
-        return $text[0] === '$';
     }
 
     /**
@@ -2248,8 +2643,6 @@ class BladeOne
         });
         return $methods;
     }
-    //</editor-fold>
-    //<editor-fold desc="compile extras">
 
     /**
      * Compile Blade statements that start with "@".
@@ -2307,15 +2700,6 @@ class BladeOne
         return preg_replace_callback('/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', $callback, $value);
     }
 
-    private function compileStatementClass($match)
-    {
-        if (isset($match[3])) {
-            return $this->phpTagEcho . $this->fixNamespaceClass($match[1]) . $match[3] . '; ?>';
-        }
-
-        return $this->phpTagEcho . $this->fixNamespaceClass($match[1]) . '(); ?>';
-    }
-
     /**
      * Determine if a given string contains a given substring.
      *
@@ -2340,60 +2724,35 @@ class BladeOne
         return false;
     }
 
+    private function compileStatementClass($match)
+    {
+        if (isset($match[3])) {
+            return $this->phpTagEcho . $this->fixNamespaceClass($match[1]) . $match[3] . '; ?>';
+        }
+
+        return $this->phpTagEcho . $this->fixNamespaceClass($match[1]) . '(); ?>';
+    }
 
     /**
-     * It separates a string using a separator and excluding quotes and double quotes.
+     * Util method to fix namespace of a class<br>
+     * Example: "SomeClass::method()" -> "\namespace\SomeClass::method()"<br>
      *
      * @param string $text
-     * @param string $separator
-     * @return array
+     *
+     * @return string
+     * @see \eftec\bladeone\BladeOne::$aliasClasses
      */
-    public function parseArgs($text, $separator = ',')
+    private function fixNamespaceClass($text)
     {
-        if ($text === null || $text === '') {
-            return []; //nothing to convert.
+        if (strpos($text, '::') === false) {
+            return $text;
         }
-        $chars = str_split($text);
-        $parts = [];
-        $nextpart = '';
-        $strL = count($chars);
-        /** @noinspection ForeachInvariantsInspection */
-        for ($i = 0; $i < $strL; $i++) {
-            $char = $chars[$i];
-            if ($char === '"' || $char === "'") {
-                $inext = strpos($text, $char, $i + 1);
-                $inext = $inext === false ? $strL : $inext;
-                $nextpart .= substr($text, $i, $inext - $i + 1);
-                $i = $inext;
-            } else {
-                $nextpart .= $char;
-            }
-            if ($char === $separator) {
-                $parts[] = substr($nextpart, 0, -1);
-                $nextpart = '';
-            }
+        $classPart = explode('::', $text, 2);
+        if (isset($this->aliasClasses[$classPart[0]])) {
+            $classPart[0] = $this->aliasClasses[$classPart[0]];
         }
-        if ($nextpart !== '') {
-            $parts[] = $nextpart;
-        }
-        $result = [];
-        foreach ($parts as $part) {
-            $r = explode('=', $part, 2);
-            $result[trim($r[0])] = count($r) === 2 ? trim($r[1]) : null;
-        }
-        return $result;
+        return $classPart[0] . '::' . $classPart[1];
     }
-
-    /**
-     * This method removes the parenthesis of the expression and parse the arguments.
-     * @param string $expression
-     * @return array
-     */
-    protected function getArgs($expression)
-    {
-        return $this->parseArgs($this->stripParentheses($expression), ' ');
-    }
-
 
     /**
      * For compile custom directive at runtime.
@@ -2439,17 +2798,6 @@ class BladeOne
     }
 
     /**
-     * Return the default value of the given value.
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    public static function value($value)
-    {
-        return $value instanceof Closure ? $value() : $value;
-    }
-
-    /**
      * Determine if the given key exists in the provided array.
      *
      * @param ArrayAccess|array $array
@@ -2462,6 +2810,59 @@ class BladeOne
             return $array->offsetExists($key);
         }
         return \array_key_exists($key, $array);
+    }
+
+    /**
+     * This method removes the parenthesis of the expression and parse the arguments.
+     * @param string $expression
+     * @return array
+     */
+    protected function getArgs($expression)
+    {
+        return $this->parseArgs($this->stripParentheses($expression), ' ');
+    }
+
+    /**
+     * It separates a string using a separator and excluding quotes and double quotes.
+     *
+     * @param string $text
+     * @param string $separator
+     * @return array
+     */
+    public function parseArgs($text, $separator = ',')
+    {
+        if ($text === null || $text === '') {
+            return []; //nothing to convert.
+        }
+        $chars = str_split($text);
+        $parts = [];
+        $nextpart = '';
+        $strL = count($chars);
+        /** @noinspection ForeachInvariantsInspection */
+        for ($i = 0; $i < $strL; $i++) {
+            $char = $chars[$i];
+            if ($char === '"' || $char === "'") {
+                $inext = strpos($text, $char, $i + 1);
+                $inext = $inext === false ? $strL : $inext;
+                $nextpart .= substr($text, $i, $inext - $i + 1);
+                $i = $inext;
+            } else {
+                $nextpart .= $char;
+            }
+            if ($char === $separator) {
+                $parts[] = substr($nextpart, 0, -1);
+                $nextpart = '';
+            }
+        }
+        if ($nextpart !== '') {
+            $parts[] = $nextpart;
+        }
+        $result = [];
+        foreach ($parts as $part) {
+            $r = explode('=', $part, 2);
+            $result[trim($r[0])] = count($r) === 2 ? trim($r[1]) : null;
+        }
+        return $result;
     }
 
     /**
@@ -2482,7 +2883,7 @@ class BladeOne
         };
         return \preg_replace_callback($pattern, $callback, $value);
     }
-    
+
     /**
      * Compile the default values for the echo statement.
      *
@@ -2517,59 +2918,38 @@ class BladeOne
      */
     protected function pipeDream($result)
     {
-        $array= preg_split('~\\\\.(*SKIP)(*FAIL)|\|~s', $result);
-        $c=count($array)-1; // base zero.
-        if ($c===0) {
+        $array = preg_split('~\\\\.(*SKIP)(*FAIL)|\|~s', $result);
+        $c = count($array) - 1; // base zero.
+        if ($c === 0) {
             return $result;
         }
 
-        $prev='';
-        for ($i=$c; $i>=1; $i--) {
-            $r=@explode(':', $array[$i], 2);
-            $fnName=trim($r[0]);
+        $prev = '';
+        for ($i = $c; $i >= 1; $i--) {
+            $r = @explode(':', $array[$i], 2);
+            $fnName = trim($r[0]);
             if (isset($this->customDirectives[$fnName])) {
-                $fnName='$this->customDirectives[\''.$fnName.'\']';
+                $fnName = '$this->customDirectives[\'' . $fnName . '\']';
             } elseif (method_exists($this, $fnName)) {
-                $fnName='$this->'.$fnName;
+                $fnName = '$this->' . $fnName;
             }
-            if ($i===1) {
-                $prev=$fnName.'('.$array[0];
-                if (count($r)===2) {
-                    $prev.=','.$r[1];
+            if ($i === 1) {
+                $prev = $fnName . '(' . $array[0];
+                if (count($r) === 2) {
+                    $prev .= ',' . $r[1];
                 }
-                $prev.=')';
+                $prev .= ')';
             } else {
-                $prev=$fnName.'('.$prev;
-                if (count($r)===2) {
-                    if ($i===2) {
-                        $prev.=',';
+                $prev = $fnName . '(' . $prev;
+                if (count($r) === 2) {
+                    if ($i === 2) {
+                        $prev .= ',';
                     }
-                    $prev.=$r[1].')';
+                    $prev .= $r[1] . ')';
                 }
             }
         }
         return $prev;
-    }
-
-    /**
-     * Util method to fix namespace of a class<br>
-     * Example: "SomeClass::method()" -> "\namespace\SomeClass::method()"<br>
-     *
-     * @param string $text
-     *
-     * @return string
-     * @see \eftec\bladeone\BladeOne::$aliasClasses
-     */
-    private function fixNamespaceClass($text)
-    {
-        if (strpos($text, '::') === false) {
-            return $text;
-        }
-        $classPart = explode('::', $text, 2);
-        if (isset($this->aliasClasses[$classPart[0]])) {
-            $classPart[0] = $this->aliasClasses[$classPart[0]];
-        }
-        return $classPart[0] . '::' . $classPart[1];
     }
 
     /**
@@ -2735,6 +3115,8 @@ class BladeOne
 
         return $this->phpTag . 'else: ?>';
     }
+    //</editor-fold>
+    //<editor-fold desc="file members">
 
     protected function compileCannot($expression)
     {
@@ -2883,8 +3265,6 @@ class BladeOne
     {
         return $this->phpTagEcho . "'" . $this->currentUser . "'; ?>";
     }
-    //</editor-fold>
-    //<editor-fold desc="file members">
 
     /**
      * Compile the endunless statements into valid PHP.
@@ -2895,6 +3275,8 @@ class BladeOne
     {
         return $this->phpTag . 'endif; ?>';
     }
+    //</editor-fold>
+    //<editor-fold desc="Array Functions">
 
     /**
      * @error('key')
@@ -2938,6 +3320,8 @@ class BladeOne
     {
         return $this->phpTag . "for{$expression}: ?>";
     }
+    //</editor-fold>
+    //<editor-fold desc="string functions">
 
     /**
      * Compile the foreach statements into valid PHP.
@@ -3011,6 +3395,8 @@ class BladeOne
     {
         return $this->phpTag . "if{$expression}: ?>";
     }
+    //</editor-fold>
+    //<editor-fold desc="loop functions">
 
     /**
      * Compile the else-if statements into valid PHP.
@@ -3037,8 +3423,6 @@ class BladeOne
         }
         return $this->phpTag . "if (empty{$expression}): ?>";
     }
-    //</editor-fold>
-    //<editor-fold desc="Array Functions">
 
     /**
      * Compile the has section statements into valid PHP.
@@ -3080,8 +3464,6 @@ class BladeOne
     {
         return $this->phpTag . 'endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>';
     }
-    //</editor-fold>
-    //<editor-fold desc="string functions">
 
     /**
      * Compile the end-can statements into valid PHP.
@@ -3143,8 +3525,8 @@ class BladeOne
     {
         return $expression ? $this->phpTag . "{$expression}; ?>" : $this->phpTag . '';
     }
-    //</editor-fold>
-    //<editor-fold desc="loop functions">
+
+    //<editor-fold desc="setter and getters">
 
     /**
      * Compile end-php statement into valid PHP.
@@ -3221,191 +3603,13 @@ class BladeOne
         $expression = $this->stripParentheses($expression);
         $ex = $this->stripParentheses($expression);
         $exp = \explode(',', $ex);
-        $file = $this->stripQuotes(isset($exp[0])? $exp[0] : null);
+        $file = $this->stripQuotes(isset($exp[0]) ? $exp[0] : null);
         $fileC = $this->getCompiledFile($file);
         if (!@\file_exists($fileC)) {
             // if the file doesn't exist then it's created
             $this->compile($file, true);
         }
         return $this->getFile($fileC);
-    }
-
-    /**
-     * Get the full path of the compiled file.
-     *
-     * @param string $templateName
-     * @return string
-     */
-    public function getCompiledFile($templateName = '')
-    {
-        $templateName = (empty($templateName)) ? $this->fileName : $templateName;
-        if ($this->getMode() == self::MODE_DEBUG) {
-            return $this->compiledPath . '/' . $templateName . $this->compileExtension;
-        }
-
-        return $this->compiledPath . '/' . \sha1($templateName) . $this->compileExtension;
-    }
-
-    /**
-     * Get the mode of the engine.See BladeOne::MODE_* constants
-     *
-     * @return int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
-     */
-    public function getMode()
-    {
-        if (\defined('BLADEONE_MODE')) {
-            $this->mode = BLADEONE_MODE;
-        }
-        return $this->mode;
-    }
-
-    /**
-     * Set the compile mode
-     *
-     * @param $mode int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
-     * @return void
-     */
-    public function setMode($mode)
-    {
-        $this->mode = $mode;
-    }
-
-    /**
-     * Compile the view at the given path.
-     *
-     * @param string $templateName The name of the template. Example folder.template
-     * @param bool $forced If the compilation will be forced (always compile) or not.
-     * @return boolean|string True if the operation was correct, or false (if not exception)
-     *                             if it fails. It returns a string (the content compiled) if isCompiled=false
-     * @throws Exception
-     */
-    public function compile($templateName = null, $forced = false)
-    {
-        $compiled = $this->getCompiledFile($templateName);
-        $template = $this->getTemplateFile($templateName);
-        if (!$this->isCompiled) {
-            return $this->compileString($this->getFile($template));
-        }
-        if ($forced || $this->isExpired($templateName)) {
-            // compile the original file
-            $contents = $this->compileString($this->getFile($template));
-            $dir = \dirname($compiled);
-            if (!\file_exists($dir)) {
-                $ok = @\mkdir($dir, 0777, true);
-                if ($ok === false) {
-                    $this->showError(
-                        'Compiling',
-                        "Unable to create the compile folder [{$dir}]. Check the permissions of it's parent folder.",
-                        true
-                    );
-                    return false;
-                }
-            }
-            if ($this->optimize) {
-                // removes space and tabs and replaces by a single space
-                $contents = \preg_replace('/^ {2,}/m', ' ', $contents);
-                $contents = \preg_replace('/^\t{2,}/m', ' ', $contents);
-            }
-            $ok = @\file_put_contents($compiled, $contents);
-            if ($ok === false) {
-                $this->showError(
-                    'Compiling',
-                    "Unable to save the file [{$compiled}]. Check the compile folder is defined and has the right permission"
-                );
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Get the full path of the template file.
-     * <p>Example: getTemplateFile('.abc.def')</p>
-     *
-     * @param string $templateName template name. If not template is set then it uses the base template.
-     * @return string
-     */
-    public function getTemplateFile($templateName = '')
-    {
-        $templateName = (empty($templateName)) ? $this->fileName : $templateName;
-        if (\strpos($templateName, '/') !== false) {
-            return $this->locateTemplate($templateName); // it's a literal
-        }
-        $arr = \explode('.', $templateName);
-        $c = \count($arr);
-        if ($c == 1) {
-            // its in the root of the template folder.
-            return $this->locateTemplate($templateName . $this->fileExtension);
-        }
-
-        $file = $arr[$c - 1];
-        \array_splice($arr, $c - 1, $c - 1); // delete the last element
-        $path = \implode('/', $arr);
-        return $this->locateTemplate($path . '/' . $file . $this->fileExtension);
-    }
-
-    /**
-     * Find template file with the given name in all template paths in the order the paths were written
-     *
-     * @param string $name Filename of the template (without path)
-     * @return string template file
-     */
-    private function locateTemplate($name)
-    {
-        $this->notFoundPath = '';
-        foreach ($this->templatePath as $dir) {
-            $path = $dir . '/' . $name;
-            if (\file_exists($path)) {
-                return $path;
-            }
-
-            $this->notFoundPath .= $path . ",";
-        }
-        return '';
-    }
-
-    //<editor-fold desc="setter and getters">
-
-    /**
-     * Get the contents of a file.
-     *
-     * @param string $fullFileName It gets the content of a filename or returns ''.
-     *
-     * @return string
-     */
-    public function getFile($fullFileName)
-    {
-        if (\is_file($fullFileName)) {
-            return \file_get_contents($fullFileName);
-        }
-        $this->showError('getFile', "File does not exist at paths (separated by comma) [{$this->notFoundPath}] or permission denied", true);
-        return '';
-    }
-
-    /**
-     * Determine if the view has expired.
-     *
-     * @param string|null $fileName
-     * @return bool
-     */
-    public function isExpired($fileName)
-    {
-        $compiled = $this->getCompiledFile($fileName);
-        $template = $this->getTemplateFile($fileName);
-        if (!\file_exists($template)) {
-            if ($this->mode == self::MODE_DEBUG) {
-                $this->showError('Read file', 'Template not found :' . $this->fileName . " on file: $template", true);
-            } else {
-                $this->showError('Read file', 'Template not found :' . $this->fileName, true);
-            }
-        }
-        // If the compiled file doesn't exist we will indicate that the view is expired
-        // so that it can be re-compiled. Else, we will verify the last modification
-        // of the views is less than the modification times of the compiled views.
-        if (!$this->compiledPath || !\file_exists($compiled)) {
-            return true;
-        }
-        return \filemtime($compiled) < \filemtime($template);
     }
 
     /**
@@ -3575,6 +3779,9 @@ class BladeOne
         $depth = isset($parts[2]) ? \trim($parts[2]) : 512;
         return $this->phpTagEcho . " json_encode($parts[0], $options, $depth); ?>";
     }
+    //</editor-fold>
+
+    // <editor-fold desc='language'>
 
     protected function compileIsset($expression)
     {
@@ -3590,6 +3797,8 @@ class BladeOne
     {
         return $this->phpTag . 'endif; ?>';
     }
+
+    //<editor-fold desc="compile">
 
     /**
      * Resolve a given class using the injectResolver callable.
@@ -3607,67 +3816,6 @@ class BladeOne
         $fullClassName = $className . "\\" . $variableName;
         return new $fullClassName();
     }
-    //</editor-fold>
-
-    // <editor-fold desc='language'>
-
-    /**
-     * Tries to translate the word if its in the array defined by BladeOneLang::$dictionary
-     * If the operation fails then, it returns the original expression without translation.
-     *
-     * @param $phrase
-     *
-     * @return string
-     */
-    public function _e($phrase)
-    {
-        if ((!\array_key_exists($phrase, static::$dictionary))) {
-            $this->missingTranslation($phrase);
-            return $phrase;
-        }
-
-        return static::$dictionary[$phrase];
-    }
-
-    /**
-     * Its the same than @_e, however it parses the text (using sprintf).
-     * If the operation fails then, it returns the original expression without translation.
-     *
-     * @param $phrase
-     *
-     * @return string
-     */
-    public function _ef($phrase)
-    {
-        $argv = \func_get_args();
-        $r = $this->_e($phrase);
-        $argv[0] = $r; // replace the first argument with the translation.
-        $result = @sprintf(...$argv);
-        $result = ($result === false) ? $r : $result;
-        return $result;
-    }
-
-    /**
-     * if num is more than one then it returns the phrase in plural, otherwise the phrase in singular.
-     * Note: the translation should be as follow: $msg['Person']='Person' $msg=['Person']['p']='People'
-     *
-     * @param string $phrase
-     * @param string $phrases
-     * @param int $num
-     *
-     * @return string
-     */
-    public function _n($phrase, $phrases, $num = 0)
-    {
-        if ((!\array_key_exists($phrase, static::$dictionary))) {
-            $this->missingTranslation($phrase);
-            return ($num <= 1) ? $phrase : $phrases;
-        }
-
-        return ($num <= 1) ? $this->_e($phrase) : $this->_e($phrases);
-    }
-
-    //<editor-fold desc="compile">
 
     /**
      * Used for @_e directive.
@@ -3693,6 +3841,8 @@ class BladeOne
         return $this->phpTagEcho . "\$this->_ef{$expression}; ?>";
     }
 
+    //</editor-fold>
+
     /**
      * Used for @_n directive.
      *
@@ -3703,30 +3853,6 @@ class BladeOne
     protected function compile_n($expression)
     {
         return $this->phpTagEcho . "\$this->_n{$expression}; ?>";
-    }
-
-    //</editor-fold>
-
-    /**
-     * Log a missing translation into the file $this->missingLog.<br>
-     * If the file is not defined, then it doesn't write the log.
-     *
-     * @param string $txt Message to write on.
-     */
-    private function missingTranslation($txt)
-    {
-        if (!$this->missingLog) {
-            return; // if there is not a file assigned then it skips saving.
-        }
-        $fz = @\filesize($this->missingLog);
-        if (\is_object($txt) || \is_array($txt)) {
-            $txt = \print_r($txt, true);
-        }
-        // Rewrite file if more than 100000 bytes
-        $mode = ($fz > 100000) ? 'w' : 'a';
-        $fp = \fopen($this->missingLog, $mode);
-        \fwrite($fp, $txt . "\n");
-        \fclose($fp);
     }
 
     // </editor-fold>
