@@ -24,7 +24,7 @@ function method2($arg=null) {
 
 try {
     //echo $blade->run("Test/hello.blade.php" // also works
-    echo $blade->run("Test.pipe", ["name" => "Jack Sparrow",'date'=>new DateTime()]);
+    echo $blade->run("Test.pipe", ["name" => "Jack Sparrow",'othername'=>'Popeye','date'=>new DateTime()]);
 } catch (Exception $e) {
     echo $e->getMessage();
 }

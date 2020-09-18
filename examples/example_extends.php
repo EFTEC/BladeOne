@@ -20,6 +20,7 @@ $countries=['Chile','Canada','China','Cape Verde'];
 
 
 $bladeOne=new BladeOne(__DIR__.'/views', __DIR__.'/compiles');
+$bladeOne->setMode(BladeOne::MODE_DEBUG);
 
 // This example uses the next files
 

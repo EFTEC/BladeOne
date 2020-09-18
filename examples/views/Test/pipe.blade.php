@@ -7,6 +7,13 @@ Remember that pipeEnable must set in true<br>
 <h2>$name </h2>
 {{$name}}<br>
 
+<h2>Testing default value</h2>
+{!!  $name | "default"  !!}<br>
+{!! $name2 | "default"  !!}<br>
+{!! $name2 | 'default'  !!}<br>
+{!! $name2 | $othername  !!}<br>
+{!! $name2 | 555 !!}<br>
+
 <h2>$name | strtolower | strtolower | strtolower </h2>
 {{$name | strtolower| strtolower | strtolower}}<br>
 

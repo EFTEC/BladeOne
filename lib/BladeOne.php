@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.47
+ * @version   3.47.1
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -127,11 +127,11 @@ class BladeOne
     /** @var string The main url of the system. Don't use raw $_SERVER values unless the value is sanitized */
     protected $baseUrl = '.';
     /** @var string|null The base domain of the system */
-    protected $baseDomain = null;
+    protected $baseDomain;
     /** @var string|null It stores the current canonical url. */
-    protected $canonicalUrl = null;
+    protected $canonicalUrl;
     /** @var string|null It stores the current url including arguments */
-    protected $currentUrl = null;
+    protected $currentUrl;
     /** @var string it is a relative path calculated between baseUrl and the current url. Example ../../ */
     protected $relativePath = '';
     /** @var string[] Dictionary of assets */
@@ -1992,7 +1992,28 @@ class BladeOne
     public function renderComponent()
     {
         $name = \array_pop($this->componentStack);
-        return $this->runChild($name, $this->componentData());
+        //return $this->runChild($name, $this->componentData());
+        $cd=$this->componentData();
+        if (!is_array($cd)) {
+            $keys=array_keys($cd);
+            foreach ($keys as $key) {
+                if (isset($this->variables[$key])) {
+                    $backup[$key]=$this->variables[$key];
+                }
+            }
+        }
+        $r=$this->runChild($name, $cd);
+        if (!isset($keys)) {
+            return $r;
+        }
+        foreach ($keys as $key) {
+            if (isset($backup[$key])) {
+                $this->variables[$key] = $backup[$key]; // this value is recovered
+            } else {
+                unset($this->variables[$key]); // this value must be deleted
+            }
+        }
+        return $r;
     }
 
     /**
@@ -2805,7 +2826,7 @@ class BladeOne
             return $array[$key];
         }
         foreach (\explode('.', $key) as $segment) {
-            if ($accesible && static::exists($array, $segment)) {
+            if (static::exists($array, $segment)) {
                 $array = $array[$segment];
             } else {
                 return static::value($default);
@@ -2945,10 +2966,15 @@ class BladeOne
         for ($i = $c; $i >= 1; $i--) {
             $r = @explode(':', $array[$i], 2);
             $fnName = trim($r[0]);
-            if (isset($this->customDirectives[$fnName])) {
-                $fnName = '$this->customDirectives[\'' . $fnName . '\']';
-            } elseif (method_exists($this, $fnName)) {
-                $fnName = '$this->' . $fnName;
+            $fnNameF=$fnName[0]; // first character
+            if ($fnNameF === '"' || $fnNameF === '\'' || $fnNameF === '$' || is_numeric($fnNameF)) {
+                $fnName='!isset('.$array[0].') ? '.$fnName.' : ';
+            } else {
+                if (isset($this->customDirectives[$fnName])) {
+                    $fnName = '$this->customDirectives[\'' . $fnName . '\']';
+                } elseif (method_exists($this, $fnName)) {
+                    $fnName = '$this->' . $fnName;
+                }
             }
             if ($i === 1) {
                 $prev = $fnName . '(' . $array[0];
@@ -3583,6 +3609,8 @@ class BladeOne
         $this->footer[] = $data;
         return $this->phpTag . '$_shouldextend[' . $this->uidCounter . ']=1; ?>';
     }
+
+    
 
     /**
      * Execute the @parent command. This operation works in tandem with extendSection
