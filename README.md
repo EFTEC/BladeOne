@@ -17,6 +17,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 
 NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 7 (March 2020)**. It misses some commands [missing](#missing) but nothing more.
 
+
 Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 7 (2020 Марта) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.
 
 ## Comparison with Twig
@@ -47,6 +48,7 @@ I will try to answer all and every one of the question (in my limited time).
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | <img src="https://camo.githubusercontent.com/3c938f71f46a90eb85bb104f0f396fcba62b8f4a/68747470733a2f2f74686570726163746963616c6465762e73332e616d617a6f6e6177732e636f6d2f692f3436696b7061376661717677726533797537706a2e6a7067" alt="example php bladeone" width="200"/> | <img src="https://github.com/EFTEC/example.cupcakes/raw/master/docs/result.jpg" alt="example php bladeone cupcakes" width="200"/> | <img src="https://github.com/EFTEC/example-search/raw/master/img/search_bootstrap.jpg" alt="example php bladeone search" width="200"/> | <img src="https://github.com/EFTEC/example-php-editablegrid/raw/master/docs/final.jpg" alt="example php bladeone search" width="200"/> |
 
+[https://www.southprojects.com](https://www.southprojects.com)
 
 
 ## Manual
