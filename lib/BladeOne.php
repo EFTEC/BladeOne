@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.47.1
+ * @version   3.47.2
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -2595,11 +2595,11 @@ class BladeOne
         if (!$text || strlen($text) < 2) {
             return $text;
         }
-        if (strpos($text, '"') === 0 && substr($text, -1) === '"') {
-            return substr($text, 1, -1);
-        }
-        if (strpos($text, "'") === 0 && substr($text, -1) === "'") {
-            return substr($text, 1, -1);
+        $text=trim($text);
+        $p0=$text[0];
+        $p1=\substr($text, -1);
+        if ($p0===$p1 && ($p0==='"' || $p0==="'")) {
+            return \substr($text, 1, -1);
         }
         return $text;
     }
