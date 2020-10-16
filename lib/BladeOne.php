@@ -34,7 +34,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.47.2
+ * @version   3.47.3
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -672,7 +672,11 @@ class BladeOne
     public function addAssetDict($name, $url = '')
     {
         if (\is_array($name)) {
-            $this->assetDict = \array_merge($this->assetDict, $name);
+            if ($this->assetDict===null) {
+                $this->assetDict = $name;
+            } else {
+                $this->assetDict = \array_merge($this->assetDict, $name);
+            }
         } else {
             $this->assetDict[$name] = $url;
         }

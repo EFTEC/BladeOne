@@ -19,7 +19,8 @@ $fullurl=str_replace('relative1/relative2/callrelative.php', '', $fullurl);
 $arr=explode('?', $fullurl);
 $fullurl=$arr[0];
 $blade->setBaseUrl($fullurl);
-$blade->addAssetDict('js/jquery.min.js', 'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js');
+$blade->addAssetDict(['js/jquery.min.js'=>'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js']);
+$blade->addAssetDict(['js/popper.min.js'=>'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js']);
 
 
 echo $blade->run("relative.relative", ['baseurl'=>$blade->getBaseUrl()]);

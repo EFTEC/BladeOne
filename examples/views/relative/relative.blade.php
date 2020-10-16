@@ -14,7 +14,11 @@ using asset dictionary <span id="loaded" style="color:red">...</span> <br>
 asset url: <b>@@asset('js/jquery.min.js')</b><br>
 asset url: <b>@asset('js/jquery.min.js')</b><br>
 
+asset url: <b>@@asset('js/popper.min.js')</b><br>
+asset url: <b>@asset('js/popper.min.js')</b><br>
+
 <script src="@asset('js/jquery.min.js')"></script>
+<script src="@asset('js/popper.min.js')"></script>
 <script>
     window.onload = function() {
         if (window.jQuery) {
