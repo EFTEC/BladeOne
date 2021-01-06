@@ -12,7 +12,7 @@ $blade->pipeEnable=true;
 
 
 try {
-    echo $blade->run("TestComponent.component", []);
+    echo $blade->run("TestComponent.component", ['myglobal'=>'hello']);
 } catch (Exception $e) {
     echo "error found ".$e->getMessage()."<br>".$e->getTraceAsString();
 }

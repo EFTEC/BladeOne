@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUnusedParameterInspection */
+
 /** @noinspection SyntaxError
  * @noinspection ForgottenDebugOutputInspection
  * @noinspection UnknownInspectionInspection
@@ -34,7 +35,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.47.3
+ * @version   3.48
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -537,6 +538,7 @@ class BladeOne
         $previousError = \error_get_last();
 
         try {
+            /** @noinspection PhpExpressionResultUnusedInspection */
             @eval('?' . '>' . $php);
         } catch (Exception $e) {
             while (\ob_get_level() > $obLevel) {
@@ -1004,7 +1006,13 @@ class BladeOne
         if (\is_array($variables)) {
             $newVariables = \array_merge($this->variables, $variables);
         } else {
-            $this->showError('run/include', "Include/run variables should be defined as array ['idx'=>'value']", true);
+            if ($variables===null) {
+                $newVariables=$this->variables;
+                var_dump($newVariables);
+                die(1);
+            }
+
+            $this->showError('run/include', "RunChild: Include/run variables should be defined as array ['idx'=>'value']", true);
             return '';
         }
         return $this->runInternal($view, $newVariables, false, false, $this->isRunFast);
@@ -1995,27 +2003,15 @@ class BladeOne
      */
     public function renderComponent()
     {
+        //echo "<hr>render<br>";
         $name = \array_pop($this->componentStack);
         //return $this->runChild($name, $this->componentData());
         $cd=$this->componentData();
-        if (!is_array($cd)) {
-            $keys=array_keys($cd);
-            foreach ($keys as $key) {
-                if (isset($this->variables[$key])) {
-                    $backup[$key]=$this->variables[$key];
-                }
-            }
-        }
+        $clean=array_keys($cd);
         $r=$this->runChild($name, $cd);
-        if (!isset($keys)) {
-            return $r;
-        }
-        foreach ($keys as $key) {
-            if (isset($backup[$key])) {
-                $this->variables[$key] = $backup[$key]; // this value is recovered
-            } else {
-                unset($this->variables[$key]); // this value must be deleted
-            }
+        // we clean variables defined inside the component (so they are garbaged when the component is used)
+        foreach ($clean as $key) {
+            unset($this->variables[$key]);
         }
         return $r;
     }
@@ -2027,10 +2023,16 @@ class BladeOne
      */
     protected function componentData()
     {
-        return \array_merge(
-            $this->componentData[\count($this->componentStack)],
-            ['slot' => \trim(\ob_get_clean())],
-            $this->slots[\count($this->componentStack)]
+        $cs=count($this->componentStack);
+        //echo "<hr>";
+        //echo "<br>data:<br>";
+        //var_dump($this->componentData);
+        //echo "<br>datac:<br>";
+        //var_dump(count($this->componentStack));
+        return array_merge(
+            $this->componentData[$cs],
+            ['slot' => trim(ob_get_clean())],
+            $this->slots[$cs]
         );
     }
 
@@ -2727,12 +2729,6 @@ class BladeOne
                     // it calls the function compile<name of the tag>
                     $match[0] = $this->$method(static::get($match, 3));
                 } else {
-                    /*echo "<pre>";
-                    var_dump($match);
-                    echo "</pre>";
-                    echo "operation not defined!";
-                    */
-                    //todo: $this->showError("@compile", "Operation not defined:@".$match[1], true);
                     return $match[0];
                 }
             }
@@ -3614,7 +3610,7 @@ class BladeOne
         return $this->phpTag . '$_shouldextend[' . $this->uidCounter . ']=1; ?>';
     }
 
-    
+
 
     /**
      * Execute the @parent command. This operation works in tandem with extendSection

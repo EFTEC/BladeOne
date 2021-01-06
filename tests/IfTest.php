@@ -6,11 +6,13 @@ namespace eftec\tests;
  * @author G.J.W. Oolbekkink <g.j.w.oolbekkink@gmail.com>
  * @since 16/09/2018
  */
-class IfTest extends AbstractBladeTestCase {
+class IfTest extends AbstractBladeTestCase
+{
     /**
      * @throws \Exception
      */
-    public function testIf() {
+    public function testIf()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @if($a == 4)
@@ -25,7 +27,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testElse() {
+    public function testElse()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @if($a == 4)
@@ -41,7 +44,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testElseIf() {
+    public function testElseIf()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @if($a == 4)
@@ -60,7 +64,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testUnless() {
+    public function testUnless()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @unless($a == 4)
@@ -74,7 +79,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testIsset() {
+    public function testIsset()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @isset($a)
@@ -88,7 +94,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testEmpty() {
+    public function testEmpty()
+    {
         $bladeSource = /** @lang Blade */
             <<<'BLADE'
 @empty($a)
@@ -100,17 +107,5 @@ BLADE;
 
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function testInvalidIf() {
-        $this->expectException(\Exception::class);
 
-        /** @noinspection BladeControlDirectives */
-        $bladeSource = /** @lang Blade */
-            <<<'BLADE'
-@if($a == 4)
-BLADE;
-        $this->blade->runString($bladeSource, ['a' => 4]);
-    }
 }
