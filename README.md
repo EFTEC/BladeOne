@@ -75,7 +75,19 @@ I will try to answer all and every one of the question (in my limited time).
 * [Changes between 2.x and 3.0 and TODO](https://github.com/EFTEC/BladeOne/wiki/Changes-between-2.x-and-3.0-and-TODO)   
 * [Code Protection (Sourceguardian and similars)](https://github.com/EFTEC/BladeOne/wiki/Code-Protection-(Sourceguardian-and-similars))   
 
+## Why does it support PHP 5.x?
 
+As for today (January 2021), PHP 5.x is still strong even when it is discontinued, but my main problem is the performance.
+
+* PHP 7.x 60.2%
+* PHP 5.x 39.5%
+* PHP 8.x 00.1%
+
+* PHP 7.0 brings some new features and definitions. One is the use of type-hinting. While it could be useful, but it affects the performance
+so there is not reason to use it for this library (we use PHPDOC and it doesn't affect the performance).   
+* PHP 7.0 adds some new features such as is_countable(). However, it is slower than the method used here. 
+* We could also use Null Coalescing Operator, but it is not slower or faster than a ternary operator. 
+* PHP 8.0 also adds str_contains(), but it doesn't bring a sustancial performance but syntax sugar. 
 
 
 ## Laravel blade tutorial
