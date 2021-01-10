@@ -35,7 +35,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.48
+ * @version   3.49
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -119,6 +119,22 @@ class BladeOne
     protected $customDirectives = [];
     /** @var bool[] Custom directive dictionary. Those directives run at runtime. */
     protected $customDirectivesRT = [];
+    /**
+     * @var bool if true then the variables defined in the include as argumentsare scoped to work only
+     * inside the include.<br>
+     * If false (default value), then the variables defined in the include as arguments are defined globally.<br>
+     * <b>Example: (includeScope=false)</b><br>
+     * <pre>
+     * @include("template",['a1'=>'abc']) // a1 is equals to abc
+     * @include("template",[]) // a1 is equals to abc
+     * </pre>
+     * <b>Example: (includeScope=true)</b><br>
+     * <pre>
+     * @include("template",['a1'=>'abc']) // a1 is equals to abc
+     * @include("template",[]) // a1 is not defined
+     * </pre>
+     */
+    public $includeScope=false;
     /** @var callable Function used for resolving injected classes. */
     protected $injectResolver;
     /** @var array Used for conditional if. */
@@ -1004,6 +1020,11 @@ class BladeOne
     public function runChild($view, $variables = [])
     {
         if (\is_array($variables)) {
+            if ($this->includeScope) {
+                $backup=$this->variables;
+            } else {
+                $backup=null;
+            }
             $newVariables = \array_merge($this->variables, $variables);
         } else {
             if ($variables===null) {
@@ -1015,7 +1036,11 @@ class BladeOne
             $this->showError('run/include', "RunChild: Include/run variables should be defined as array ['idx'=>'value']", true);
             return '';
         }
-        return $this->runInternal($view, $newVariables, false, false, $this->isRunFast);
+        $r=$this->runInternal($view, $newVariables, false, false, $this->isRunFast);
+        if ($backup!==null) {
+            $this->variables=$backup;
+        }
+        return $r;
     }
 
     /**
