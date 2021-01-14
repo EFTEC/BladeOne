@@ -35,7 +35,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.49
+ * @version   3.49.1
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -585,7 +585,7 @@ class BladeOne
      * @param string $value
      * @return string
      */
-    protected function compileString($value)
+    public function compileString($value)
     {
         $result = '';
         if (\strpos($value, '@verbatim') !== false) {
@@ -3071,11 +3071,10 @@ class BladeOne
 
     protected function compileSet($expression)
     {
-        //$segments = explode('=', preg_replace("/[\(\)\\\"\']/", '', $expression));
-        //$segments = \explode('=', \preg_replace("/[\(\)\\\']/", '', $expression));
-        $segments = \explode('=', \preg_replace("/[()\\\']/", '', $expression));
-        $value = (\count($segments) >= 2) ? ' =@' . $segments[1] : '++';
-        return $this->phpTag . \trim($segments[0]) . $value . '; ?>';
+        //$segments = \explode('=', \preg_replace("/[()\\\']/", '', $expression));
+        $segments=\explode('=', $this->stripParentheses($expression));
+        $value = (\count($segments) >= 2) ? '=@' . $segments[1] : '++';
+        return $this->phpTag . \trim($segments[0]) . $value . ';?>';
     }
 
     /**

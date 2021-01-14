@@ -8,11 +8,13 @@ namespace eftec\tests;
  * @author G.J.W. Oolbekkink <g.j.w.oolbekkink@gmail.com>
  * @since 17/09/2018
  */
-class VariablesTest extends AbstractBladeTestCase {
+class VariablesTest extends AbstractBladeTestCase
+{
     /**
      * @throws \Exception
      */
-    public function testPrintVariable() {
+    public function testPrintVariable()
+    {
         $bladeString = /** @lang Blade */
             <<<'BLADE'
 {{$var1}}
@@ -21,11 +23,30 @@ BLADE;
         $this->assertEqualsIgnoringWhitespace("content2", $this->blade->runString($bladeString, ["var1" => "content2"]));
         $this->assertEqualsIgnoringWhitespace("&lt;a href=&quot;/&quot;&gt;My Link&lt;/a&gt;", $this->blade->runString($bladeString, ["var1" => "<a href=\"/\">My Link</a>"]));
     }
+    public function testSet()
+    {
+        $bladeString='@set($info=$abc)';
+        self::assertEquals('<?php $info=@$abc;?>', $this->blade->compileString($bladeString));
+
+        $bladeString='@set($info=$r["dd"])';
+        self::assertEquals('<?php $info=@$r["dd"];?>', $this->blade->compileString($bladeString));
+
+        $bladeString='@set($info=$vm[\'_fummedicionesEmpty\'])';
+        self::assertEquals('<?php $info=@$vm[\'_fummedicionesEmpty\'];?>', $this->blade->compileString($bladeString));
+
+        $bladeString='@set($info)';
+        self::assertEquals('<?php $info++;?>', $this->blade->compileString($bladeString));
+
+        $bladeString='@set($info)';
+        self::assertEquals('<?php $info++;?>', $this->blade->compileString($bladeString));
+
+    }
 
     /**
      * @throws \Exception
      */
-    public function testPrintUnescapedVariable() {
+    public function testPrintUnescapedVariable()
+    {
         $bladeString = /** @lang Blade */
             <<<'BLADE'
 {!! $var1 !!}
@@ -37,7 +58,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testDontPrintVariable() {
+    public function testDontPrintVariable()
+    {
         $bladeString = /** @lang Blade */
             <<<'BLADE'
 @{{ $var }}
@@ -48,7 +70,8 @@ BLADE;
     /**
      * @throws \Exception
      */
-    public function testVerbatim() {
+    public function testVerbatim()
+    {
         $bladeString = /** @lang Blade */
             <<<'BLADE'
 @verbatim
