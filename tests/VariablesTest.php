@@ -31,6 +31,9 @@ BLADE;
         $bladeString='@set($info=fn("aaa",30))';
         self::assertEquals('<?php $info=@fn("aaa",30);?>', $this->blade->compileString($bladeString));
 
+        $bladeString='@set($info=44+55)';
+        self::assertEquals('<?php $info=@44+55;?>', $this->blade->compileString($bladeString));
+
         $bladeString='@set($info=$r["dd"])';
         self::assertEquals('<?php $info=@$r["dd"];?>', $this->blade->compileString($bladeString));
 
