@@ -35,7 +35,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.49.1
+ * @version   3.50
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -239,7 +239,7 @@ class BladeOne
             return false;
         };
 
-        if (!\file_exists($this->compiledPath)) {
+        if (!\is_dir($this->compiledPath)) {
             $ok = @\mkdir($this->compiledPath, 0777, true);
             if ($ok === false) {
                 $this->showError(
@@ -1193,7 +1193,7 @@ class BladeOne
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
             $dir = \dirname($compiled);
-            if (!\file_exists($dir)) {
+            if (!\is_dir($dir)) {
                 $ok = @\mkdir($dir, 0777, true);
                 if ($ok === false) {
                     $this->showError(
@@ -1298,7 +1298,7 @@ class BladeOne
         $this->notFoundPath = '';
         foreach ($this->templatePath as $dir) {
             $path = $dir . '/' . $name;
-            if (\file_exists($path)) {
+            if (\is_file($path)) {
                 return $path;
             }
 
@@ -1333,7 +1333,7 @@ class BladeOne
     {
         $compiled = $this->getCompiledFile($fileName);
         $template = $this->getTemplateFile($fileName);
-        if (!\file_exists($template)) {
+        if (!\is_file($template)) {
             if ($this->mode == self::MODE_DEBUG) {
                 $this->showError('Read file', 'Template not found :' . $this->fileName . " on file: $template", true);
             } else {
@@ -1343,7 +1343,7 @@ class BladeOne
         // If the compiled file doesn't exist we will indicate that the view is expired
         // so that it can be re-compiled. Else, we will verify the last modification
         // of the views is less than the modification times of the compiled views.
-        if (!$this->compiledPath || !\file_exists($compiled)) {
+        if (!$this->compiledPath || !\is_file($compiled)) {
             return true;
         }
         return \filemtime($compiled) < \filemtime($template);
@@ -1436,7 +1436,7 @@ class BladeOne
     private function templateExist($templateName)
     {
         $file = $this->getTemplateFile($templateName);
-        return \file_exists($file);
+        return \is_file($file);
     }
 
     /**
@@ -3674,7 +3674,7 @@ class BladeOne
         $exp = \explode(',', $ex);
         $file = $this->stripQuotes(isset($exp[0]) ? $exp[0] : null);
         $fileC = $this->getCompiledFile($file);
-        if (!@\file_exists($fileC)) {
+        if (!@\is_file($fileC)) {
             // if the file doesn't exist then it's created
             $this->compile($file, true);
         }
