@@ -35,7 +35,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2020 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   3.50
+ * @version   3.51
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -197,11 +197,22 @@ class BladeOne
     private $switchCount = 0;
     /** @var bool Indicates if the switch is recently open */
     private $firstCaseInSwitch = true;
-
+    /**
+     * @var callable[] It allows to parse the compiled output using a function.
+     * This function doesn't require to return a value<br>
+     * <b>Example:</b> this converts all compiled result in uppercase (note, content is a ref)
+     * <pre>
+     * $this->compileCallbacks[]= static function (&$content, $templatename=null) {
+     *      $content=strtoupper($content);
+     * };
+     * </pre>
+     */
+    public $compileCallbacks=[];
 
     //</editor-fold>
 
     //<editor-fold desc="constructor">
+
 
     /**
      * Bob the constructor.
@@ -1172,7 +1183,16 @@ class BladeOne
             return false;
         }
     }
-
+    protected function compileCallBacks(&$contents, $templateName)
+    {
+        if (!empty($this->compileCallbacks)) {
+            foreach ($this->compileCallbacks as $callback) {
+                if (is_callable($callback)) {
+                    $callback($contents, $templateName);
+                }
+            }
+        }
+    }
     /**
      * Compile the view at the given path.
      *
@@ -1187,11 +1207,14 @@ class BladeOne
         $compiled = $this->getCompiledFile($templateName);
         $template = $this->getTemplateFile($templateName);
         if (!$this->isCompiled) {
-            return $this->compileString($this->getFile($template));
+            $contents=$this->compileString($this->getFile($template));
+            $this->compileCallBacks($contents, $templateName);
+            return $contents;
         }
         if ($forced || $this->isExpired($templateName)) {
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
+            $this->compileCallBacks($contents, $templateName);
             $dir = \dirname($compiled);
             if (!\is_dir($dir)) {
                 $ok = @\mkdir($dir, 0777, true);
@@ -2994,12 +3017,10 @@ class BladeOne
             $fnNameF=$fnName[0]; // first character
             if ($fnNameF === '"' || $fnNameF === '\'' || $fnNameF === '$' || is_numeric($fnNameF)) {
                 $fnName='!isset('.$array[0].') ? '.$fnName.' : ';
-            } else {
-                if (isset($this->customDirectives[$fnName])) {
-                    $fnName = '$this->customDirectives[\'' . $fnName . '\']';
-                } elseif (method_exists($this, $fnName)) {
-                    $fnName = '$this->' . $fnName;
-                }
+            } elseif (isset($this->customDirectives[$fnName])) {
+                $fnName = '$this->customDirectives[\'' . $fnName . '\']';
+            } elseif (method_exists($this, $fnName)) {
+                $fnName = '$this->' . $fnName;
             }
             if ($i === 1) {
                 $prev = $fnName . '(' . $array[0];
