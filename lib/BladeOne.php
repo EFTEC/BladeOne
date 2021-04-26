@@ -293,7 +293,7 @@ class BladeOne
     public function showError($id, $text, $critic = false, $alwaysThrow = false)
     {
         \ob_get_clean();
-        if (($this->throwOnError || $alwaysThrow) && $critic === true) {
+        if ($this->throwOnError || $alwaysThrow || $critic === true) {
             throw new \RuntimeException("BladeOne Error [$id] $text");
         } else {
             echo "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
