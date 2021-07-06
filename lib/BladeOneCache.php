@@ -4,7 +4,7 @@
 /** @noinspection DuplicatedCode */
 
 
-namespace eftec\bladeone;
+namespace Eftec\Bladeone;
 
 use function fclose;
 use function file_put_contents;
@@ -79,7 +79,7 @@ trait BladeOneCache
     {
         $this->cacheLog=$file;
     }
-    
+
     public function writeCacheLog($txt, $nivel)
     {
         if (!$this->cacheLog) {

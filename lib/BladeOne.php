@@ -18,7 +18,7 @@
  * @noinspection Php
  */
 
-namespace eftec\bladeone;
+namespace Eftec\Bladeone;
 
 use ArrayAccess;
 use BadMethodCallException;
@@ -26,6 +26,7 @@ use Closure;
 use Countable;
 use Exception;
 use InvalidArgumentException;
+
 
 /**
  * BladeOne - A Blade Template implementation in a single file
