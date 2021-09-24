@@ -4,6 +4,13 @@
 namespace eftec\bladeone;
 
 use Redis;
+use function class_exists;
+use function file_put_contents;
+use function filemtime;
+use function ob_get_contents;
+use function strlen;
+use function substr;
+use function time;
 
 /**
  * trait BladeOneCacheRedis
@@ -69,7 +76,7 @@ trait BladeOneCacheRedis
         if ($this->redisConnected) {
             return true;
         }
-        if (!\class_exists('Redis')) {
+        if (!class_exists('Redis')) {
             return false; // it requires redis.
         }
         if ($redisIP !== null) {
@@ -103,9 +110,9 @@ trait BladeOneCacheRedis
             // if the information is already in the array then returns it.
             return $this->cacheExpired[$compiledFile];
         }
-        $date = @\filemtime($compiledFile);
+        $date = @filemtime($compiledFile);
         if ($date) {
-            if ($date + $cacheDuration < \time()) {
+            if ($date + $cacheDuration < time()) {
                 $this->cacheExpired[$compiledFile] = true;
                 return true; // time-out.
             }
@@ -121,7 +128,7 @@ trait BladeOneCacheRedis
     {
         $this->curCacheId = ($id == "") ? ($this->curCacheId + 1) : $id;
         $this->curCacheDuration = $cacheDuration;
-        $this->curCachePosition = \strlen(\ob_get_contents());
+        $this->curCachePosition = strlen(ob_get_contents());
         $compiledFile = $this->getCompiledFile() . '_cache' . $this->curCacheId;
         if ($this->cacheExpired('', $id, $cacheDuration)) {
             $this->cacheRunning = false;
@@ -136,9 +143,9 @@ trait BladeOneCacheRedis
     public function cacheEnd()
     {
         if (!$this->cacheRunning) {
-            $txt = \substr(\ob_get_contents(), $this->curCachePosition);
+            $txt = substr(ob_get_contents(), $this->curCachePosition);
             $compiledFile = $this->getCompiledFile() . '_cache' . $this->curCacheId;
-            \file_put_contents($compiledFile, $txt);
+            file_put_contents($compiledFile, $txt);
         }
         $this->cacheRunning = false;
     }

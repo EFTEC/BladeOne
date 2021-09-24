@@ -3,7 +3,6 @@
 # BladeOne Blade Template Engine
 BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside Laravel.
 
-Бладеоне-это отдельная версия ядра Blade-шаблонов, которая использует один PHP-файл и может быть портирована и использована в различных проектах. Он позволяет использовать шаблон Blade за пределами laravel.    
 
 
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
@@ -16,10 +15,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 [![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 7 (March 2020)**. It misses some commands [missing](#missing) but nothing more.
-
-
-Примечание: до сих пор это, видимо, только один проект, который обновляется с последней версией ** Blade 7 (2020 Марта) **. Он пропускает некоторые команды [отсутствует](#missing), но ничего больше.
+NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 8 (August 2021)**. It misses some commands [missing](#missing) but nothing more.
 
 ## Comparison with Twig
 
@@ -75,19 +71,9 @@ I will try to answer all and every one of the question (in my limited time).
 * [Changes between 2.x and 3.0 and TODO](https://github.com/EFTEC/BladeOne/wiki/Changes-between-2.x-and-3.0-and-TODO)   
 * [Code Protection (Sourceguardian and similars)](https://github.com/EFTEC/BladeOne/wiki/Code-Protection-(Sourceguardian-and-similars))   
 
-## Why does it support PHP 5.x?
+## PHP 5.x support?
 
-As for today (January 2021), PHP 5.x is still strong even when it is discontinued, but my main problem is the performance.
-
-* PHP 7.x 60.2%
-* PHP 5.x 39.5%
-* PHP 8.x 00.1%
-
-* PHP 7.0 brings some new features and definitions. One is the use of type-hinting. While it could be useful, but it affects the performance
-so there is not reason to use it for this library (we use PHPDOC and it doesn't affect the performance).   
-* PHP 7.0 adds some new features such as is_countable(). However, it is slower than the method used here. 
-* We could also use Null Coalescing Operator, but it is not slower or faster than a ternary operator. 
-* PHP 8.0 also adds str_contains(), but it doesn't bring a sustancial performance but syntax sugar. 
+This version does not support PHP 5.x anymore. However, you can use the old version that is 100% functional with PHP 5.6 and higher.
 
 
 ## Laravel blade tutorial
@@ -421,7 +407,7 @@ Template:
 
 ## Named argument (since 3.38)
 
-BladeOne allows named arguments.  This feature must be implemented per function.
+**BladeOne** allows named arguments.  This feature must be implemented per function.
 
 Let's say the next problem:
 
@@ -434,7 +420,7 @@ It is the old library BladeOneHtml:
 @endselect
 ```
 
-And it is the next library:
+And it is the new library:
 
 ```html
 @select(id="aaa" value=$selection values=$countries alias=$country)
@@ -449,7 +435,7 @@ The new method **select** allows to add different types of arguments
 
 ## BladeOneHtml
 
-It is a new extension to BladeOne. It allows to create html components easily and with near-to-native performance.
+It is a new extension to BladeOne. It allows to create HTML components easily and with near-to-native performance.
 
 It uses a new feature of BladeOne: named arguments
 

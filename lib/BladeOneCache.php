@@ -1,4 +1,8 @@
-<?php /** @noinspection TypeUnsafeComparisonInspection */
+<?php /** @noinspection UnknownInspectionInspection */
+/** @noinspection PhpMissingParamTypeInspection */
+/** @noinspection ReturnTypeCanBeDeclaredInspection */
+/** @noinspection PhpMissingReturnTypeInspection */
+/** @noinspection TypeUnsafeComparisonInspection */
 /** @noinspection PhpUnused */
 
 /** @noinspection DuplicatedCode */
@@ -6,6 +10,7 @@
 
 namespace eftec\bladeone;
 
+use Exception;
 use function fclose;
 use function file_put_contents;
 use function filemtime;
@@ -176,12 +181,12 @@ trait BladeOneCache
         // else
         // save for the first time.
 
-        return $this->phpTag . "echo \$this->cacheStart{$expression}; if(!\$this->cacheRunning) { ?>";
+        return $this->phpTag . "echo \$this->cacheStart$expression; if(!\$this->cacheRunning) { ?>";
     }
 
     public function compileEndCache($expression)
     {
-        return $this->phpTag . "} // if cacheRunning\necho \$this->cacheEnd{$expression}; ?>";
+        return $this->phpTag . "} // if cacheRunning\necho \$this->cacheEnd$expression; ?>";
     }
 
     /**
@@ -204,10 +209,11 @@ trait BladeOneCache
     /**
      * run the blade engine. It returns the result of the code.
      *
-     * @param string $view The name of the cache. Ex: "folder.folder.view" ("/folder/folder/view.blade")
-     * @param array $variables An associative arrays with the values to display.
-     * @param int $ttl time to live (in second).
+     * @param string $view      The name of the cache. Ex: "folder.folder.view" ("/folder/folder/view.blade")
+     * @param array  $variables An associative arrays with the values to display.
+     * @param int    $ttl       time to live (in second).
      * @return string
+     * @throws Exception
      */
     public function runCache($view, $variables = [], $ttl = 86400)
     {
@@ -309,7 +315,7 @@ trait BladeOneCache
     public function cacheEnd($txt = null)
     {
         if (!$this->cacheRunning) {
-            $txt = ($txt !== null) ? $txt : substr(ob_get_contents(), $this->curCachePosition);
+            $txt = $txt ?? substr(ob_get_contents(), $this->curCachePosition);
             if ($this->cachePageRunning) {
                 $compiledFile = $this->getCompiledFileCache($this->fileName);
             } else {

@@ -9,19 +9,19 @@ use eftec\bladeone\BladeOneLang;
  * @author Jake Whiteley <jakebwhiteley@gmail.com>
  * @since  01/06/2019
  *
- * @property HasLang blade
+ * @property BladeOne blade
  */
 class BladeOneLangTest extends AbstractBladeTestCase
 {
     protected function setUp()
     {
-        $this->blade = new HasLang(
+        $this->blade = new BladeOne(
             self::TEMPLATE_PATH,
             self::COMPILED_PATH,
             BladeOne::MODE_SLOW
         );
 
-        HasLang::$dictionary = [
+        BladeOne::$dictionary = [
             'Hat' => 'Sombrero',
             'Cat' => 'Gato',
             'Cats' => 'Gatos',
@@ -150,10 +150,3 @@ class BladeOneLangTest extends AbstractBladeTestCase
     }
 }
 
-/**
- * A custom BladeOne with the lang trait.
- */
-class HasLang extends BladeOne
-{
-    use BladeOneLang;
-}

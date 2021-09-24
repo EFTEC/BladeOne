@@ -1,4 +1,8 @@
-<?php /** @noinspection PhpUnused */
+<?php /** @noinspection ReturnTypeCanBeDeclaredInspection */
+/** @noinspection PhpMissingReturnTypeInspection */
+/** @noinspection UnknownInspectionInspection */
+
+/** @noinspection PhpUnused */
 
 namespace eftec\bladeone;
 
@@ -23,7 +27,7 @@ trait BladeOneCustom
     protected function compilePanel($expression)
     {
         $this->customItem[] = 'Panel';
-        return $this->phpTag . "echo \$this->panel{$expression}; ?>";
+        return $this->phpTag . "echo \$this->panel$expression; ?>";
     }
 
     protected function compileEndPanel()
