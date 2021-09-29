@@ -37,7 +37,7 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2021 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.00
+ * @version   4.1
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
@@ -2554,12 +2554,12 @@ class BladeOne
 
     protected function compileDump($expression)
     {
-        return $this->phpTagEcho . " \$this->dump$expression;?>";
+        return $this->phpTagEcho . "\$this->dump$expression;?>";
     }
 
     protected function compileRelative($expression)
     {
-        return $this->phpTagEcho . " \$this->relative$expression;?>";
+        return $this->phpTagEcho . "\$this->relative$expression;?>";
     }
 
     protected function compileMethod($expression)
@@ -2577,7 +2577,7 @@ class BladeOne
 
     protected function compileDd($expression)
     {
-        return $this->phpTagEcho . " '<pre>'; var_dump$expression; echo '</pre>';?>";
+        return $this->phpTagEcho . "'<pre>'; var_dump$expression; echo '</pre>';?>";
     }
 
     /**
@@ -2919,13 +2919,102 @@ class BladeOne
     }
 
     /**
-     * It separates a string using a separator and excluding quotes and double quotes.
+     * It separates a string using a separator and a identifier<br>
+     * It excludes quotes,double quotes and the "¬" symbol.<br>
+     * <b>Example</b><br>
+     * <pre>
+     * $this->parseArgs('a=2,b='a,b,c',d'); // ['a'=>'2','b'=>'a,b,c','d'=>null]
+     * $this->parseArgs('a=2,b=c,d'); // ['a'=>'2','b'=>'c','d'=>null]
+     * $this->parseArgs('a=2 b=c',' '); // ['a'=>'2','b'=>'c']
+     * $this->parseArgs('a:2 b:c',' ',':'); // ['a'=>'2','b'=>'c']
+     * </pre>
+     * Note: parseArgs('a = 2 b = c',' '); with return 4 values instead of 2.
      *
-     * @param string $text
-     * @param string $separator
+     * @param string $text the text to separate
+     * @param string $separator the separator of arguments
+     * @param string $assigment the character used to assign a new value
+     * @param bool   $emptyKey  if the argument is without value, we return it as key (true) or value (false) ?
      * @return array
      */
-    public function parseArgs($text, $separator = ',')
+    public function parseArgs($text, $separator = ',', $assigment = '=', $emptyKey = true)
+    {
+        if ($text === null || $text === '') {
+            return []; //nothing to convert.
+        }
+        $chars = $text; // str_split($text);
+        $parts = [];
+        $nextpart = '';
+        $strL = strlen($chars);
+        $stringArr='"\'¬';
+        $parenthesis='([{';
+        $parenthesisClose=')]}';
+        $insidePar=false;
+        for ($i = 0; $i < $strL; $i++) {
+            $char = $chars[$i];
+            // we check if the character is a parenthesis.
+            $pp=strpos($parenthesis, $char);
+            if ($pp!==false) {
+                // is a parenthesis, so we mark as inside a parenthesis.
+                $insidePar=$parenthesisClose[$pp];
+            }
+            if ($char===$insidePar) {
+                // we close the parenthesis.
+                $insidePar=false;
+            }
+            if (strpos($stringArr, $char)!==false) { // if ($char === '"' || $char === "'" || $char === "¬") {
+                // we found a string initializer
+                $inext = strpos($text, $char, $i + 1);
+                $inext = $inext === false ? $strL : $inext;
+                $nextpart .= substr($text, $i, $inext - $i + 1);
+                $i = $inext;
+            } else {
+                $nextpart .= $char;
+            }
+            if ($char === $separator && $insidePar==false) {
+                $parts[] = substr($nextpart, 0, -1);
+                $nextpart = '';
+            }
+        }
+        if ($nextpart !== '') {
+            $parts[] = $nextpart;
+        }
+        $result = [];
+        // duct taping for key= argument (it has a space). however, it doesn't work with key =argument
+        /*
+        foreach ($parts as $k=>$part) {
+            if(substr($part,-1)===$assigment && isset($parts[$k+1])) {
+                var_dump('ok');
+                $parts[$k].=$parts[$k+1];
+                unset($parts[$k+1]);
+            }
+        }
+        */
+        foreach ($parts as $part) {
+            if ($part) {
+                $part=trim($part);
+                $char = $part[0];
+                if (strpos($stringArr, $char)!==false) { // if ($char === '"' || $char === "'" || $char === "¬") {
+                    if ($emptyKey) {
+                        $result[$part] = null;
+                    } else {
+                        $result[] = $part;
+                    }
+                } else {
+                    $r = explode($assigment, $part, 2);
+                    if (count($r) === 2) {
+                        // key=value.
+                        $result[trim($r[0])] = trim($r[1]);
+                    } elseif ($emptyKey) {
+                        $result[trim($r[0])] = null;
+                    } else {
+                        $result[] = trim($r[0]);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+    public function parseArgsOld($text, $separator = ',')
     {
         if ($text === null || $text === '') {
             return []; //nothing to convert.
@@ -2960,7 +3049,6 @@ class BladeOne
         }
         return $result;
     }
-
     /**
      * Compile the "raw" echo statements.
      *
@@ -3868,7 +3956,7 @@ class BladeOne
 
     protected function compileAsset($expression)
     {
-        return $this->phpTagEcho . " (isset(\$this->assetDict[$expression]))?\$this->assetDict[$expression]:\$this->baseUrl.'/'.$expression; ?>";
+        return $this->phpTagEcho . "(isset(\$this->assetDict[$expression]))?\$this->assetDict[$expression]:\$this->baseUrl.'/'.$expression; ?>";
     }
 
     protected function compileJSon($expression)
@@ -3876,7 +3964,7 @@ class BladeOne
         $parts = \explode(',', $this->stripParentheses($expression));
         $options = isset($parts[1]) ? \trim($parts[1]) : JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
         $depth = isset($parts[2]) ? \trim($parts[2]) : 512;
-        return $this->phpTagEcho . " json_encode($parts[0], $options, $depth); ?>";
+        return $this->phpTagEcho . "json_encode($parts[0], $options, $depth); ?>";
     }
     //</editor-fold>
 

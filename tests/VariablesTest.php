@@ -23,6 +23,11 @@ BLADE;
         $this->assertEqualsIgnoringWhitespace("content2", $this->blade->runString($bladeString, ["var1" => "content2"]));
         $this->assertEqualsIgnoringWhitespace("&lt;a href=&quot;/&quot;&gt;My Link&lt;/a&gt;", $this->blade->runString($bladeString, ["var1" => "<a href=\"/\">My Link</a>"]));
     }
+    public function testSetFunction()
+    {
+        $bladeString = '@set($info=funcion(1,222+funcion(2,3,4),"abc",3))';
+        self::assertEquals('<?php $info=@funcion(1,222+funcion(2,3,4),"abc",3);?>', $this->blade->compileString($bladeString));
+    }
     public function testSet()
     {
         $bladeString='@set($info=$abc)';

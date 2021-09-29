@@ -1,4 +1,9 @@
-<?php
+<?php /** @noinspection PhpMissingParamTypeInspection */
+/** @noinspection ReturnTypeCanBeDeclaredInspection */
+/** @noinspection PhpUnused */
+
+/** @noinspection PhpMissingReturnTypeInspection */
+
 namespace eftec\tests;
 
 use eftec\bladeone\BladeOne;
@@ -42,7 +47,7 @@ trait TraitExample
     public function compileHelloNamed($expression)
     {
         $args = $this->getArgs($expression); // args separates the arguments by name
-        $name=isset($args['name']) ? $args['name'] : '--empty--';
+        $name= $args['name'] ?? '--empty--';
         return "<?php echo 'Hello '.$name; ?>";
     }
 
@@ -116,5 +121,9 @@ class OtherTest extends AbstractBladeTestCase
         $this->assertEquals('aaa"bcd', $this->blade->addInsideQuote('aaa"', "bcd"));
         $this->assertEquals('bcd', $this->blade->addInsideQuote('', "bcd"));
         $this->assertEquals('"bcd"', $this->blade->addInsideQuote('""', "bcd"));
+
+        $arr=$this->blade->parseArgs('a1=1 a2=function(1 2 3)', ' ');
+        $compare=['a1'=>'1','a2'=>'function(1 2 3)'];
+        $this->assertEquals($compare, $arr);
     }
 }
