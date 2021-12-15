@@ -433,6 +433,53 @@ The old method **select** only allows a limited number of arguments. And the ord
 
 The new method **select** allows to add different types of arguments 
 
+## Command Line (CLI)
+
+![docs/cli.png](docs/cli.png)
+
+BladeOne (since the version v4.2) allows to run some operations via command line (CLI)
+
+How to run it?
+
+* Go to your home path and call the PHP script as follow:
+
+```shell
+php vendor/lib/eftec/bladeone/lib/BladeOne.php
+```
+
+Or change you folder according to your installation.
+
+And you can set the syntax as follow:
+
+* **-templatepath** <templatepath> (optional) the template-path.
+  * Example: '/folder/views' or 'views' (relative)
+* **-compilepath** <compilepath>  (optional) the compile-path.
+  * Example: '/folder/compiles or 'compiles' (relative)
+* **-clearcompile** It deletes the content of the compile path
+* **-check** It checks the library
+
+Clear the compile folder
+
+```shell
+php vendor/lib/eftec/bladeone/lib/BladeOne.php -clearcompile
+```
+
+Check the folders, if the folder exists, if it has the right permissions, etc.
+
+```shell
+php vendor/lib/eftec/bladeone/lib/BladeOne.php -check
+```
+
+Example to clear the compile folder using a custom compile path
+
+```shell
+php vendor/lib/eftec/bladeone/lib/BladeOne.php -clearcompile -compilepath mycompile # relative path to the current location
+php vendor/lib/eftec/bladeone/lib/BladeOne.php -clearcompile -compilepath /var/mycompile # absolute path (Linux/MacOS)
+php vendor/lib/eftec/bladeone/lib/BladeOne.php -clearcompile -compilepath c:\var\mycompile # absolute path (Windows)
+```
+
+
+
 ## BladeOneHtml
 
 It is a new extension to BladeOne. It allows to create HTML components easily and with near-to-native performance.

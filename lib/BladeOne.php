@@ -37,13 +37,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2021 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.1
+ * @version   4.2
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-
+    public const VERSION='4.2';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -105,9 +105,9 @@ class BladeOne
      * </pre>
      */
     public $compileCallbacks = [];
-    /** @var array All of the registered extensions. */
+    /** @var array All the registered extensions. */
     protected $extensions = [];
-    /** @var array All of the finished, captured sections. */
+    /** @var array All the finished, captured sections. */
     protected $sections = [];
     /** @var string The template currently being compiled. For example "folder.template" */
     protected $fileName;
@@ -123,7 +123,7 @@ class BladeOne
     protected $variables = [];
     /** @var null Dictionary of global variables */
     protected $variablesGlobal = [];
-    /** @var array All of the available compiler functions. */
+    /** @var array All the available compiler functions. */
     protected $compilers = [
         'Extensions',
         'Statements',
@@ -136,7 +136,7 @@ class BladeOne
     protected $composerStack = [];
     /** @var array The stack of in-progress push sections. */
     protected $pushStack = [];
-    /** @var array All of the finished, captured push sections. */
+    /** @var array All the finished, captured push sections. */
     protected $pushes = [];
     /** @var int The number of active rendering operations. */
     protected $renderCount = 0;
@@ -266,16 +266,14 @@ class BladeOne
         // If the traits has "Constructors", then we call them.
         // Requisites.
         // 1- the method must be public or protected
-        // 2- it must doesn't have arguments
+        // 2- it must don't have arguments
         // 3- It must have the name of the trait. i.e. trait=MyTrait, method=MyTrait()
         $traits = get_declared_traits();
-        if ($traits !== null) {
-            foreach ($traits as $trait) {
-                $r = explode('\\', $trait);
-                $name = end($r);
-                if (is_callable([$this, $name]) && method_exists($this, $name)) {
-                    $this->{$name}();
-                }
+        foreach ($traits as $trait) {
+            $r = explode('\\', $trait);
+            $name = end($r);
+            if (is_callable([$this, $name]) && method_exists($this, $name)) {
+                $this->{$name}();
             }
         }
     }
@@ -297,16 +295,16 @@ class BladeOne
         \ob_get_clean();
         if ($this->throwOnError || $alwaysThrow || $critic === true) {
             throw new \RuntimeException("BladeOne Error [$id] $text");
-        } else {
-            $msg= "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
-            $msg.= "BladeOne Error [$id]:<br>";
-            $msg.= "<span style='color:white'>$text</span><br></div>\n";
-            echo $msg;
-            if ($critic) {
-                die(1);
-            }
-            return $msg;
         }
+
+        $msg= "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
+        $msg.= "BladeOne Error [$id]:<br>";
+        $msg.= "<span style='color:white'>$text</span><br></div>\n";
+        echo $msg;
+        if ($critic) {
+            die(1);
+        }
+        return $msg;
     }
 
     /**
@@ -700,7 +698,7 @@ class BladeOne
     /**
      * It adds an alias to the link of the resources.<br>
      * addAssetDict('name','url/res.jpg')<br>
-     * addAssetDict(['name'=>'url/res.jpg','name2'=>'url/res2.jpg');
+     * addAssetDict(['name'=>'url/res.jpg','name2'=>'url/res2.jpg']);
      *
      * @param string|array $name example 'css/style.css', you could also add an array
      * @param string       $url  example https://www.web.com/style.css'
@@ -878,8 +876,8 @@ class BladeOne
     /**
      * Get the string contents of a push section.
      *
-     * @param int|string $each if int, then it split the foreach every $each numbers.<br>
-     *                         if string, "c3" it means that it will split in 3 columns<br>
+     * @param int|string $each if "int", then it split the foreach every $each numbers.<br>
+     *                         if "string" or "c3", then it means that it will split in 3 columns<br>
      * @param string     $splitText
      * @param string     $splitEnd
      * @return string
@@ -1187,8 +1185,7 @@ class BladeOne
     protected function methodExistsStatic($class, $method)
     {
         try {
-            $mc = new \ReflectionMethod($class, $method);
-            return $mc->isStatic();
+            return (new \ReflectionMethod($class, $method))->isStatic();
         } catch (\ReflectionException $e) {
             return false;
         }
@@ -1301,7 +1298,7 @@ class BladeOne
         $arr = \explode('.', $templateName);
         $c = \count($arr);
         if ($c == 1) {
-            // its in the root of the template folder.
+            // it's in the root of the template folder.
             return $this->locateTemplate($templateName . $this->fileExtension);
         }
 
@@ -1396,7 +1393,7 @@ class BladeOne
     {
         \ob_start();
         \extract($variables);
-        // We'll evaluate the contents of the view inside a try/catch block so we can
+        // We'll evaluate the contents of the view inside a try/catch block, so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
         try {
@@ -1462,7 +1459,7 @@ class BladeOne
     }
 
     /**
-     * Returns true if the template exists. Otherwise it returns false
+     * Returns true if the template exists. Otherwise, it returns false
      *
      * @param $templateName
      * @return bool
@@ -1665,7 +1662,7 @@ class BladeOne
      * $this->share(['variable'=>10.5,'variable2'=>'hello']);
      * </pre>
      *
-     * @param string|array $varname It is the name of the variable or it is an associative array
+     * @param string|array $varname It is the name of the variable or, it is an associative array
      * @param mixed        $value
      * @return $this
      * @see \eftec\bladeone\BladeOne::share
@@ -1998,9 +1995,9 @@ class BladeOne
      * <b>Example:<b><br>
      * <pre>
      * $this->composer('folder.view',function($bladeOne) { $bladeOne->share('newvalue','hi there'); });
-     * $this->composer('folder.view','namespace1\namespace2\SomeClass'); // SomeClass must exist and it must have the
+     * $this->composer('folder.view','namespace1\namespace2\SomeClass'); // SomeClass must exist, and it must have the
      *                                                                   // method 'composer'
-     * $this->composer('folder.*',$instance); // $instance must has the method called 'composer'
+     * $this->composer('folder.*',$instance); // $instance must have the method called 'composer'
      * $this->composer(); // clear all composer.
      * </pre>
      *
@@ -2205,8 +2202,8 @@ class BladeOne
     }
 
     /**
-     * It sets the base url and it also calculates the relative path.<br>
-     * The base url defines the "root" of the project, not always the level of the domain but it could be
+     * It sets the base url and, it also calculates the relative path.<br>
+     * The base url defines the "root" of the project, not always the level of the domain, but it could be
      * any folder.<br>
      * This value is used to calculate the relativity of the resources but it is also used to set the domain.<br>
      * <b>Note:</b> The trailing slash is removed automatically if it's present.<br>
@@ -2247,7 +2244,7 @@ class BladeOne
      * <b>Note:</b> If we set baseurl, then it always uses the baseurl as domain (it's safe).<br>
      * <b>Note:</b> This information could be forged/faked by the end-user.<br>
      * <b>Note:</b> It returns empty '' if it is called in a command line interface / non-web.<br>
-     * <b>Note:</b> It doesn't returns the user and password.<br>
+     * <b>Note:</b> It doesn't return the user and password.<br>
      * @param bool $noArgs if true then it excludes the arguments.
      * @return string
      */
@@ -2324,7 +2321,7 @@ class BladeOne
      * <li>Otherwise, the url is calculated with the information sends by the user</li>
      * </ul>
      *
-     * @param bool $noArgs if true then it ignore the arguments.
+     * @param bool $noArgs if true then it ignores the arguments.
      * @return string|null
      */
     public function getCurrentUrl($noArgs = false)
@@ -2440,7 +2437,7 @@ class BladeOne
     }
 
     /**
-     * Its the same than @_e, however it parses the text (using sprintf).
+     * It's the same as "@_e", however it parses the text (using sprintf).
      * If the operation fails then, it returns the original expression without translation.
      *
      * @param $phrase
@@ -2457,7 +2454,7 @@ class BladeOne
     }
 
     /**
-     * Tries to translate the word if its in the array defined by BladeOneLang::$dictionary
+     * Tries to translate the word if it's in the array defined by BladeOneLang::$dictionary
      * If the operation fails then, it returns the original expression without translation.
      *
      * @param $phrase
@@ -2728,7 +2725,7 @@ class BladeOne
             if ($methods[$method1] < $methods[$method2]) {
                 return 1;
             }
-            // Otherwise give preference to raw tags (assuming they've overridden)
+            // Otherwise, give preference to raw tags (assuming they've overridden)
             if ($method1 === 'compileRawEchos') {
                 return -1;
             }
@@ -3709,7 +3706,7 @@ class BladeOne
      */
     protected function compilePhp($expression)
     {
-        return $expression ? $this->phpTag . "$expression; ?>" : $this->phpTag . '';
+        return $expression ? $this->phpTag . "$expression; ?>" : $this->phpTag;
     }
 
     //<editor-fold desc="setter and getters">
@@ -4043,4 +4040,156 @@ class BladeOne
     }
 
     // </editor-fold>
+
+
+    //<editor-fold desc="cli">
+    public static function isCli()
+    {
+        return !http_response_code();
+    }
+
+    /**
+     * @param           $key
+     * @param string    $default  is the defalut value is the parameter is set
+     *                            without value.
+     * @param bool      $set      it is the value returned when the argument is set but there is not value assigned
+     * @return string
+     */
+    public static function getParameterCli($key, $default = '', $set = true)
+    {
+        global $argv;
+        $p = array_search('-' . $key, $argv, true);
+        if ($p === false) {
+            return $default;
+        }
+        if (isset($argv[$p + 1])) {
+            return self::removeTrailSlash($argv[$p + 1]);
+        }
+        return $set;
+    }
+
+    protected static function removeTrailSlash($txt)
+    {
+        return rtrim($txt, '/\\');
+    }
+
+    /**
+     * @param string $str
+     * @param string $type=['i','e','s','w'][$i]
+     * @return string
+     */
+    public static function colorLog($str, $type = 'i')
+    {
+        switch ($type) {
+            case 'e': //error
+                return "\033[31m$str\033[0m";
+            case 's': //success
+                return "\033[32m$str\033[0m";
+            case 'w': //warning
+                return "\033[33m$str\033[0m";
+            case 'i': //info
+                return "\033[36m$str\033[0m";
+            default:
+                return $str;
+        }
+    }
+    public function checkHealthPath()
+    {
+        echo self::colorLog("Checking Health\n");
+        if (is_dir($this->compiledPath)) {
+            echo "Compile-path [$this->compiledPath] is a folder ".self::colorLog("OK")."\n";
+        } else {
+            echo "Compile-path [$this->compiledPath] is not a folder ".self::colorLog("ERROR", 'e')."\n";
+        }
+        $error=self::colorLog('OK');
+        try {
+            /** @noinspection RandomApiMigrationInspection */
+            $rnd=$this->compiledPath . '/dummy'.rand(10000, 900009);
+            $f = @file_put_contents($rnd, 'dummy');
+            if ($f===false) {
+                $error=self::colorLog("Unable to create file [".$this->compiledPath . '/dummy]', 'e');
+            }
+            @unlink($rnd);
+        } catch (Exception $ex) {
+            $error=self::colorLog($ex->getMessage(), 'e');
+        }
+        echo "Testing write in the compile folder [$rnd] $error\n";
+        $files = @glob($this->templatePath[0].'/*');
+        echo "Testing reading in the view folder [".$this->templatePath[0]."].\n";
+        echo "View(s) found :".count($files)."\n";
+    }
+    public function clearcompile()
+    {
+        echo self::colorLog("Clearing Compile Folder\n");
+        $files = glob($this->compiledPath.'/*'); // get all file names
+        $count=0;
+        foreach ($files as $file) { // iterate files
+            if (is_file($file)) {
+                $count++;
+                echo "deleting [$file] ";
+                $r=@unlink($file); // delete file
+                if ($r) {
+                    echo self::colorLog("OK\n");
+                } else {
+                    echo self::colorLog("ERROR\n", 'e');
+                }
+            }
+        }
+        echo "Files deleted $count\n";
+    }
+    public function cliEngine()
+    {
+        $clearcompile = self::getParameterCli('clearcompile');
+        $check = self::getParameterCli('check');
+        echo'  ____  _           _       ____             '."\n";
+        echo' |  _ \| |         | |     / __ \            '."\n";
+        echo' | |_) | | __ _  __| | ___| |  | |_ __   ___ '."\n";
+        echo' |  _ <| |/ _` |/ _` |/ _ \ |  | | \'_ \ / _ \\'."\n";
+        echo' | |_) | | (_| | (_| |  __/ |__| | | | |  __/'."\n";
+        echo' |____/|_|\__,_|\__,_|\___|\____/|_| |_|\___|'." V.". self::VERSION."\n\n";
+        echo"\n";
+        $done=false;
+        if ($check) {
+            $done=true;
+            $this->checkHealthPath();
+        }
+        if ($clearcompile) {
+            $done=true;
+            $this->clearcompile();
+        }
+        if (!$done) {
+            echo" Syntax:\n";
+            echo" -templatepath <templatepath> (optional) the template-path.\n  Example: '/folder/views' or 'views' (relative)\n";
+            echo" -compilepath <compilepath>  (optional) the compile-path.\n  Example: '/folder/compiles or 'compiles' (relative)\n";
+            echo" -clearcompile It deletes the content of the compile path\n";
+            echo" -check It checks the library\n";
+        }
+    }
+    public static function isAbsolutePath($path)
+    {
+        if (!$path) {
+            return true;
+        }
+        if (DIRECTORY_SEPARATOR === '/') {
+            // linux and macos
+            return $path[0]==='/';
+        }
+        return $path[1]===':';
+    }
+
+    //</editor-fold>
+}
+if (!defined('PHPUNIT_COMPOSER_INSTALL') && !defined('__PHPUNIT_PHAR__')
+    && isset($_SERVER['PHP_SELF']) && basename($_SERVER['PHP_SELF']) === 'BladeOne.php'
+    && BladeOne::isCli()) {
+    $compilepath = BladeOne::getParameterCli('compilepath', null);
+    $templatepath = BladeOne::getParameterCli('templatepath', null);
+    if (!BladeOne::isAbsolutePath($compilepath)) {
+        $compilepath=getcwd().'/'.$compilepath;
+    }
+    if (!BladeOne::isAbsolutePath($templatepath)) {
+        $templatepath=getcwd().'/'.$templatepath;
+    }
+    $inst=new BladeOne($templatepath, $compilepath);
+    $inst->cliEngine();
 }
