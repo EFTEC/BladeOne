@@ -2,7 +2,7 @@
 /**
  * Copyright (c) 2016 Jorge Patricio Castro Castillo MIT License..s
  */
-
+/** @deprecated  */
 use eftec\bladeone\BladeOne;
 use eftec\bladeone\BladeOneHtmlBootstrap;
 use eftec\bladeone\BladeOneHtmlBootstrap4;

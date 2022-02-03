@@ -124,14 +124,13 @@ class BladeOneLangTest extends AbstractBladeTestCase
         $this->blade->missingLog = stream_get_meta_data($file)['uri'];
 
         $data = [
-            'array' => ['Dog']
+            'array' => 'Dog'
         ];
 
         $this->blade->runString('Dog in spanish is @_e($array)', $data);
-
         $this->assertStringMatchesFormatFile(
             $this->blade->missingLog,
-            "Array\n(\n    [0] => Dog\n)\n\n"
+            "Dog\n"
         );
     }
 

@@ -29,7 +29,7 @@
   "suggest": {
     "ext-mbstring": "This extension is used if it's active",
     "eftec/bladeonehtml": "Extension to create forms"
-  },  
+  },
   "archive": {
     "exclude": [
       "/examples"
@@ -46,9 +46,9 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "^5.7",
-    "squizlabs/php_codesniffer": "^3.6.0",
-    "friendsofphp/php-cs-fixer": "^3.1"
+    "phpunit/phpunit": "^7.5.20",
+    "squizlabs/php_codesniffer": "^3.6.2",
+    "friendsofphp/php-cs-fixer": "^3.3.0"
   },
   "scripts": {
     "sniff": [

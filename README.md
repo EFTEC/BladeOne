@@ -7,7 +7,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
 [![Total Downloads](https://poser.pugx.org/eftec/bladeone/downloads)](https://packagist.org/packages/eftec/bladeone)
-[![Maintenance](https://img.shields.io/maintenance/yes/2021.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)]()
 [![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
 [![php](https://img.shields.io/badge/php->5.6-green.svg)]()
 [![php](https://img.shields.io/badge/php-7.x-green.svg)]()
@@ -482,9 +482,9 @@ php vendor/lib/eftec/bladeone/lib/BladeOne.php -clearcompile -compilepath c:\var
 
 ## BladeOneHtml
 
-It is a new extension to BladeOne. It allows to create HTML components easily and with near-to-native performance.
+It is a new extension to **BladeOne**. It allows to create HTML components easily and with near-to-native performance.
 
-It uses a new feature of BladeOne: named arguments
+It uses a new feature of **BladeOne**: named arguments
 
 Example to create a select:
 
@@ -513,6 +513,6 @@ You are welcome to use it, share it, ask for changes and whatever you want to. J
 
 ## License
 MIT License.
-BladeOne (c) 2016-2021 Jorge Patricio Castro Castillo
+BladeOne (c) 2016-2022 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is mostly a original work)
 

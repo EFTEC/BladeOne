@@ -242,7 +242,7 @@ class BladeOne
 
         $this->authAnyCallBack = function ($array = []) {
             foreach ($array as $permission) {
-                if (\in_array($permission, $this->currentPermission, true)) {
+                if (\in_array($permission, $this->currentPermission??[], true)) {
                     return true;
                 }
             }
@@ -464,10 +464,10 @@ class BladeOne
         foreach ((array)$needles as $needle) {
             if ($needle != '') {
                 if (\function_exists('mb_strpos')) {
-                    if (\mb_strpos($haystack, $needle) === 0) {
+                    if ($haystack!==null && \mb_strpos($haystack, $needle) === 0) {
                         return true;
                     }
-                } elseif (\strpos($haystack, $needle) === 0) {
+                } elseif ($haystack!==null && \strpos($haystack, $needle) === 0) {
                     return true;
                 }
             }
