@@ -7,7 +7,7 @@
 namespace eftec\bladeone;
 
 /*
- * Its an example of a custom set of functions for bladeone.
+ * It's an example of a custom set of functions for bladeone.
  * in examples/TestCustom.php there is a working example
  */
 

@@ -56,7 +56,7 @@ trait BladeOneCache
     protected $cachePageRunning = false;
     protected $cacheLog;
     /**
-     * @var array avoids to compare the file different times. It also avoids race conditions.
+     * @var array avoids comparing the file different times. It also avoids race conditions.
      */
     private $cacheExpired = [];
     /**
@@ -75,7 +75,7 @@ trait BladeOneCache
     }
 
     /**
-     * It sets the cache log. If not cache log then it does not generates a log file<br>
+     * It sets the cache log. If not cache log then it does not generate a log file<br>
      * The cache log stores each time a template is creates or expired.<br>
      *
      * @param string $file
@@ -84,7 +84,7 @@ trait BladeOneCache
     {
         $this->cacheLog=$file;
     }
-    
+
     public function writeCacheLog($txt, $nivel)
     {
         if (!$this->cacheLog) {
@@ -119,7 +119,7 @@ trait BladeOneCache
      * It sets the strategy of the cache page.
      *
      * @param null|string $cacheStrategy =['get','post','getpost','request',null][$i]
-     * @param array|null $index if null then it reads all indexes. If not, it reads a indexes.
+     * @param array|null $index if null then it reads all indexes. If not, it reads an indexes.
      */
     public function setCacheStrategy($cacheStrategy, $index = null)
     {
@@ -128,7 +128,7 @@ trait BladeOneCache
     }
 
     /**
-     * It obtains an unique GUID based in:<br>
+     * It obtains a unique GUID based in:<br>
      * <b>get</b>= parameters from the url<br>
      * <b>post</b>= parameters sends via post<br>
      * <b>getpost</b> = a mix between get and post<br>
@@ -190,7 +190,7 @@ trait BladeOneCache
     }
 
     /**
-     * It get the filename of the compiled file (cached). If cache is not enabled, then it
+     * It gets the filename of the compiled file (cached). If cache is not enabled, then it
      * returns the regular file.
      *
      * @param string $view

@@ -15,7 +15,9 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 [![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 
-NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 8 (August 2021)**. It misses some commands [missing](#missing) but nothing more.
+> NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 8 (January 2022)**. 
+> Dynamic blade components are not supported (reason: performance purpose) and custom features aimed for blade, but everything else is supported [missing](#missing.
+
 
 ## Comparison with Twig
 
@@ -84,7 +86,8 @@ You could also check the wiki [Wiki](https://github.com/EFTEC/BladeOne/wiki)
 
 ## About this version
 By standard, The original Blade library is part of Laravel (Illuminate components) and to use this template library, you require install Laravel and Illuminate-view components.
-The syntax of Blade is pretty nice and bright. It's based in C# Razor (another template library for C#). It's starting to be considered a de-facto standard template system for many PHP (Smarty has been riding off the sunset since years ago) so, if we can use it without Laravel then its a big plus for many projects. 
+The syntax of Blade is pretty nice and bright. It's based in C# Razor (another template library for C#). It's starting to be considered a de-facto standard template system for many PHP (Smarty has been riding off the sunset since years ago) so, if we can use it without Laravel then 
+it's a big plus for many projects. 
 In fact, in theory, it is even possible to use with Laravel.
 Exists different versions of Blade Template that runs without Laravel, but most requires 50 or more files, and those templates add a new level of complexity, so they are not removing Laravel but hiding:
 
@@ -109,7 +112,8 @@ Let’s say that we have the next code
 // more PHP code
 // more HTML code.
 ```
-It leads to a mess of a code.  For example, let’s say that we oversee changing the visual layout of the page. In this case, we should change all the code and we could even break part of the programming.   
+It leads to a mess of a code.  For example, let’s say that we oversee changing the visual layout of the page. In this case, we should change all the code,
+and we could even break part of the programming.   
 Instead, using a template system works in the next way:
 ```php
 // some php code
@@ -131,12 +135,13 @@ include "template.php";
 // template.php
 echo "my name is ".$name;
 ```
-Even for this simple example, there is a risk of hacking.   How?  A user could sends malicious code by using the GET variable, such as html or even javascript. The second file should be written as follow:
+Even for this simple example, there is a risk of hacking.   How?  A user could send malicious code by using the GET variable, such as html or even javascript. 
+The second file should be written as follows:
 ```php 
  // template.php
 echo "my name is ".html_entities($name);
 ```
-html_entities should be used in every single part of the visual layer (html) where the user could injects malicious code, and it’s a real tedious work.   BladeOne does it automatically.
+html_entities should be used in every single part of the visual layer (html) where the user could inject malicious code, and it’s a real tedious work.   BladeOne does it automatically.
 ```php 
 // template.blade.php
 My name is {{$name}}
@@ -190,11 +195,11 @@ protected function compileMyFunction($expression)
 }
 ```
 
-Where the function could be used in a template as follow
+Where the function could be used in a template as follows
 ```php
 @myFunction('param','param2'...)
 ```
-Alternatively, BladeOne allows to run arbitrary code from any class or method if its defined.
+Alternatively, BladeOne allows running arbitrary code from any class or method if its defined.
 ```php
 {{SomeClass::SomeMethod('param','param2'...)}}
 ```
@@ -228,7 +233,7 @@ echo $blade->run("hello",array("variable1"=>"value1")); // it calls /views/hello
 Where `$views` is the folder where the views (templates not compiled) will be stored. 
 `$cache` is the folder where the compiled files will be stored.
 
-In this example, the BladeOne opens the template **hello**. So in the views folder it should exist a file called **hello.blade.php**
+In this example, the BladeOne opens the template **hello**. So in the views-folder it should exist a file called **hello.blade.php**
 
 views/hello.blade.php:
 ```html
@@ -278,7 +283,7 @@ Our view could look like:
 
 What if we want to show the name in uppercase?.
 
-We could do in our code $name=strtoupper('Jack Sparrow'). With Pipes, we could do the same as follow:
+We could do in our code $name=strtoupper('Jack Sparrow'). With Pipes, we could do the same as follows:
 
 ```php
  {{$name | strtoupper}} // JACK SPARROW 
@@ -381,7 +386,7 @@ and the next lines to the template (different methods)
 
 
 ### Method 2 Alias
-Or we could define alias for each classes.
+Or we could define alias for each class.
 
 php code:
 ```php
@@ -431,7 +436,7 @@ And it is the new library:
 
 The old method **select** only allows a limited number of arguments. And the order of the arguments is important.
 
-The new method **select** allows to add different types of arguments 
+The new method **select** allows adding different types of arguments 
 
 ## Command Line (CLI)
 
@@ -441,7 +446,7 @@ BladeOne (since the version v4.2) allows to run some operations via command line
 
 How to run it?
 
-* Go to your home path and call the PHP script as follow:
+* Go to your home path and call the PHP script as follows:
 
 ```shell
 php vendor/lib/eftec/bladeone/lib/BladeOne.php
@@ -449,16 +454,16 @@ php vendor/lib/eftec/bladeone/lib/BladeOne.php
 
 Or change you folder according to your installation.
 
-And you can set the syntax as follow:
+And you can set the syntax as follows:
 
 * **-templatepath** <templatepath> (optional) the template-path.
   * Example: '/folder/views' or 'views' (relative)
 * **-compilepath** <compilepath>  (optional) the compile-path.
   * Example: '/folder/compiles or 'compiles' (relative)
-* **-clearcompile** It deletes the content of the compile path
+* **-clearcompile** It deletes the content of the compile-path
 * **-check** It checks the library
 
-Clear the compile folder
+Clear the compile-folder
 
 ```shell
 php vendor/lib/eftec/bladeone/lib/BladeOne.php -clearcompile
@@ -470,7 +475,7 @@ Check the folders, if the folder exists, if it has the right permissions, etc.
 php vendor/lib/eftec/bladeone/lib/BladeOne.php -check
 ```
 
-Example to clear the compile folder using a custom compile path
+Example to clear the compile-folder using a custom compile path
 
 ```shell
 php vendor/lib/eftec/bladeone/lib/BladeOne.php -clearcompile -compilepath mycompile # relative path to the current location
@@ -482,7 +487,7 @@ php vendor/lib/eftec/bladeone/lib/BladeOne.php -clearcompile -compilepath c:\var
 
 ## BladeOneHtml
 
-It is a new extension to **BladeOne**. It allows to create HTML components easily and with near-to-native performance.
+It is a new extension to **BladeOne**. It allows creating HTML components easily and with near-to-native performance.
 
 It uses a new feature of **BladeOne**: named arguments
 
@@ -514,5 +519,6 @@ You are welcome to use it, share it, ask for changes and whatever you want to. J
 ## License
 MIT License.
 BladeOne (c) 2016-2022 Jorge Patricio Castro Castillo
-Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is mostly a original work)
+Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is 
+mostly an original work)
 
