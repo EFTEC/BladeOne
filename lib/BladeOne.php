@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpMissingParamTypeInspection
+<?php
+
+/** @noinspection PhpMissingParamTypeInspection
  * @noinspection PhpUnusedParameterInspection
  * @noinspection SyntaxError
  * @noinspection ForgottenDebugOutputInspection
@@ -53,6 +55,7 @@ class BladeOne
     public static $dictionary = [];
     /** @var string PHP tag. You could use < ?php or < ? (if shorttag is active in php.ini) */
     public $phpTag = '<?php '; // hello hello hello.
+    /** @var string */
     public $phpTagEcho = '<?php' . ' echo ';
     /** @var string $currentUser Current user. Example: john */
     public $currentUser;
@@ -72,6 +75,7 @@ class BladeOne
     public $csrf_token = '';
     /** @var string The path to the missing translations log file. If empty then every missing key is not saved. */
     public $missingLog = '';
+    /** @var bool */
     public $pipeEnable = false;
     /** @var array Alias (with or without namespace) of the classes */
     public $aliasClasses = [];
@@ -118,7 +122,7 @@ class BladeOne
     protected $loopsStack = [];
     /** @var array Dictionary of variables */
     protected $variables = [];
-    /** @var null Dictionary of global variables */
+    /** @var array Dictionary of global variables */
     protected $variablesGlobal = [];
     /** @var array All the available compiler functions. */
     protected $compilers = [
@@ -179,6 +183,7 @@ class BladeOne
     protected $escapedTags = ['{{{', '}}}'];
     /** @var string The "regular" / legacy echo string format. */
     protected $echoFormat = '\htmlentities(%s, ENT_QUOTES, \'UTF-8\', false)';
+    /** @var string */
     protected $echoFormatOld = 'static::e(%s)';
     /** @var array Lines that will be added at the footer of the template */
     protected $footer = [];
@@ -233,7 +238,11 @@ class BladeOne
         $this->templatePath = (is_array($templatePath)) ? $templatePath : [$templatePath];
         $this->compiledPath = $compiledPath;
         $this->setMode($mode);
-        $this->authCallBack = function ($action = null, /** @noinspection PhpUnusedParameterInspection */ $subject = null) {
+        $this->authCallBack = function (
+            $action = null,
+            /** @noinspection PhpUnusedParameterInspection */
+            $subject = null
+        ) {
             return \in_array($action, $this->currentPermission, true);
         };
 
@@ -246,7 +255,10 @@ class BladeOne
             return false;
         };
 
-        $this->errorCallBack = static function (/** @noinspection PhpUnusedParameterInspection */ $key = null) {
+        $this->errorCallBack = static function (
+            /** @noinspection PhpUnusedParameterInspection */
+            $key = null
+        ) {
             return false;
         };
 
@@ -307,14 +319,21 @@ class BladeOne
     /**
      * Escape HTML entities in a string.
      *
-     * @param string $value
+     * @param string|null $value
      * @return string
      */
     public static function e($value): string
     {
-        return (\is_array($value) || \is_object($value))
-            ? \htmlentities(\print_r($value, true), ENT_QUOTES, 'UTF-8', false)
-            : \htmlentities($value, ENT_QUOTES, 'UTF-8', false);
+        // Prevent "Deprecated: htmlentities(): Passing null to parameter #1 ($string) of type string is deprecated" message
+        if (\is_null($value)) {
+            return '';
+        }
+
+        if (\is_array($value) || \is_object($value)) {
+            return \htmlentities(\print_r($value, true), ENT_QUOTES, 'UTF-8', false);
+        }
+
+        return \htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
 
     protected static function convertArgCallBack($k, $v): string
@@ -438,14 +457,19 @@ class BladeOne
     /**
      * Strip the parentheses from the given expression.
      *
-     * @param string $expression
+     * @param string|null $expression
      * @return string
      */
     public function stripParentheses($expression): string
     {
+        if (\is_null($expression)) {
+            return '';
+        }
+
         if (static::startsWith($expression, '(')) {
             $expression = \substr($expression, 1, -1);
         }
+
         return $expression;
     }
 
@@ -576,7 +600,7 @@ class BladeOne
                 \ob_end_clean();
             }
             throw $e;
-        } catch (ParseError $e) { // PHP 7
+        } catch (\ParseError $e) { // PHP >= 7
             while (\ob_get_level() > $obLevel) {
                 \ob_end_clean();
             }
@@ -1151,7 +1175,8 @@ class BladeOne
     protected function wildCardComparison($text, $textWithWildcard): bool
     {
         if (($textWithWildcard === null || $textWithWildcard === '')
-            || strpos($textWithWildcard, '*') === false) {
+            || strpos($textWithWildcard, '*') === false
+        ) {
             // if the text with wildcard is null or empty, or it contains two ** or it contains no * then..
             return $text == $textWithWildcard;
         }
@@ -1519,8 +1544,10 @@ class BladeOne
 
     public function ipClient()
     {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-            && \preg_match('/^([d]{1,3}).([d]{1,3}).([d]{1,3}).([d]{1,3})$/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        if (
+            isset($_SERVER['HTTP_X_FORWARDED_FOR'])
+            && \preg_match('/^([d]{1,3}).([d]{1,3}).([d]{1,3}).([d]{1,3})$/', $_SERVER['HTTP_X_FORWARDED_FOR'])
+        ) {
             return $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
         return $_SERVER['REMOTE_ADDR'] ?? '';
@@ -2120,8 +2147,7 @@ class BladeOne
             $this->slotStack[$this->currentComponent()]
         );
 
-        $this->slots[$this->currentComponent()]
-        [$currentSlot] = \trim(\ob_get_clean());
+        $this->slots[$this->currentComponent()][$currentSlot] = \trim(\ob_get_clean());
     }
 
     /**
@@ -4183,9 +4209,11 @@ class BladeOne
     //</editor-fold>
 }
 
-if (!defined('PHPUNIT_COMPOSER_INSTALL') && !defined('__PHPUNIT_PHAR__')
+if (
+    !defined('PHPUNIT_COMPOSER_INSTALL') && !defined('__PHPUNIT_PHAR__')
     && isset($_SERVER['PHP_SELF']) && basename($_SERVER['PHP_SELF']) === 'BladeOne.php'
-    && BladeOne::isCli()) {
+    && BladeOne::isCli()
+) {
     $compilepath = BladeOne::getParameterCli('compilepath', null);
     $templatepath = BladeOne::getParameterCli('templatepath', null);
     if (!BladeOne::isAbsolutePath($compilepath)) {

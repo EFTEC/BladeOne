@@ -13,7 +13,7 @@ use eftec\bladeone\BladeOneLang;
  */
 class BladeOneLangTest extends AbstractBladeTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->blade = new BladeOne(
             self::TEMPLATE_PATH,
@@ -148,4 +148,3 @@ class BladeOneLangTest extends AbstractBladeTestCase
         $this->assertEquals(\filesize($this->blade->missingLog), 4);
     }
 }
-
