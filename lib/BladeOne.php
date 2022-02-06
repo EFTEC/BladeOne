@@ -33,16 +33,16 @@ use InvalidArgumentException;
  *
  * @package   BladeOne
  * @author    Jorge Patricio Castro Castillo <jcastro arroba eftec dot cl>
- * @copyright Copyright (c) 2016-2021 Jorge Patricio Castro Castillo MIT License.
+ * @copyright Copyright (c) 2016-2022 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.2
+ * @version   4.4.1
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.2';
+    public const VERSION = '4.4.1';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -55,8 +55,8 @@ class BladeOne
     public static $dictionary = [];
     /** @var string PHP tag. You could use < ?php or < ? (if shorttag is active in php.ini) */
     public $phpTag = '<?php '; // hello hello hello.
-    /** @var string */
-    public $phpTagEcho = '<?php' . ' echo ';
+    /** @var string this line is used to easily echo a value */
+    protected $phpTagEcho = '<?php' . ' echo ';
     /** @var string $currentUser Current user. Example: john */
     public $currentUser;
     /** @var string $currentRole Current role. Example: admin */
@@ -4119,12 +4119,14 @@ class BladeOne
         }
     }
 
-    public function checkHealthPath(): void
+    public function checkHealthPath(): bool
     {
         echo self::colorLog("Checking Health\n");
+        $status=true;
         if (is_dir($this->compiledPath)) {
             echo "Compile-path [$this->compiledPath] is a folder " . self::colorLog("OK") . "\n";
         } else {
+            $status=false;
             echo "Compile-path [$this->compiledPath] is not a folder " . self::colorLog("ERROR", 'e') . "\n";
         }
         $error = self::colorLog('OK');
@@ -4133,19 +4135,22 @@ class BladeOne
             $rnd = $this->compiledPath . '/dummy' . rand(10000, 900009);
             $f = @file_put_contents($rnd, 'dummy');
             if ($f === false) {
+                $status=false;
                 $error = self::colorLog("Unable to create file [" . $this->compiledPath . '/dummy]', 'e');
             }
             @unlink($rnd);
         } catch (Exception $ex) {
+            $status=false;
             $error = self::colorLog($ex->getMessage(), 'e');
         }
         echo "Testing write in the compile folder [$rnd] $error\n";
         $files = @glob($this->templatePath[0] . '/*');
         echo "Testing reading in the view folder [" . $this->templatePath[0] . "].\n";
         echo "View(s) found :" . count($files) . "\n";
+        return $status;
     }
 
-    public function clearcompile(): void
+    public function clearcompile(): int
     {
         echo self::colorLog("Clearing Compile Folder\n");
         $files = glob($this->compiledPath . '/*'); // get all file names
@@ -4163,6 +4168,7 @@ class BladeOne
             }
         }
         echo "Files deleted $count\n";
+        return $count;
     }
 
     public function cliEngine(): void

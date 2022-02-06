@@ -1,17 +1,17 @@
 <h1>It is a test of the tags @@component</h1>
 <h2>paramless</h2>
 
-@component('TestComponent.paramless')
+@component('TestComponent.paramless',['color'=>'blue'])
     <strong>Whoops!</strong> Something went wrong! (the code is right btw), it must show a no-color background
 @endcomponent
 
-@component('TestComponent.paramless')
+@component('TestComponent.paramless',['color'=>'blue'])
     <strong>Whoops!</strong> Something went wrong! (the code is right btw), it must show a no-color background
 @endcomponent
 
 
 <h2>with parameters</h2>
-@component('TestComponent.alert',array('title'=>'no title'))
+@component('TestComponent.alert',array('title'=>'no title','color'=>'orange'))
     <strong>Whoops!</strong> Something went wrong! (the code is right btw), it must show a no-color background
 @endcomponent
 <br>
@@ -53,7 +53,7 @@
     <strong>Whoops!</strong> Something went wrong! (the code is right btw), it must show a lightblue background
 @endcomponent
 
-@component('TestComponent.alert',[])
+@component('TestComponent.alert',['color'=>'red'])
     @slot('title', 'COMPONENT #3')
 
     <strong>Whoops!</strong> Something went wrong! (the code is right btw), it must show a no-color background

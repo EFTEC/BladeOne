@@ -1,0 +1,1 @@
+paramlessmyglobal:{!! $myglobal !!}{!! $slot !!}
