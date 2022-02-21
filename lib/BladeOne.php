@@ -367,13 +367,16 @@ class BladeOne
      * $this->wrapPHP('hello()'); // "< ?php echo $this->e(hello()); ? >"
      * </pre>
      *
-     * @param string $input The input value
+     * @param ?string $input The input value
      * @param string $quote The quote used (to quote the result)
      * @param bool   $parse If the result will be parsed or not. If false then it's returned without $this->e
      * @return string
      */
     public function wrapPHP($input, $quote = '"', $parse = true): string
     {
+        if($input===null) {
+            return 'null';
+        }
         if (strpos($input, '(') !== false && !$this->isQuoted($input)) {
             if ($parse) {
                 return $quote . $this->phpTagEcho . '$this->e(' . $input . ');?>' . $quote;
@@ -3010,8 +3013,8 @@ class BladeOne
         }
         */
         foreach ($parts as $part) {
+            $part = trim($part);
             if ($part) {
-                $part = trim($part);
                 $char = $part[0];
                 if (strpos($stringArr, $char) !== false) { // if ($char === '"' || $char === "'" || $char === "¬") {
                     if ($emptyKey) {

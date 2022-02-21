@@ -68,7 +68,7 @@ class ClassUsingTraitExample extends BladeOne
 
 class OtherTest extends AbstractBladeTestCase
 {
-   
+
     /**
      * @throws \Exception
      */
@@ -77,13 +77,14 @@ class OtherTest extends AbstractBladeTestCase
         $drinks=['Coca','Fanta','Sprite'];
         $bladeSource = '@json($drinks)';
         $this->assertEquals('["Coca","Fanta","Sprite"]', $this->blade->runString($bladeSource, ["drinks"=>$drinks]));
-        
+
         $bladeSource = '@json($drinks,JSON_FORCE_OBJECT)';
         $this->assertEqualsIgnoringWhitespace('{"0":"Coca","1":"Fanta","2":"Sprite"}', $this->blade->runString($bladeSource, ["drinks"=>$drinks]));
     }
     public function testwrapPHP()
     {
         $this->assertEquals('"aaaa"', $this->blade->wrapPHP('"aaaa"', '"', true));
+        $this->assertEquals('null', $this->blade->wrapPHP(null, '"', true));
         $this->assertEquals('"<?php echo "aaaa$bbb";?>"', $this->blade->wrapPHP('"aaaa$bbb"', '"', false));
     }
 
@@ -105,7 +106,7 @@ class OtherTest extends AbstractBladeTestCase
         $arr=$this->blade->parseArgs('a1=1 a2="2" a3=\'3\' a4=$aaa a5=function() a6=\'aaa bbb\' a7', ' ');
         $compare=['a1'=>'1','a2'=>'"2"','a3'=>"'3'",'a4'=>'$aaa','a5'=>'function()','a6'=>"'aaa bbb'",'a7'=>null];
         $this->assertEquals($compare, $arr);
-        
+
         $this->assertEquals(true, $this->blade->isQuoted("'aaa'"));
         $this->assertEquals(false, $this->blade->isQuoted("aaa'"));
         $this->assertEquals(true, $this->blade->isQuoted('"aaa"'));
