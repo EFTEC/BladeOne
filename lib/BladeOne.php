@@ -36,13 +36,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2022 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.4.2
+ * @version   4.5
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.4.2';
+    public const VERSION = '4.5';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -147,6 +147,16 @@ class BladeOne
     protected $compiledPath;
     /** @var string the extension of the compiled file. */
     protected $compileExtension = '.bladec';
+    /**
+     * @var string=['auto','sha1','md5','nochange'][$i] It determines how the compiled filename will be called.<br>
+     *            <b>auto</b> (default mode) the mode is "sha1" unless the mode is MODE_DEBUG<br>
+     *            <b>sha1</b> the filename is converted into a sha1 hash<br>
+     *            <b>md5</b> the filename is converted into a md5 hash<br>
+     *            <b>normal</b> the filename is left untouched<br>
+     */
+    protected $compileTypeFileName='auto';
+
+
     /** @var array Custom "directive" dictionary. Those directives run at compile time. */
     protected $customDirectives = [];
     /** @var bool[] Custom directive dictionary. Those directives run at runtime. */
@@ -211,9 +221,9 @@ class BladeOne
      */
     protected $mode;
     /** @var int Indicates the number of open switches */
-    private $switchCount = 0;
+    protected $switchCount = 0;
     /** @var bool Indicates if the switch is recently open */
-    private $firstCaseInSwitch = true;
+    protected $firstCaseInSwitch = true;
 
     //</editor-fold>
 
@@ -1097,7 +1107,7 @@ class BladeOne
      * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */
-    private function runInternal($view, $variables = [], $forced = false, $isParent = true, $runFast = false): string
+    protected function runInternal($view, $variables = [], $forced = false, $isParent = true, $runFast = false): string
     {
         $this->currentView = $view;
         if (@\count($this->composerStack)) {
@@ -1105,7 +1115,7 @@ class BladeOne
         }
         if (@\count($this->variablesGlobal) > 0) {
             $this->variables = \array_merge($variables, $this->variablesGlobal);
-            $this->variablesGlobal = []; // used so we delete it.
+            //$this->variablesGlobal = []; // used so we delete it.
         } else {
             $this->variables = $variables;
         }
@@ -1276,12 +1286,22 @@ class BladeOne
     public function getCompiledFile($templateName = ''): string
     {
         $templateName = (empty($templateName)) ? $this->fileName : $templateName;
-        if ($this->getMode() == self::MODE_DEBUG) {
-            return $this->compiledPath . '/' . $templateName . $this->compileExtension;
+        $style=$this->compileTypeFileName;
+        if ($style==='auto') {
+            $style=($this->getMode() === self::MODE_DEBUG)?'nochange':'sha1';
         }
-
-        return $this->compiledPath . '/' . \sha1($templateName) . $this->compileExtension;
+        switch ($style) {
+            case 'normal':
+                return $this->compiledPath . '/' . $templateName . $this->compileExtension;
+            case 'md5':
+                return $this->compiledPath . '/' . \md5($templateName) . $this->compileExtension;
+            case 'sha1':
+                return $this->compiledPath . '/' . \sha1($templateName) . $this->compileExtension;
+        }
+        return $this->compiledPath . '/' . $templateName . $this->compileExtension;
     }
+
+
 
     /**
      * Get the mode of the engine.See BladeOne::MODE_* constants
@@ -1297,7 +1317,7 @@ class BladeOne
     }
 
     /**
-     * Set the compile mode
+     * Set the compile mode<br>
      *
      * @param $mode int=[self::MODE_AUTO,self::MODE_DEBUG,self::MODE_FAST,self::MODE_SLOW][$i]
      * @return void
@@ -1339,7 +1359,7 @@ class BladeOne
      * @param string $name Filename of the template (without path)
      * @return string template file
      */
-    private function locateTemplate($name): string
+    protected function locateTemplate($name): string
     {
         $this->notFoundPath = '';
         foreach ($this->templatePath as $dir) {
@@ -1489,7 +1509,7 @@ class BladeOne
      * @param $templateName
      * @return bool
      */
-    private function templateExist($templateName): bool
+    protected function templateExist($templateName): bool
     {
         $file = $this->getTemplateFile($templateName);
         return \is_file($file);
@@ -1872,7 +1892,29 @@ class BladeOne
     {
         $this->compileExtension = $fileExtension;
     }
+    /**
+     * @return string
+     * @see \eftec\bladeone\BladeOne::setCompileTypeFileName
+     */
+    public function getCompileTypeFileName(): string
+    {
+        return $this->compileTypeFileName;
+    }
 
+    /**
+     * It determines how the compiled filename will be called.<br>
+     * <b>auto</b> (default mode) the mode is "sha1" unless the mode is MODE_DEBUG<br>
+     * <b>sha1</b> the filename is converted into a sha1 hash (it's the slow method, but it is safest)<br>
+     * <b>md5</b> the filename is converted into a md5 hash (it's faster than sha1, and it uses less space)<br>
+     * <b>normal</b> the filename is left untouched (it's the fastest mode but the filename could be exposed)<br>
+     * @param string $compileTypeFileName=['auto','sha1','md5','nochange'][$i]
+     * @return BladeOne
+     */
+    public function setCompileTypeFileName(string $compileTypeFileName): BladeOne
+    {
+        $this->compileTypeFileName = $compileTypeFileName;
+        return $this;
+    }
     /**
      * Add new loop to the stack.
      *
@@ -2503,7 +2545,7 @@ class BladeOne
      *
      * @param string $txt Message to write on.
      */
-    private function missingTranslation($txt): void
+    protected function missingTranslation($txt): void
     {
         if (!$this->missingLog) {
             return; // if there is not a file assigned then it skips saving.
@@ -2843,7 +2885,7 @@ class BladeOne
         return false;
     }
 
-    private function compileStatementClass($match): string
+    protected function compileStatementClass($match): string
     {
         if (isset($match[3])) {
             return $this->phpTagEcho . $this->fixNamespaceClass($match[1]) . $match[3] . '; ?>';
@@ -2861,7 +2903,7 @@ class BladeOne
      * @return string
      * @see \eftec\bladeone\BladeOne::$aliasClasses
      */
-    private function fixNamespaceClass($text): string
+    protected function fixNamespaceClass($text): string
     {
         if (strpos($text, '::') === false) {
             return $text;

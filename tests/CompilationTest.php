@@ -18,6 +18,19 @@ class CompilationTest extends AbstractBladeTestCase
     {
         $this->assertEqualsIgnoringWhitespace("Compilation test template", $this->blade->run('compilation.base', []));
     }
+    public function testTypeFilename(): void
+    {
+        global $blade;
+        $views = __DIR__ . '/templates';
+        $compiledFolder = __DIR__ . '/compiled';
+        $blade = new BladeOne($views, $compiledFolder);
+        $blade->setCompileTypeFileName('md5');
+        $this->assertEquals("It is a basic template hello world.\n", $blade->run('basic',['variable'=>'hello world']));
+        $this->assertEquals('f17aaabc20bfe045075927934fed52d2.bladec',basename($blade->getCompiledFile('basic')));
+        $blade->setCompileTypeFileName('nochange');
+        $this->assertEquals("It is a basic template hello world.\n", $blade->run('basic',['variable'=>'hello world']));
+        $this->assertEquals('basic.bladec',basename($blade->getCompiledFile('basic')));
+    }
 
     public function testToken(): void
     {
