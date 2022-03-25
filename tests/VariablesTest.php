@@ -70,17 +70,20 @@ BLADE;
      */
     public function testPrintPipe()
     {
-        $bladeString = /** @lang Blade */
-            <<<'BLADE'
-{!! $name | md5 | substr:1,2 !!}
-BLADE;
-        $bladeString2 = /** @lang Blade */
-            <<<'BLADE'
-{!! $name | md5 !!}
-BLADE;
+
+
         $this->blade->pipeEnable=true;
-        $this->assertEquals("<?php echo md5(substr(\$name ,1,2); ?>", $this->blade->compileString($bladeString, ["name" => "12345"]));
-        $this->assertEquals("<?php echo md5(\$name ); ?>", $this->blade->compileString($bladeString2, ["name" => "12345"]));
+        $this->assertEquals('<?php echo md5(substr(substr(substr(substr(substr(substr(strtoupper($name ),1,5 ),1,10 ),1,15 ),1,20 ),1,25 ),1,30 )); ?>'
+            , $this->blade->compileString('{!! $name | md5 | substr:1,30 | substr:1,25 | substr:1,20 | substr:1,15 | substr:1,10 | substr:1,5 | strtoupper !!}',["name" => "12345"]));
+        $this->assertEquals('<?php echo md5(md5(md5(substr($name ,1,25)))); ?>'
+            , $this->blade->compileString('{!! $name | md5 | md5 | md5 | substr:1,25 !!}',["name" => "12345"]));
+
+        $this->assertEquals("<?php echo md5(substr(\$name ,1,2)); ?>"
+            , $this->blade->compileString('{!! $name | md5 | substr:1,2 !!}',["name" => "12345"]));
+        $this->assertEquals("<?php echo md5(substr(substr(\$name ,1,2),1,2 )); ?>"
+            , $this->blade->compileString('{!! $name | md5 | substr:1,2 | substr:1,2  !!}',["name" => "12345"]));
+        $this->assertEquals("<?php echo md5(\$name ); ?>"
+            , $this->blade->compileString('{!! $name | md5 !!}', ["name" => "12345"]));
     }
 
 
