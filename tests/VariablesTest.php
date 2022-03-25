@@ -65,6 +65,24 @@ BLADE;
         $this->assertEqualsIgnoringWhitespace("content", $this->blade->runString($bladeString, ["var1" => "content"]));
         $this->assertEqualsIgnoringWhitespace("<a href=\"/\">My Link</a>", $this->blade->runString($bladeString, ["var1" => "<a href=\"/\">My Link</a>"]));
     }
+    /**
+     * @throws \Exception
+     */
+    public function testPrintPipe()
+    {
+        $bladeString = /** @lang Blade */
+            <<<'BLADE'
+{!! $name | md5 | substr:1,2 !!}
+BLADE;
+        $bladeString2 = /** @lang Blade */
+            <<<'BLADE'
+{!! $name | md5 !!}
+BLADE;
+        $this->blade->pipeEnable=true;
+        $this->assertEquals("<?php echo md5(substr(\$name ,1,2); ?>", $this->blade->compileString($bladeString, ["name" => "12345"]));
+        $this->assertEquals("<?php echo md5(\$name ); ?>", $this->blade->compileString($bladeString2, ["name" => "12345"]));
+    }
+
 
     /**
      * @throws \Exception
