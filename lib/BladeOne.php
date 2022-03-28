@@ -3175,7 +3175,7 @@ class BladeOne
             return $result;
         }
         $prev = '';
-        for ($i = $c; $i >= 1; $i--) {
+        for ($i = 1; $i <=$c; $i++) {
             $r = @explode(':', $array[$i], 2);
             $fnName = trim($r[0]);
             $fnNameF = $fnName[0]; // first character
@@ -3186,15 +3186,16 @@ class BladeOne
             } elseif (method_exists($this, $fnName)) {
                 $fnName = '$this->' . $fnName;
             }
-            if ($i === $c) {
+            $hasArgument=count($r) === 2;
+            if ($i === 1) {
                 $prev = $fnName . '(' . $array[0];
-                if (count($r) === 2) {
+                if ($hasArgument) {
                     $prev .= ',' . $r[1];
                 }
                 $prev .= ')';
             } else {
                 $prev = $fnName . '(' . $prev;
-                if (count($r) === 2) {
+                if ($hasArgument) {
                     $prev .=','. $r[1] . ')';
                 } else {
                     $prev.=')';
