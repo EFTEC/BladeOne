@@ -338,7 +338,7 @@ class BladeOne
         if (\is_null($value)) {
             return '';
         }
-        if (is_numeric($value)) {
+        if (\is_numeric($value)) {
             return self::e(strval($value));
         }
         if (\is_array($value) || \is_object($value)) {
