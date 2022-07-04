@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace eftec\tests;
 
@@ -31,6 +31,16 @@ class CompilationTest extends AbstractBladeTestCase
         $this->assertEquals("It is a basic template hello world.\n", $blade->run('basic',['variable'=>'hello world']));
         $this->assertEquals('basic.bladec',basename($blade->getCompiledFile('basic')));
     }
+    public function testComment(): void
+    {
+        global $blade;
+        $views = __DIR__ . '/templates';
+        $compiledFolder = __DIR__ . '/compiled';
+        $blade = new BladeOne($views, $compiledFolder);
+        $blade->setCompileTypeFileName('md5');
+        $this->assertEquals("Multi line comment in PHP tags\n\nSingle line comment in PHP tags\n\n", $blade->run('comment',[]));
+        $this->assertEquals('06d4cd63bde972fc66a0aed41d2f5c51.bladec',basename($blade->getCompiledFile('comment')));
+    }
 
     public function testToken(): void
     {
@@ -53,14 +63,18 @@ class CompilationTest extends AbstractBladeTestCase
         $blade = new BladeOne($views, $compiledFolder, BladeOne::MODE_SLOW);
         $blade->setCanFunction(function ($action, $subject = null) {
             global $blade;
-            if ($subject === 'noallowed') return false;
+            if ($subject === 'noallowed') {
+                return false;
+            }
             return in_array($action, $blade->currentPermission, true);
         });
 
         $blade->setAnyFunction(function ($array) {
             global $blade;
             foreach ($array as $permission) {
-                if (in_array($permission, $blade->currentPermission, true)) return true;
+                if (in_array($permission, $blade->currentPermission, true)) {
+                    return true;
+                }
             }
             return false;
         });
