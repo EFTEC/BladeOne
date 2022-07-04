@@ -329,7 +329,7 @@ class BladeOne
     /**
      * Escape HTML entities in a string.
      *
-     * @param string|null $value
+     * @param int|string|null $value
      * @return string
      */
     public static function e($value): string
@@ -338,7 +338,9 @@ class BladeOne
         if (\is_null($value)) {
             return '';
         }
-
+        if (is_numeric($value)) {
+            return self::e(strval($value));
+        }
         if (\is_array($value) || \is_object($value)) {
             return \htmlentities(\print_r($value, true), ENT_QUOTES, 'UTF-8', false);
         }
