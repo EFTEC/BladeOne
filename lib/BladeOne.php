@@ -36,13 +36,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2022 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.5.4
+ * @version   4.5.5
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.5.4';
+    public const VERSION = '4.5.5';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -338,13 +338,12 @@ class BladeOne
         if (\is_null($value)) {
             return '';
         }
-        if (\is_numeric($value)) {
-            return self::e((string)$value);
-        }
         if (\is_array($value) || \is_object($value)) {
             return \htmlentities(\print_r($value, true), ENT_QUOTES, 'UTF-8', false);
         }
-
+        if (\is_numeric($value)) {
+            $value=(string)$value;
+        }
         return \htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
 
