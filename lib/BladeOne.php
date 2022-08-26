@@ -36,13 +36,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2022 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.5.5
+ * @version   4.6
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.5.5';
+    public const VERSION = '4.6';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -192,7 +192,7 @@ class BladeOne
     /** @var array Array of opening and closing tags for escaped echos. */
     protected $escapedTags = ['{{{', '}}}'];
     /** @var string The "regular" / legacy echo string format. */
-    protected $echoFormat = '\htmlentities(%s, ENT_QUOTES, \'UTF-8\', false)';
+    protected $echoFormat = '\htmlentities(%s??\'\', ENT_QUOTES, \'UTF-8\', false)';
     /** @var string */
     protected $echoFormatOld = 'static::e(%s)';
     /** @var array Lines that will be added at the footer of the template */
@@ -436,7 +436,7 @@ class BladeOne
         if (\is_array($value) || \is_object($value)) {
             return \htmlentities(\print_r($value, true), ENT_NOQUOTES, 'UTF-8', false);
         }
-        return \htmlentities($value, ENT_NOQUOTES, 'UTF-8', false);
+        return \htmlentities($value??'', ENT_NOQUOTES, 'UTF-8', false);
     }
 
     /**
@@ -592,9 +592,9 @@ class BladeOne
     /**
      * run the blade engine. It returns the result of the code.
      *
-     * @param string HTML to parse
-     * @param array $data
-     * @return string
+     * @param string $string HTML to parse
+     * @param array $data It is an associative array with the datas to display.
+     * @return string It returns a parsed string
      * @throws Exception
      */
     public function runString($string, $data = []): string

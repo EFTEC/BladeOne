@@ -2,6 +2,8 @@
 
 namespace eftec\tests;
 
+use Exception;
+
 /**
  * Test passing variables into Blade templates.
  *
@@ -11,9 +13,9 @@ namespace eftec\tests;
 class VariablesTest extends AbstractBladeTestCase
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function testPrintVariable()
+    public function testPrintVariable(): void
     {
         $bladeString = /** @lang Blade */
             <<<'BLADE'
@@ -23,12 +25,12 @@ BLADE;
         $this->assertEqualsIgnoringWhitespace("content2", $this->blade->runString($bladeString, ["var1" => "content2"]));
         $this->assertEqualsIgnoringWhitespace("&lt;a href=&quot;/&quot;&gt;My Link&lt;/a&gt;", $this->blade->runString($bladeString, ["var1" => "<a href=\"/\">My Link</a>"]));
     }
-    public function testSetFunction()
+    public function testSetFunction(): void
     {
         $bladeString = '@set($info=funcion(1,222+funcion(2,3,4),"abc",3))';
         self::assertEquals('<?php $info=@funcion(1,222+funcion(2,3,4),"abc",3);?>', $this->blade->compileString($bladeString));
     }
-    public function testSet()
+    public function testSet(): void
     {
         $bladeString='@set($info=$abc)';
         self::assertEquals('<?php $info=@$abc;?>', $this->blade->compileString($bladeString));
@@ -54,9 +56,21 @@ BLADE;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function testPrintUnescapedVariable()
+    public function testNull(): void
+    {
+
+        $bladeString='var:{{$var}},{{$var2}}';
+        self::assertEquals('var:,', $this->blade->runString($bladeString,['var'=>null]));
+    }
+
+
+
+    /**
+     * @throws Exception
+     */
+    public function testPrintUnescapedVariable(): void
     {
         $bladeString = /** @lang Blade */
             <<<'BLADE'
@@ -66,15 +80,15 @@ BLADE;
         $this->assertEqualsIgnoringWhitespace("<a href=\"/\">My Link</a>", $this->blade->runString($bladeString, ["var1" => "<a href=\"/\">My Link</a>"]));
     }
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function testPrintPipe()
+    public function testPrintPipe(): void
     {
 
 
         $this->blade->pipeEnable=true;
         $this->assertEquals('<?php echo strtoupper(substr(substr(substr(substr(substr(substr(md5($name ),1,30 ),1,25 ),1,20 ),1,15 ),1,10 ),1,5 )); ?>'
-            , $this->blade->compileString('{!! $name | md5 | substr:1,30 | substr:1,25 | substr:1,20 | substr:1,15 | substr:1,10 | substr:1,5 | strtoupper !!}',["name" => "12345"]));
+            , $this->blade->compileString('{!! $name | md5 | substr:1,30 | substr:1,25 | substr:1,20 | substr:1,15 | substr:1,10 | substr:1,5 | strtoupper !!}'));
         $this->assertEquals('<?php echo substr(md5(md5(md5($name ))),1,25); ?>'
             , $this->blade->compileString('{!! $name | md5 | md5 | md5 | substr:1,25 !!}',["name" => "12345"]));
 
@@ -88,9 +102,9 @@ BLADE;
 
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function testDontPrintVariable()
+    public function testDontPrintVariable(): void
     {
         $bladeString = /** @lang Blade */
             <<<'BLADE'
@@ -100,9 +114,9 @@ BLADE;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function testVerbatim()
+    public function testVerbatim(): void
     {
         $bladeString = /** @lang Blade */
             <<<'BLADE'
