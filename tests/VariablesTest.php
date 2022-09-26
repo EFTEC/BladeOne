@@ -53,6 +53,8 @@ BLADE;
         $bladeString='@set($info)';
         self::assertEquals('<?php $info++;?>', $this->blade->compileString($bladeString));
 
+        $bladeString='@set($info=1===2)';
+        self::assertEquals('<?php $info=@1===2;?>', $this->blade->compileString($bladeString));
     }
 
     /**

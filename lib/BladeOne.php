@@ -3261,7 +3261,7 @@ class BladeOne
     {
         //$segments = \explode('=', \preg_replace("/[()\\\']/", '', $expression));
         $segments = \explode('=', $this->stripParentheses($expression));
-        $value = (\count($segments) >= 2) ? '=@' . $segments[1] : '++';
+        $value = (\count($segments) >= 2) ? '=@' . implode('=', array_slice($segments, 1)) : '++';
         return $this->phpTag . \trim($segments[0]) . $value . ';?>';
     }
 
