@@ -43,8 +43,8 @@ Also, if you want to reopen a report, then you are open to do that.
 I will try to answer all and every one of the question (in my limited time).    
 
 ## Some example
-| [ExampleTicketPHP](https://github.com/jorgecc/ExampleTicketPHP) | [Example cupcakes](https://github.com/EFTEC/example.cupcakes) | [Example Search](https://github.com/EFTEC/example-search)    | [Example Editable Grid](https://github.com/EFTEC/example-php-editablegrid) |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [ExampleTicketPHP](https://github.com/jorgecc/ExampleTicketPHP)                                                                                                                                                                                                        | [Example cupcakes](https://github.com/EFTEC/example.cupcakes)                                                                     | [Example Search](https://github.com/EFTEC/example-search)                                                                              | [Example Editable Grid](https://github.com/EFTEC/example-php-editablegrid)                                                             |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
 | <img src="https://camo.githubusercontent.com/3c938f71f46a90eb85bb104f0f396fcba62b8f4a/68747470733a2f2f74686570726163746963616c6465762e73332e616d617a6f6e6177732e636f6d2f692f3436696b7061376661717677726533797537706a2e6a7067" alt="example php bladeone" width="200"/> | <img src="https://github.com/EFTEC/example.cupcakes/raw/master/docs/result.jpg" alt="example php bladeone cupcakes" width="200"/> | <img src="https://github.com/EFTEC/example-search/raw/master/img/search_bootstrap.jpg" alt="example php bladeone search" width="200"/> | <img src="https://github.com/EFTEC/example-php-editablegrid/raw/master/docs/final.jpg" alt="example php bladeone search" width="200"/> |
 
 [https://www.southprojects.com](https://www.southprojects.com)
@@ -82,7 +82,7 @@ This version does not support PHP 5.x anymore. However, you can use the old vers
 
 You can find some tutorials and example on the folder [Examples](examples).
 
-You could also check the wiki [Wiki](https://github.com/EFTEC/BladeOne/wiki)
+You could also check the [Wiki](https://github.com/EFTEC/BladeOne/wiki)
 
 ## About this version
 By standard, The original Blade library is part of Laravel (Illuminate components) and to use this template library, you require install Laravel and Illuminate-view components.
@@ -449,18 +449,22 @@ How to run it?
 * Go to your home path and call the PHP script as follows:
 
 ```shell
-php vendor/lib/eftec/bladeone/lib/BladeOne.php
+php vendor/bin/bladeonecli    # windows/linux/macos
+# or you could execute the script as:
+./vendor/bin/bladeonecli.bat  # windows
+./vendor/bin/bladeonecli      # linux/macos
 ```
 
 Or change you folder according to your installation.
 
 And you can set the syntax as follows:
 
-* **-templatepath** <templatepath> (optional) the template-path.
+* **-templatepath** <templatepath> (optional) the template-path (view paths).
   * Example: '/folder/views' or 'views' (relative)
 * **-compilepath** <compilepath>  (optional) the compile-path.
   * Example: '/folder/compiles or 'compiles' (relative)
 * **-clearcompile** It deletes the content of the compile-path
+* **-createfolder** It creates the "compile" and "template" folders
 * **-check** It checks the library
 
 Clear the compile-folder

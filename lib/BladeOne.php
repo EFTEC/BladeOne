@@ -36,13 +36,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2022 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.6
+ * @version   4.7
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.6';
+    public const VERSION = '4.7';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -272,16 +272,7 @@ class BladeOne
             return false;
         };
 
-        if (!\is_dir($this->compiledPath)) {
-            $ok = @\mkdir($this->compiledPath, 0777, true);
-            if ($ok === false) {
-                $this->showError(
-                    'Constructing',
-                    "Unable to create the compile folder [$this->compiledPath]. Check the permissions of it's parent folder.",
-                    true
-                );
-            }
-        }
+
         // If the traits has "Constructors", then we call them.
         // Requisites.
         // 1- the method must be public or protected
@@ -1249,18 +1240,6 @@ class BladeOne
             // compile the original file
             $contents = $this->compileString($this->getFile($template));
             $this->compileCallBacks($contents, $templateName);
-            $dir = \dirname($compiled);
-            if (!\is_dir($dir)) {
-                $ok = @\mkdir($dir, 0777, true);
-                if ($ok === false) {
-                    $this->showError(
-                        'Compiling',
-                        "Unable to create the compile folder [$dir]. Check the permissions of it's parent folder.",
-                        true
-                    );
-                    return false;
-                }
-            }
             if ($this->optimize) {
                 // removes space and tabs and replaces by a single space
                 $contents = \preg_replace('/^ {2,}/m', ' ', $contents);
@@ -4164,6 +4143,8 @@ class BladeOne
                 return "\033[33m$str\033[0m";
             case 'i': //info
                 return "\033[36m$str\033[0m";
+            case 'b':
+                return "\e[01m$str\e[22m";
             default:
                 return $str;
         }
@@ -4178,6 +4159,14 @@ class BladeOne
         } else {
             $status=false;
             echo "Compile-path [$this->compiledPath] is not a folder " . self::colorLog("ERROR", 'e') . "\n";
+        }
+        foreach($this->templatePath as $t) {
+            if (is_dir($t)) {
+                echo "Template-path (view) [$t] is a folder " . self::colorLog("OK") . "\n";
+            } else {
+                $status = false;
+                echo "Template-path (view) [$t] is not a folder " . self::colorLog("ERROR", 'e') . "\n";
+            }
         }
         $error = self::colorLog('OK');
         try {
@@ -4198,6 +4187,34 @@ class BladeOne
         echo "Testing reading in the view folder [" . $this->templatePath[0] . "].\n";
         echo "View(s) found :" . count($files) . "\n";
         return $status;
+    }
+    public function createFolders(): void
+    {
+        echo self::colorLog("Creating Folder\n");
+        echo "Creating compile folder[".self::colorLog($this->compiledPath,'b')."] ";
+        if (!\is_dir($this->compiledPath)) {
+            $ok = @\mkdir($this->compiledPath, 0770, true);
+            if ($ok === false) {
+                echo self::colorLog("Error: Unable to create folder, check the permissions\n", 'e');
+            } else {
+                echo self::colorLog("OK\n");
+            }
+        } else {
+            echo self::colorLog("Note: folder already exist.\n", 'w');
+        }
+        foreach($this->templatePath as $t) {
+            echo "Creating template folder [".self::colorLog($t,'b')."] ";
+            if (!\is_dir($t)) {
+                $ok = @\mkdir($t, 0770, true);
+                if ($ok === false) {
+                    echo self::colorLog("Error: Unable to create folder, check the permissions\n", 'e');
+                } else {
+                    echo self::colorLog("OK\n");
+                }
+            } else {
+                echo self::colorLog("Note: folder already exist.\n", 'w');
+            }
+        }
     }
 
     public function clearcompile(): int
@@ -4224,6 +4241,7 @@ class BladeOne
     public function cliEngine(): void
     {
         $clearcompile = self::getParameterCli('clearcompile');
+        $createfolder = self::getParameterCli('createfolder');
         $check = self::getParameterCli('check');
         echo '  ____  _           _       ____             ' . "\n";
         echo ' |  _ \| |         | |     / __ \            ' . "\n";
@@ -4241,12 +4259,24 @@ class BladeOne
             $done = true;
             $this->clearcompile();
         }
+        if($createfolder) {
+            $done=true;
+            $this->createFolders();
+        }
         if (!$done) {
             echo " Syntax:\n";
-            echo " -templatepath <templatepath> (optional) the template-path.\n  Example: '/folder/views' or 'views' (relative)\n";
-            echo " -compilepath <compilepath>  (optional) the compile-path.\n  Example: '/folder/compiles or 'compiles' (relative)\n";
-            echo " -clearcompile It deletes the content of the compile path\n";
-            echo " -check It checks the library\n";
+            echo " ".self::colorLog("-templatepath","b")." <templatepath> (optional) the template-path (view path).\n";
+            echo "    Default value: 'views'\n";
+            echo "    Example: 'php /vendor/bin/bladeonecli /folder/views' (absolute)\n";
+            echo "    Example: 'php /vendor/bin/bladeonecli folder/view1' (relative)\n";
+            echo " ".self::colorLog("-compilepath","b")." <compilepath>  (optional) the compile-path.\n";
+            echo "    Default value: 'compiles'\n";
+            echo "    Example: 'php /vendor/bin/bladeonecli /folder/compiles' (absolute)\n";
+            echo "    Example: 'php /vendor/bin/bladeonecli compiles' (relative)\n";
+            echo " ".self::colorLog("-createfolder","b")." it creates the folders if they don't exist.\n";
+            echo "    Example: php ./vendor/bin/bladeonecli -createfolder\n";
+            echo " ".self::colorLog("-clearcompile","b")." It deletes the content of the compile path\n";
+            echo " ".self::colorLog("-check","b")." It checks the folders and permissions\n";
         }
     }
 
@@ -4263,21 +4293,4 @@ class BladeOne
     }
 
     //</editor-fold>
-}
-
-if (
-    !defined('PHPUNIT_COMPOSER_INSTALL') && !defined('__PHPUNIT_PHAR__')
-    && isset($_SERVER['PHP_SELF']) && basename($_SERVER['PHP_SELF']) === 'BladeOne.php'
-    && BladeOne::isCli()
-) {
-    $compilepath = BladeOne::getParameterCli('compilepath', null);
-    $templatepath = BladeOne::getParameterCli('templatepath', null);
-    if (!BladeOne::isAbsolutePath($compilepath)) {
-        $compilepath = getcwd() . '/' . $compilepath;
-    }
-    if (!BladeOne::isAbsolutePath($templatepath)) {
-        $templatepath = getcwd() . '/' . $templatepath;
-    }
-    $inst = new BladeOne($templatepath, $compilepath);
-    $inst->cliEngine();
 }

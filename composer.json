@@ -40,7 +40,10 @@
       "eftec\\tests\\": "tests/"
     }
   },
+  "bin": [
+    "lib/bladeonecli"
+  ],
   "require-dev": {
-    "phpunit/phpunit": "^8.0"
+    "phpunit/phpunit": "^8.5.23"
   }
 }
