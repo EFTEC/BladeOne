@@ -14,7 +14,7 @@ class NoEscapeTest extends AbstractBladeTestCase {
     public function testCompilationDebugCreatesCompiledFile() {
         $this->blade->setMode(BladeOne::MODE_DEBUG);
         $this->blade->run('compilation.noescape', []);
-        $this->assertFileEquals(__DIR__ . '/resources/compiled/compilation.noescape.bladec',
+        $this->assertFileEquals(__DIR__ . '/resources/compiled/compilation.noescape_' . \sha1(__DIR__ . '/resources/templates/compilation/noescape.blade.php') . '.bladec',
             __DIR__ . '/resources/templates/compilation/noescape.blade.php');
         $this->blade->setMode(BladeOne::MODE_SLOW);
     }

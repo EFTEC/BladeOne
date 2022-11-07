@@ -148,11 +148,10 @@ class BladeOne
     /** @var string the extension of the compiled file. */
     protected $compileExtension = '.bladec';
     /**
-     * @var string=['auto','sha1','md5','nochange'][$i] It determines how the compiled filename will be called.<br>
-     *            <b>auto</b> (default mode) the mode is "sha1" unless the mode is MODE_DEBUG<br>
+     * @var string=['auto','sha1','md5'][$i] It determines how the compiled filename will be called.<br>
+     *            <b>auto</b> (default mode) the mode is "sha1"<br>
      *            <b>sha1</b> the filename is converted into a sha1 hash<br>
      *            <b>md5</b> the filename is converted into a md5 hash<br>
-     *            <b>normal</b> the filename is left untouched<br>
      */
     protected $compileTypeFileName='auto';
 
@@ -1266,19 +1265,26 @@ class BladeOne
     public function getCompiledFile($templateName = ''): string
     {
         $templateName = (empty($templateName)) ? $this->fileName : $templateName;
+
+        $fullPath = $this->getTemplateFile($templateName);
+        if($fullPath == '') {
+            throw new \RuntimeException('Template not found: ' . $templateName);
+        }
+
         $style=$this->compileTypeFileName;
         if ($style==='auto') {
-            $style=($this->getMode() === self::MODE_DEBUG)?'nochange':'sha1';
+            $style='sha1';
         }
+
         switch ($style) {
-            case 'normal':
-                return $this->compiledPath . '/' . $templateName . $this->compileExtension;
             case 'md5':
-                return $this->compiledPath . '/' . \md5($templateName) . $this->compileExtension;
-            case 'sha1':
-                return $this->compiledPath . '/' . \sha1($templateName) . $this->compileExtension;
+                $hash = \md5($fullPath);
+                break;
+            default:
+                $hash = \sha1($fullPath);
         }
-        return $this->compiledPath . '/' . $templateName . $this->compileExtension;
+
+        return $this->compiledPath . '/' . basename($templateName) . '_' . $hash . $this->compileExtension;
     }
 
 
@@ -1883,11 +1889,10 @@ class BladeOne
 
     /**
      * It determines how the compiled filename will be called.<br>
-     * <b>auto</b> (default mode) the mode is "sha1" unless the mode is MODE_DEBUG<br>
+     * <b>auto</b> (default mode) the mode is "sha1"<br>
      * <b>sha1</b> the filename is converted into a sha1 hash (it's the slow method, but it is safest)<br>
      * <b>md5</b> the filename is converted into a md5 hash (it's faster than sha1, and it uses less space)<br>
-     * <b>normal</b> the filename is left untouched (it's the fastest mode but the filename could be exposed)<br>
-     * @param string $compileTypeFileName=['auto','sha1','md5','nochange'][$i]
+     * @param string $compileTypeFileName=['auto','sha1','md5'][$i]
      * @return BladeOne
      */
     public function setCompileTypeFileName(string $compileTypeFileName): BladeOne

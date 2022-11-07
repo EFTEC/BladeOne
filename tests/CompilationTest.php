@@ -24,12 +24,16 @@ class CompilationTest extends AbstractBladeTestCase
         $views = __DIR__ . '/templates';
         $compiledFolder = __DIR__ . '/compiled';
         $blade = new BladeOne($views, $compiledFolder);
+
+        // Type MD5
         $blade->setCompileTypeFileName('md5');
         $this->assertEquals("It is a basic template hello world.\n", $blade->run('basic',['variable'=>'hello world']));
-        $this->assertEquals('f17aaabc20bfe045075927934fed52d2.bladec',basename($blade->getCompiledFile('basic')));
+        $this->assertEquals('basic_' . \md5($views . '/' . 'basic.blade.php') . '.bladec',basename($blade->getCompiledFile('basic')));
+
+        // Type default fallback (type does not exist)
         $blade->setCompileTypeFileName('nochange');
         $this->assertEquals("It is a basic template hello world.\n", $blade->run('basic',['variable'=>'hello world']));
-        $this->assertEquals('basic.bladec',basename($blade->getCompiledFile('basic')));
+        $this->assertEquals('basic_' . \sha1($views . '/' . 'basic.blade.php') . '.bladec',basename($blade->getCompiledFile('basic')));
     }
     public function testComment(): void
     {
@@ -39,7 +43,7 @@ class CompilationTest extends AbstractBladeTestCase
         $blade = new BladeOne($views, $compiledFolder);
         $blade->setCompileTypeFileName('md5');
         $this->assertEquals("Multi line comment in PHP tags\n\nSingle line comment in PHP tags\n\n", $blade->run('comment',[]));
-        $this->assertEquals('06d4cd63bde972fc66a0aed41d2f5c51.bladec',basename($blade->getCompiledFile('comment')));
+        $this->assertEquals('comment_' . \md5($views . '/' . 'comment.blade.php') . '.bladec',basename($blade->getCompiledFile('comment')));
     }
 
     public function testToken(): void
@@ -138,7 +142,7 @@ class CompilationTest extends AbstractBladeTestCase
         $this->blade->setMode(BladeOne::MODE_DEBUG);
         $this->blade->run('compilation.base', []);
 
-        $this->assertFileExists(__DIR__ . '/resources/compiled/compilation.base.bladec');
+        $this->assertFileExists(__DIR__ . '/resources/compiled/compilation.base_' . \sha1(__DIR__ . '/resources/templates/compilation/base.blade.php') . '.bladec');
 
         $this->blade->setMode(BladeOne::MODE_SLOW);
     }
@@ -177,7 +181,7 @@ class CompilationTest extends AbstractBladeTestCase
         $this->blade->setCompiledExtension('.bladeD');
         $this->blade->run('compilation.base', []);
 
-        $this->assertFileExists(__DIR__ . '/resources/compiled/' . sha1('compilation.base') . '.bladeD');
+        $this->assertFileExists(__DIR__ . '/resources/compiled/compilation.base_' . sha1(__DIR__ . '/resources/templates/compilation/base.blade.php') . '.bladeD');
 
         $this->blade->setCompiledExtension('.bladec');
     }
