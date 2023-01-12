@@ -508,7 +508,7 @@ class BladeOne
      *
      * @param bool $bool
      * @return BladeOne
-     * @see \eftec\bladeone\BladeOne::setMode
+     * @see BladeOne::setMode
      */
     public function setIsCompiled($bool = false): BladeOne
     {
@@ -677,10 +677,10 @@ class BladeOne
      *
      * @return string
      *
-     * @see \eftec\bladeone\BladeOne::compileStatements
-     * @see \eftec\bladeone\BladeOne::compileExtends
-     * @see \eftec\bladeone\BladeOne::compileComments
-     * @see \eftec\bladeone\BladeOne::compileEchos
+     * @see BladeOne::compileStatements
+     * @see BladeOne::compileExtends
+     * @see BladeOne::compileComments
+     * @see BladeOne::compileEchos
      */
     protected function parseToken($token): string
     {
@@ -1698,7 +1698,7 @@ class BladeOne
      * @param string|array $varname It is the name of the variable or, it is an associative array
      * @param mixed        $value
      * @return $this
-     * @see \eftec\bladeone\BladeOne::share
+     * @see BladeOne::share
      */
     public function with($varname, $value = null): BladeOne
     {
@@ -1880,7 +1880,7 @@ class BladeOne
     }
     /**
      * @return string
-     * @see \eftec\bladeone\BladeOne::setCompileTypeFileName
+     * @see BladeOne::setCompileTypeFileName
      */
     public function getCompileTypeFileName(): string
     {
@@ -1991,7 +1991,7 @@ class BladeOne
         } elseif (static::startsWith($empty, 'raw|')) {
             $result = \substr($empty, 4);
         } else {
-            $result = $this->run($empty, []);
+            $result = $this->run($empty);
         }
         return $result;
     }
@@ -2330,7 +2330,7 @@ class BladeOne
      * <b>Note:</b>The relative path is calculated when we set the base url.
      *
      * @return string
-     * @see \eftec\bladeone\BladeOne::setBaseUrl
+     * @see BladeOne::setBaseUrl
      */
     public function getRelativePath(): string
     {
@@ -2569,7 +2569,7 @@ class BladeOne
     /**
      * @param $expression
      * @return string
-     * @see \eftec\bladeone\BladeOne::getCanonicalUrl
+     * @see BladeOne::getCanonicalUrl
      */
     public function compileCanonical($expression = null): string
     {
@@ -2580,7 +2580,7 @@ class BladeOne
     /**
      * @param $expression
      * @return string
-     * @see \eftec\bladeone\BladeOne::getBaseUrl()
+     * @see BladeOne::getBaseUrl
      */
     public function compileBase($expression = null): string
     {
@@ -2887,7 +2887,7 @@ class BladeOne
      * @param string $text
      *
      * @return string
-     * @see \eftec\bladeone\BladeOne::$aliasClasses
+     * @see BladeOne
      */
     protected function fixNamespaceClass($text): string
     {

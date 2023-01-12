@@ -7,7 +7,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
 [![Total Downloads](https://poser.pugx.org/eftec/bladeone/downloads)](https://packagist.org/packages/eftec/bladeone)
-[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2023.svg)]()
 [![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
 [![php](https://img.shields.io/badge/php->5.6-green.svg)]()
 [![php](https://img.shields.io/badge/php-7.x-green.svg)]()
@@ -522,7 +522,7 @@ You are welcome to use it, share it, ask for changes and whatever you want to. J
 
 ## License
 MIT License.
-BladeOne (c) 2016-2022 Jorge Patricio Castro Castillo
+BladeOne (c) 2016-2023 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is 
 mostly an original work)
 
