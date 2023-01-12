@@ -215,7 +215,9 @@ Alternatively, BladeOne allows running arbitrary code from any class or method i
 
 If you use **composer**, then you could add the library using the next command (command line)  
 
-> composer require eftec/bladeone
+```shell
+composer require eftec/bladeone
+```
 
 If you don't use it, then you could download the library and include it manually.
 
