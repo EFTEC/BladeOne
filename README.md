@@ -219,7 +219,7 @@ If you use **composer**, then you could add the library using the next command (
 
 If you don't use it, then you could download the library and include it manually.
 
-### Implicit definition
+### Explicit definition
 
 ```php
 use eftec\bladeone\BladeOne;
@@ -241,7 +241,7 @@ views/hello.blade.php:
 {{$variable1}}
 ```
 
-### Explicit
+### Implicit definition
 
 In this mode, it uses the folders ```__DIR__/views``` and ```__DIR__/compiles```, also it uses the mode as MODE_AUTO.
 
