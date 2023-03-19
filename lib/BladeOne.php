@@ -3114,13 +3114,18 @@ class BladeOne
 
     /**
      * Compile the default values for the echo statement.
+     * Example:
+     * {{ $test or 'test2' }} compiles to {{ isset($test) ? $test : 'test2' }}
      *
      * @param string $value
      * @return string
      */
     protected function compileEchoDefaults($value): string
     {
-        $result = \preg_replace('/^(?=\$)(.+?)\s+or\s+(.+?)$/s', 'isset($1) ? $1 : $2', $value);
+        // Source: https://www.php.net/manual/en/language.variables.basics.php
+        $patternPHPVariableName = '\$[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*';
+
+        $result = \preg_replace('/^(' . $patternPHPVariableName . ')\s+or\s+(.+?)$/s', 'isset($1) ? $1 : $2', $value);
         if (!$this->pipeEnable) {
             return $this->fixNamespaceClass($result);
         }
