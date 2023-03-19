@@ -1950,7 +1950,7 @@ class BladeOne
     /**
      * Get an instance of the first loop in the stack.
      *
-     * @return object
+     * @return object|null
      */
     public function getFirstLoop(): ?object
     {

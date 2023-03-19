@@ -24,7 +24,7 @@ class CompilationTest extends AbstractBladeTestCase
         $views = __DIR__ . '/templates';
         $compiledFolder = __DIR__ . '/compiled';
         $blade = new BladeOne($views, $compiledFolder);
-
+        $blade->createFolders();
         // Type MD5
         $blade->setCompileTypeFileName('md5');
         $this->assertEquals("It is a basic template hello world.\n", $blade->run('basic',['variable'=>'hello world']));
@@ -105,6 +105,7 @@ class CompilationTest extends AbstractBladeTestCase
     {
         $this->blade->pipeEnable = true;
         $this->blade->setPath(__DIR__ . '/templates', __DIR__ . '/compiles');
+        $this->blade->createFolders();
         $this->assertEqualsIgnoringWhitespace('paramlessmyglobal:helloCONTENTSLOTcolor:red,title:notitle,myglobal:helloCONTENTSLOT2,endtitle:notitle'
             , $this->blade->run("TestComponent.component", ['myglobal' => 'hello']));
         $this->blade->pipeEnable = false;
