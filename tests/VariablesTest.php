@@ -128,4 +128,27 @@ BLADE;
 BLADE;
         $this->assertEqualsIgnoringWhitespace("{{ \$var }}", $this->blade->runString($bladeString, ["var" => "my_var"]));
     }
+
+    public function testDefaultFallback() : void {
+
+        $this->assertEquals('<?php echo \htmlentities(isset($_Name1) ? $_Name1 : \'Default\'??\'\', ENT_QUOTES, \'UTF-8\', false); ?>', $this->blade->compileString('{{ $_Name1 or \'Default\' }}'));
+        $this->assertEquals('<?php echo isset($_Name1) ? $_Name1 : \'Default\'; ?>', $this->blade->compileString('{!! $_Name1 or \'Default\' !!}'));
+        $this->assertEquals('<?php echo isset($_Name1) ? $_Name1 : "Default"; ?>', $this->blade->compileString('{!! $_Name1 or "Default" !!}'));
+        $this->assertEquals('<?php echo isset($_Name1) ? $_Name1 : fallback("test2"); ?>', $this->blade->compileString('{!! $_Name1 or fallback("test2") !!}'));
+        $this->assertEquals('<?php echo isset($_Name1) ? $_Name1 : fallback(\'test2\'); ?>', $this->blade->compileString('{!! $_Name1 or fallback(\'test2\') !!}'));
+    }
+    
+    public function testNotDefaultFallback() : void
+    {
+        $this->assertEquals('<?php echo \htmlentities(T->method(\'TEST or TEST2\')??\'\', ENT_QUOTES, \'UTF-8\', false); ?>', $this->blade->compileString('{{ T->method(\'TEST or TEST2\') }}'));
+        $this->assertEquals('<?php echo function1("TEST or TEST2"); ?>', $this->blade->compileString('{!! function1("TEST or TEST2") !!}'));
+        $this->assertEquals('<?php echo $t("TEST or TEST2"); ?>', $this->blade->compileString('{!! $t("TEST or TEST2") !!}'));
+        $this->assertEquals('<?php echo $t->method("TEST or TEST2"); ?>', $this->blade->compileString('{!! $t->method("TEST or TEST2") !!}'));
+        $this->assertEquals('<?php echo \htmlentities($t->method("TEST or TEST2")??\'\', ENT_QUOTES, \'UTF-8\', false); ?>', $this->blade->compileString('{{ $t->method("TEST or TEST2") }}'));
+        $this->assertEquals('<?php echo \htmlentities($t->method(\'TEST or TEST2\')??\'\', ENT_QUOTES, \'UTF-8\', false); ?>', $this->blade->compileString('{{ $t->method(\'TEST or TEST2\') }}'));
+        $this->assertEquals('<?php echo \htmlentities(T::staticMethod(\'TEST or TEST2\')??\'\', ENT_QUOTES, \'UTF-8\', false); ?>', $this->blade->compileString('{{ T::staticMethod(\'TEST or TEST2\') }}'));
+        $this->assertEquals('<?php echo \htmlentities(T::staticMethod(\'TEST or TEST2\')??\'\', ENT_QUOTES, \'UTF-8\', false); ?>', $this->blade->compileString('{{ T::staticMethod(\'TEST or TEST2\') }}'));
+        $this->assertEquals('<?php echo \htmlentities($t::staticMethod(\'TEST or TEST2\')??\'\', ENT_QUOTES, \'UTF-8\', false); ?>', $this->blade->compileString('{{ $t::staticMethod(\'TEST or TEST2\') }}'));
+        $this->assertEquals('<?php echo \htmlentities($t::staticMethod(\'TEST or TEST2\')??\'\', ENT_QUOTES, \'UTF-8\', false); ?>', $this->blade->compileString('{{ $t::staticMethod(\'TEST or TEST2\') }}'));
+    }
 }
