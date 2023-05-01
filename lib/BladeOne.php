@@ -36,13 +36,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2022 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.8.2
+ * @version   4.9
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.8.2';
+    public const VERSION = '4.9';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -746,6 +746,7 @@ class BladeOne
      *
      * @param string $expression
      * @return string
+     * @see BladeOne::startPush
      */
     public function compilePush($expression): string
     {
@@ -757,6 +758,7 @@ class BladeOne
      *
      * @param string $expression
      * @return string
+     * @see BladeOne::startPush
      */
     public function compilePushOnce($expression): string
     {
@@ -769,6 +771,7 @@ class BladeOne
      *
      * @param string $expression
      * @return string
+     * @see BladeOne::startPush
      */
     public function compilePrepend($expression): string
     {
@@ -886,12 +889,26 @@ class BladeOne
     /**
      * Get the string contents of a push section.
      *
-     * @param string $section
-     * @param string $default
+     * @param string $section the name of the section
+     * @param string $default the default name of the section is not found.
      * @return string
      */
     public function yieldPushContent($section, $default = ''): string
     {
+        if($section===null || $section==='') {
+            return $default;
+        }
+        if($section[-1]==='*') {
+            $keys=array_keys($this->pushes);
+            $findme=rtrim($section,'*');
+            $result="";
+            foreach($keys as $key) {
+                if(strpos($key,$findme)===0) {
+                    $result.=\implode(\array_reverse($this->pushes[$key]));
+                }
+            }
+            return $result;
+        }
         if (!isset($this->pushes[$section])) {
             return $default;
         }
@@ -3928,6 +3945,7 @@ class BladeOne
      *
      * @param string $expression
      * @return string
+     * @see BladeOne::yieldPushContent
      */
     protected function compileStack($expression): string
     {
