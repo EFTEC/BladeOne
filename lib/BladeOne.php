@@ -278,9 +278,13 @@ class BladeOne
         // 2- it must don't have arguments
         // 3- It must have the name of the trait. i.e. trait=MyTrait, method=MyTrait()
         $traits = get_declared_traits();
+        $currentTraits = (array) class_uses($this);
         foreach ($traits as $trait) {
             $r = explode('\\', $trait);
             $name = end($r);
+            if (!in_array($trait, $currentTraits, true)) {
+                continue;
+            }
             if (is_callable([$this, $name]) && method_exists($this, $name)) {
                 $this->{$name}();
             }
