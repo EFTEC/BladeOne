@@ -7,7 +7,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
 [![Total Downloads](https://poser.pugx.org/eftec/bladeone/downloads)](https://packagist.org/packages/eftec/bladeone)
-[![Maintenance](https://img.shields.io/maintenance/yes/2023.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2024.svg)]()
 [![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
 [![php](https://img.shields.io/badge/php->5.6-green.svg)]()
 [![php](https://img.shields.io/badge/php-7.x-green.svg)]()
@@ -15,8 +15,7 @@ BladeOne is a standalone version of Blade Template Engine that uses a single PHP
 [![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 
-> NOTE: So far it's apparently the only one project that it's updated with the latest version of **Blade 8 (January 2022)**. 
-> Dynamic blade components are not supported (reason: performance purpose) and custom features aimed for blade, but everything else is supported [missing](#missing.
+> Dynamic blade components are not supported (reason: performance purpose) and custom features aimed for blade, but everything else is supported.
 
 
 ## Comparison with Twig
@@ -524,7 +523,7 @@ You are welcome to use it, share it, ask for changes and whatever you want to. J
 
 ## License
 MIT License.
-BladeOne (c) 2016-2023 Jorge Patricio Castro Castillo
+BladeOne (c) 2016-2024 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is 
 mostly an original work)
 

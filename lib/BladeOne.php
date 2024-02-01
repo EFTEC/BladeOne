@@ -36,13 +36,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2023 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.9
+ * @version   4.10
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.9';
+    public const VERSION = '4.10';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -81,29 +81,29 @@ class BladeOne
     public $aliasClasses = [];
     /**
      * @var bool if true then the variables defined in the "include" as arguments are scoped to work only
-     * inside the include.<br>
+     * inside the "include" statement.<br>
      * If false (default value), then the variables defined in the "include" as arguments are defined globally.<br>
-     * <b>Example: (includeScope=false)</b><br>
-     * <pre>
+     * **Example: (includeScope=false)**<br>
+     * ```php
      * @include("template",['a1'=>'abc']) // a1 is equals to abc
      * @include("template",[]) // a1 is equals to abc
-     * </pre>
-     * <b>Example: (includeScope=true)</b><br>
-     * <pre>
+     * ```
+     * **Example: (includeScope=true)**<br>
+     * ```php
      * @include("template",['a1'=>'abc']) // a1 is equals to abc
      * @include("template",[]) // a1 is not defined
-     * </pre>
+     * ```
      */
     public $includeScope = false;
     /**
      * @var callable[] It allows to parse the compiled output using a function.
      * This function doesn't require to return a value<br>
-     * <b>Example:</b> this converts all compiled result in uppercase (note, content is a ref)
-     * <pre>
+     * **Example:** this converts all compiled result in uppercase (note, content is a ref)
+     * ```php
      * $this->compileCallbacks[]= static function (&$content, $templatename=null) {
      *      $content=strtoupper($content);
      * };
-     * </pre>
+     * ```
      */
     public $compileCallbacks = [];
     /** @var array All the registered extensions. */
@@ -149,9 +149,9 @@ class BladeOne
     protected $compileExtension = '.bladec';
     /**
      * @var string=['auto','sha1','md5'][$i] It determines how the compiled filename will be called.<br>
-     *            <b>auto</b> (default mode) the mode is "sha1"<br>
-     *            <b>sha1</b> the filename is converted into a sha1 hash<br>
-     *            <b>md5</b> the filename is converted into a md5 hash<br>
+     *            **auto** (default mode) the mode is "sha1"<br>
+     *            **sha1** the filename is converted into a sha1 hash<br>
+     *            **md5** the filename is converted into a md5 hash<br>
      */
     protected $compileTypeFileName='auto';
 
@@ -363,14 +363,14 @@ class BladeOne
 
     /**
      * It converts a text into a php code with echo<br>
-     * <b>Example:</b><br>
-     * <pre>
+     * **Example:**<br>
+     * ```php
      * $this->wrapPHP('$hello'); // "< ?php echo $this->e($hello); ? >"
      * $this->wrapPHP('$hello',''); // < ?php echo $this->e($hello); ? >
      * $this->wrapPHP('$hello','',false); // < ?php echo $hello; ? >
      * $this->wrapPHP('"hello"'); // "< ?php echo $this->e("hello"); ? >"
      * $this->wrapPHP('hello()'); // "< ?php echo $this->e(hello()); ? >"
-     * </pre>
+     * ```
      *
      * @param ?string $input The input value
      * @param string $quote The quote used (to quote the result)
@@ -608,7 +608,7 @@ class BladeOne
                 \ob_end_clean();
             }
             throw $e;
-        } catch (\ParseError $e) { // PHP >= 7
+        } catch (\Throwable $e) { // PHP >= 7
             while (\ob_get_level() > $obLevel) {
                 \ob_end_clean();
             }
@@ -1181,15 +1181,15 @@ class BladeOne
     /**
      * It compares with wildcards (*) and returns true if both strings are equals<br>
      * The wildcards only works at the beginning and/or at the end of the string.<br>
-     * <b>Example:<b><br>
-     * <pre>
+     * **Example:**<br>
+     * ```php
      * Text::wildCardComparison('abcdef','abc*'); // true
      * Text::wildCardComparison('abcdef','*def'); // true
      * Text::wildCardComparison('abcdef','*abc*'); // true
      * Text::wildCardComparison('abcdef','*cde*'); // true
      * Text::wildCardComparison('abcdef','*cde'); // false
      *
-     * </pre>
+     * ```
      *
      * @param string      $text
      * @param string|null $textWithWildcard
@@ -1441,7 +1441,7 @@ class BladeOne
         // an exception is thrown. This prevents any partial views from leaking.
         try {
             eval(' ?>' . $content . $this->phpTag);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleViewException($e);
         }
         return \ltrim(\ob_get_clean());
@@ -1479,7 +1479,7 @@ class BladeOne
         // an exception is thrown. This prevents any partial views from leaking.
         try {
             include $compiledFile;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleViewException($e);
         }
         return \ltrim(\ob_get_clean());
@@ -1557,7 +1557,7 @@ class BladeOne
     {
         try {
             $this->csrf_token = \bin2hex(\random_bytes(10));
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->csrf_token = '123456789012345678901234567890'; // unable to generates a random token.
         }
         @$_SESSION[$tokenId] = $this->csrf_token . '|' . $this->ipClient();
@@ -1579,9 +1579,9 @@ class BladeOne
      * It requires an open session.
      *
      * @param bool   $alwaysRegenerate [optional] Default is false.<br>
-     *                                 If <b>true</b> then it will generate a new token regardless
+     *                                 If **true** then it will generate a new token regardless
      *                                 of the method.<br>
-     *                                 If <b>false</b>, then it will generate only if the method is POST.<br>
+     *                                 If **false**, then it will generate only if the method is POST.<br>
      *                                 Note: You must not use true if you want to use csrf with AJAX.
      *
      * @param string $tokenId          [optional] Name of the token.
@@ -1698,14 +1698,14 @@ class BladeOne
     }
 
     /**
-     * Adds a global variable. If <b>$varname</b> is an array then it merges all the values.
-     * <b>Example:</b>
-     * <pre>
+     * Adds a global variable. If **$varname** is an array then it merges all the values.
+     * **Example:**
+     * ```php
      * $this->share('variable',10.5);
      * $this->share('variable2','hello');
      * // or we could add the two variables as:
      * $this->share(['variable'=>10.5,'variable2'=>'hello']);
-     * </pre>
+     * ```
      *
      * @param string|array $varname It is the name of the variable or, it is an associative array
      * @param mixed        $value
@@ -1718,14 +1718,14 @@ class BladeOne
     }
 
     /**
-     * Adds a global variable. If <b>$varname</b> is an array then it merges all the values.
-     * <b>Example:</b>
-     * <pre>
+     * Adds a global variable. If **$varname** is an array then it merges all the values.
+     * **Example:**
+     * ```php
      * $this->share('variable',10.5);
      * $this->share('variable2','hello');
      * // or we could add the two variables as:
      * $this->share(['variable'=>10.5,'variable2'=>'hello']);
-     * </pre>
+     * ```
      *
      * @param string|array $varname It is the name of the variable, or it is an associative array
      * @param mixed        $value
@@ -1901,9 +1901,9 @@ class BladeOne
 
     /**
      * It determines how the compiled filename will be called.<br>
-     * <b>auto</b> (default mode) the mode is "sha1"<br>
-     * <b>sha1</b> the filename is converted into a sha1 hash (it's the slow method, but it is safest)<br>
-     * <b>md5</b> the filename is converted into a md5 hash (it's faster than sha1, and it uses less space)<br>
+     * * **auto** (default mode) the mode is "sha1"<br>
+     * * **sha1** the filename is converted into a sha1 hash (it's the slow method, but it is safest)<br>
+     * * **md5** the filename is converted into a md5 hash (it's faster than sha1, and it uses less space)<br>
      * @param string $compileTypeFileName=['auto','sha1','md5'][$i]
      * @return BladeOne
      */
@@ -2041,10 +2041,10 @@ class BladeOne
     /**
      * It sets the current view<br>
      * This value is cleared when it is used (method run).<br>
-     * <b>Example:<b><br>
-     * <pre>
+     * **Example:**<br>
+     * ```php
      * $this->setView('folder.view')->share(['var1'=>20])->run(); // or $this->run('folder.view',['var1'=>20]);
-     * </pre>
+     * ```
      *
      * @param string $view
      * @return BladeOne
@@ -2058,14 +2058,14 @@ class BladeOne
     /**
      * It injects a function, an instance, or a method class when a view is called.<br>
      * It could be stacked.   If it sets null then it clears all definitions.
-     * <b>Example:<b><br>
-     * <pre>
+     * **Example:**<br>
+     * ```php
      * $this->composer('folder.view',function($bladeOne) { $bladeOne->share('newvalue','hi there'); });
      * $this->composer('folder.view','namespace1\namespace2\SomeClass'); // SomeClass must exist, and it must have the
      *                                                                   // method 'composer'
      * $this->composer('folder.*',$instance); // $instance must have the method called 'composer'
      * $this->composer(); // clear all composer.
-     * </pre>
+     * ```
      *
      * @param string|array|null    $view It could contain wildcards (*). Example: 'aa.bb.cc','*.bb.cc','aa.bb.*','*.bb.*'
      *
@@ -2271,15 +2271,15 @@ class BladeOne
      * The base url defines the "root" of the project, not always the level of the domain, but it could be
      * any folder.<br>
      * This value is used to calculate the relativity of the resources, but it is also used to set the domain.<br>
-     * <b>Note:</b> The trailing slash is removed automatically if it's present.<br>
-     * <b>Note:</b> We should not use arguments or name of the script.<br>
-     * <b>Examples:</b><br>
-     * <pre>
+     * **Note:** The trailing slash is removed automatically if it's present.<br>
+     * **Note:** We should not use arguments or name of the script.<br>
+     * **Examples:**<br>
+     * ```php
      * $this->setBaseUrl('http://domain.dom/myblog');
      * $this->setBaseUrl('http://domain.dom/corporate/erp');
      * $this->setBaseUrl('http://domain.dom/blog.php?args=20'); // avoid this one.
      * $this->setBaseUrl('http://another.dom');
-     * </pre>
+     * ```
      *
      * @param string $baseUrl Example http://www.web.com/folder  https://www.web.com/folder/anotherfolder
      * @return BladeOne
@@ -2306,10 +2306,10 @@ class BladeOne
 
     /**
      * It gets the full current url calculated with the information sends by the user.<br>
-     * <b>Note:</b> If we set baseurl, then it always uses the baseurl as domain (it's safe).<br>
-     * <b>Note:</b> This information could be forged/faked by the end-user.<br>
-     * <b>Note:</b> It returns empty '' if it is called in a command line interface / non-web.<br>
-     * <b>Note:</b> It doesn't return the user and password.<br>
+     * **Note:** If we set baseurl, then it always uses the baseurl as domain (it's safe).<br>
+     * **Note:** This information could be forged/faked by the end-user.<br>
+     * **Note:** It returns empty '' if it is called in a command line interface / non-web.<br>
+     * **Note:** It doesn't return the user and password.<br>
      * @param bool $noArgs if true then it excludes the arguments.
      * @return string
      */
@@ -2331,15 +2331,15 @@ class BladeOne
 
     /**
      * It returns the relative path to the base url or empty if not set<br>
-     * <b>Example:</b><br>
-     * <pre>
+     * **Example:**<br>
+     * ```php
      * // current url='http://domain.dom/page/subpage/web.php?aaa=2
      * $this->setBaseUrl('http://domain.dom/');
      * $this->getRelativePath(); // '../../'
      * $this->setBaseUrl('http://domain.dom/');
      * $this->getRelativePath(); // '../../'
-     * </pre>
-     * <b>Note:</b>The relative path is calculated when we set the base url.
+     * ```
+     * **Note:**The relative path is calculated when we set the base url.
      *
      * @return string
      * @see BladeOne::setBaseUrl
@@ -2351,7 +2351,7 @@ class BladeOne
 
     /**
      * It gets the full current canonical url.<br>
-     * <b>Example:</b> https://www.mysite.com/aaa/bb/php.php?aa=bb
+     * **Example:** https://www.mysite.com/aaa/bb/php.php?aa=bb
      * <ul>
      * <li>It returns the $this->canonicalUrl value if is not null</li>
      * <li>Otherwise, it returns the $this->currentUrl if not null</li>
@@ -2367,7 +2367,7 @@ class BladeOne
 
     /**
      * It sets the full canonical url.<br>
-     * <b>Example:</b> https://www.mysite.com/aaa/bb/php.php?aa=bb
+     * **Example:** https://www.mysite.com/aaa/bb/php.php?aa=bb
      *
      * @param string|null $canonUrl
      * @return BladeOne
@@ -2380,7 +2380,7 @@ class BladeOne
 
     /**
      * It gets the full current url<br>
-     * <b>Example:</b> https://www.mysite.com/aaa/bb/php.php?aa=bb
+     * **Example:** https://www.mysite.com/aaa/bb/php.php?aa=bb
      * <ul>
      * <li>It returns the $this->currentUrl if not null</li>
      * <li>Otherwise, the url is calculated with the information sends by the user</li>
@@ -2400,8 +2400,8 @@ class BladeOne
 
     /**
      * It sets the full current url.<br>
-     * <b>Example:</b> https://www.mysite.com/aaa/bb/php.php?aa=bb
-     * <b>Note:</b> If the current url is not set, then the system could calculate the current url.
+     * **Example:** https://www.mysite.com/aaa/bb/php.php?aa=bb
+     * **Note:** If the current url is not set, then the system could calculate the current url.
      *
      * @param string|null $currentUrl
      * @return BladeOne
@@ -2469,11 +2469,11 @@ class BladeOne
 
     /**
      * It adds a string inside a quoted string<br>
-     * <b>example:</b><br>
-     * <pre>
+     * **example:**<br>
+     * ```php
      * $this->addInsideQuote("'hello'"," world"); // 'hello world'
      * $this->addInsideQuote("hello"," world"); // hello world
-     * </pre>
+     * ```
      *
      * @param $quoted
      * @param $newFragment
@@ -2984,13 +2984,13 @@ class BladeOne
     /**
      * It separates a string using a separator and an identifier<br>
      * It excludes quotes,double quotes and the "¬" symbol.<br>
-     * <b>Example</b><br>
-     * <pre>
+     * **Example**<br>
+     * ```php
      * $this->parseArgs('a=2,b='a,b,c',d'); // ['a'=>'2','b'=>'a,b,c','d'=>null]
      * $this->parseArgs('a=2,b=c,d'); // ['a'=>'2','b'=>'c','d'=>null]
      * $this->parseArgs('a=2 b=c',' '); // ['a'=>'2','b'=>'c']
      * $this->parseArgs('a:2 b:c',' ',':'); // ['a'=>'2','b'=>'c']
-     * </pre>
+     * ```
      * Note: parseArgs('a = 2 b = c',' '); with return 4 values instead of 2.
      *
      * @param string $text      the text to separate
@@ -3159,12 +3159,12 @@ class BladeOne
      * If the method exists (in this class) then it is used<br>
      * Otherwise, it uses a global function.<br>
      * If you want to escape the "|", then you could use "/|"<br>
-     * <b>Note:</b> It only works if $this->pipeEnable=true and by default it is false<br>
-     * <b>Example:</b><br>
-     * <pre>
+     * **Note:** It only works if $this->pipeEnable=true and by default it is false<br>
+     * **Example:**<br>
+     * ```php
      * $this->pipeDream('$name | strtolower | substr:0,4'); // strtolower(substr($name ,0,4)
      * $this->pipeDream('$name| getMode') // $this->getMode($name)
-     * </pre>
+     * ```
      *
      * @param string $result
      * @return string
@@ -4201,7 +4201,7 @@ class BladeOne
                 $error = self::colorLog("Unable to create file [" . $this->compiledPath . '/dummy]', 'e');
             }
             @unlink($rnd);
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $status=false;
             $error = self::colorLog($ex->getMessage(), 'e');
         }

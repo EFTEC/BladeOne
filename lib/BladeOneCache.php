@@ -129,10 +129,10 @@ trait BladeOneCache
 
     /**
      * It obtains a unique GUID based in:<br>
-     * <b>get</b>= parameters from the url<br>
-     * <b>post</b>= parameters sends via post<br>
-     * <b>getpost</b> = a mix between get and post<br>
-     * <b>request</b> = get, post and cookies (including sessions)<br>
+     * **get**= parameters from the url<br>
+     * **post**= parameters sends via post<br>
+     * **getpost** = a mix between get and post<br>
+     * **request** = get, post and cookies (including sessions)<br>
      * MD5 could generate colisions (2^64 = 18,446,744,073,709,551,616) but the end hash is the sum of the hash of
      * the page + this GUID.
      *
