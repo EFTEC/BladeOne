@@ -54,7 +54,7 @@ I will try to answer all and every one of the question (in my limited time).
 * [BladeOne Manual](https://github.com/EFTEC/BladeOne/wiki/BladeOne-Manual)    
 * [Template tags (views)](https://github.com/EFTEC/BladeOne/wiki/Template-tags)    
     * [Template variables](https://github.com/EFTEC/BladeOne/wiki/Template-variables)     
-    * [Template inheritance](https://github.com/EFTEC/BladeOne/wiki/Template-inheritance)  
+    * [Template inheritance](https://github.com/EFTEC/BladeOne/wiki/Template-inheritance)   
     * [Template component](https://github.com/EFTEC/BladeOne/wiki/Template-Component)            
     * [Template stack](https://github.com/EFTEC/BladeOne/wiki/Template-stack)
     * [Template asset, relative, base, current and canonical links](https://github.com/EFTEC/BladeOne/wiki/Template-Asset,-Relative,-Base-and-Canonical-Links)
@@ -62,6 +62,7 @@ I will try to answer all and every one of the question (in my limited time).
     * [Template logic](https://github.com/EFTEC/BladeOne/wiki/Template-logic)    
     * [Template loop](https://github.com/EFTEC/BladeOne/wiki/Template-loop)    
     * [Template Pipes (Filter)](https://github.com/EFTEC/BladeOne/wiki/Template-Pipes-(Filter))    
+* [Custom Control](https://github.com/EFTEC/BladeOne/wiki/Custom-Control 
 * [Methods of the class](https://github.com/EFTEC/BladeOne/wiki/Methods-of-the-class)   
 * [Injecting logic before the view (composer)](https://github.com/EFTEC/BladeOne/wiki/Injecting-logic-before-the-view-(composer))
 * [Extending the class](https://github.com/EFTEC/BladeOne/wiki/Extending-the-class)   
