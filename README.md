@@ -205,7 +205,7 @@ Alternatively, BladeOne allows running arbitrary code from any class or method i
 ## Install (pick one of the next one)
 
 1) Download the file manually then unzip (using WinRAR,7zip or any other program) https://github.com/EFTEC/BladeOne/archive/master.zip
-2) git clone https://github.com/EFTEC/BladeOne
+2) git clone https://github.com/EFTEC/BladeOne (it doesn't include the examples)
 3) Composer. See [usage](#usage)
 4) wget https://github.com/EFTEC/BladeOne/archive/master.zip
    unzip master.zip
@@ -250,6 +250,14 @@ In this mode, it uses the folders ```__DIR__/views``` and ```__DIR__/compiles```
 use eftec\bladeone\BladeOne;
 
 $blade = new BladeOne(); // MODE_DEBUG allows to pinpoint troubles.
+echo $blade->run("hello",array("variable1"=>"value1")); // it calls /views/hello.blade.php
+```
+
+### Injection
+You can inject the Bladeone using an existing instance of it. If there is no instance, then it will create a new one using
+the default folders.
+```
+$blade=BladeOne::$instance;
 echo $blade->run("hello",array("variable1"=>"value1")); // it calls /views/hello.blade.php
 ```
 
@@ -340,6 +348,10 @@ or
     // The user is not authenticated...
 @endguest
 ```
+
+### Custom controls.
+There are multiples ways to create a new control (tag)
+
 
 
 
