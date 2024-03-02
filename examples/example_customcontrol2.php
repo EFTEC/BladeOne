@@ -14,9 +14,9 @@ $blade->pipeEnable=true;
 $blade->clearMethods();
 
 
-$blade->addMethod('runtime','card',static function($args) {
+$blade->addMethod('runtime','card',static function($args) { // @card($item)
     $result='';
-    $result.=BladeOne::$instance->runChild('auto.card',['value'=>$args[0]]);
+    $result.=BladeOne::$instance->runChild('auto.card',['value'=>$args[0]]); // auto.card is a view.
     return $result;
 });
 

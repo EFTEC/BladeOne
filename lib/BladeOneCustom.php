@@ -15,7 +15,7 @@ use function array_pop;
 
 trait BladeOneCustom
 {
-    private $customItem = []; // indicates the type of the current tag. such as select/selectgroup/etc.
+    private array $customItem = []; // indicates the type of the current tag. such as select/selectgroup/etc.
 
     //<editor-fold desc="compile function">
     /**

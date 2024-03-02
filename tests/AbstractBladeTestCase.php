@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
  * @since 16/09/2018
  */
 abstract class AbstractBladeTestCase extends TestCase {
-    const TEMPLATE_PATH = __DIR__ . '/resources/templates';
-    const COMPILED_PATH = __DIR__ . '/resources/compiled';
+    public const TEMPLATE_PATH = __DIR__ . '/resources/templates';
+    public const COMPILED_PATH = __DIR__ . '/resources/compiled';
 
     protected $blade;
     public function __construct($name = null, array $data = [], $dataName = '') {

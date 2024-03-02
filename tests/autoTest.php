@@ -14,9 +14,10 @@ class autoTest extends AbstractBladeTestCase
     /**
      * @throws \Exception
      */
-    public function test1()
+    public function test1(): void
     {
         BladeOne::$instance->clearMethods();
+        BladeOne::$instance->setPath(self::TEMPLATE_PATH, self::COMPILED_PATH);
         BladeOne::$instance->addMethod('runtime', 'one', static function($args) {
             return "method one " . $args['a1'] . ',' . $args['a2'];
         });
@@ -27,7 +28,7 @@ class autoTest extends AbstractBladeTestCase
             BladeOne::$instance->run("auto.test1", ['a1' => 10, 'a2' => 20]));
     }
 
-    public function test2()
+    public function test2(): void
     {
         // it clears the previous methods created in different tests
         BladeOne::$instance->clearMethods();

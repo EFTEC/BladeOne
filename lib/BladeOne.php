@@ -1,5 +1,5 @@
 <?php
-/** @noinspection PhpMissingParamTypeInspection
+/**
  * @noinspection PhpUnusedParameterInspection
  * @noinspection SyntaxError
  * @noinspection ForgottenDebugOutputInspection
@@ -34,13 +34,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2023 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.11
+ * @version   4.12
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.11';
+    public const VERSION = '4.12';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -50,34 +50,34 @@ class BladeOne
     /** @var int DEBUG MODE, the file is always compiled and the filename is identifiable. */
     public const MODE_DEBUG = 5;
     /** @var array Hold dictionary of translations */
-    public static $dictionary = [];
+    public static array $dictionary = [];
     /** @var string PHP tag. You could use < ?php or < ? (if shorttag is active in php.ini) */
-    public $phpTag = '<?php '; // hello hello hello.
+    public string $phpTag = '<?php '; // hello hello hello.
     /** @var string this line is used to easily echo a value */
-    protected $phpTagEcho = '<?php' . ' echo ';
-    /** @var string $currentUser Current user. Example: john */
-    public $currentUser;
-    /** @var string $currentRole Current role. Example: admin */
-    public $currentRole;
-    /** @var string[] $currentPermission Current permission. Example ['edit','add'] */
-    public $currentPermission = [];
+    protected string $phpTagEcho = '<?php' . ' echo ';
+    /** @var string|null $currentUser Current user. Example: john */
+    public ?string $currentUser;
+    /** @var string|null $currentRole Current role. Example: admin */
+    public ?string $currentRole;
+    /** @var string[]|null $currentPermission Current permission. Example ['edit','add'] */
+    public ?array $currentPermission = [];
     /** @var callable callback of validation. It is used for @can,@cannot */
     public $authCallBack;
-    /** @var callable callback of validation. It is used for @canany */
+    /** @var callable|null callback of validation. It is used for @canany */
     public $authAnyCallBack;
-    /** @var callable callback of errors. It is used for @error */
+    /** @var callable|null callback of errors. It is used for @error */
     public $errorCallBack;
     /** @var bool if true then, if the operation fails, and it is critic, then it throws an error */
-    public $throwOnError = false;
+    public bool $throwOnError = false;
     /** @var string security token */
-    public $csrf_token = '';
+    public string $csrf_token = '';
     /** @var string The path to the missing translations log file. If empty then every missing key is not saved. */
-    public $missingLog = '';
+    public string $missingLog = '';
     /** @var bool if true then pipes commands are available, example {{$a1|strtolower}} */
-    public $pipeEnable = false;
+    public bool $pipeEnable = false;
     /** @var array Alias (with or without namespace) of the classes */
-    public $aliasClasses = [];
-    protected $hierarcy = [];
+    public array $aliasClasses = [];
+    protected array $hierarcy = [];
     /**
      * @var callable[] associative array with the callable methods. The key must be the name of the method<br>
      *                 <b>example:</b><br>
@@ -86,11 +86,11 @@ class BladeOne
      *                 $this->methods['runtimeAlert']=function(?array $arguments=null) { return };
      *                 ```
      */
-    protected $methods = [];
-    protected $controlStack=[['name'=>'','args'=>[],'parent'=>0]];
-    protected $controlStackParent=0;
+    protected array $methods = [];
+    protected array $controlStack=[['name'=>'','args'=>[],'parent'=>0]];
+    protected int $controlStackParent=0;
     /** @var BladeOne it is used to get the last instance */
-    public static $instance;
+    public static BladeOne $instance;
     /**
      * @var bool if true then the variables defined in the "include" as arguments are scoped to work only
      * inside the "include" statement.<br>
@@ -106,7 +106,7 @@ class BladeOne
      * @include("template",[]) // a1 is not defined
      * ```
      */
-    public $includeScope = false;
+    public bool $includeScope = false;
     /**
      * @var callable[] It allows to parse the compiled output using a function.
      *      This function doesn't require to return a value<br>
@@ -117,122 +117,122 @@ class BladeOne
      *      };
      *      ```
      */
-    public $compileCallbacks = [];
+    public array $compileCallbacks = [];
     /** @var array All the registered extensions. */
-    protected $extensions = [];
+    protected array $extensions = [];
     /** @var array All the finished, captured sections. */
-    protected $sections = [];
+    protected array $sections = [];
     /** @var string The template currently being compiled. For example "folder.template" */
-    protected $fileName;
-    protected $currentView;
-    protected $notFoundPath;
+    protected string $fileName;
+    protected string $currentView;
+    protected string $notFoundPath;
     /** @var string File extension for the template files. */
-    protected $fileExtension = '.blade.php';
+    protected string $fileExtension = '.blade.php';
     /** @var array The stack of in-progress sections. */
-    protected $sectionStack = [];
+    protected array $sectionStack = [];
     /** @var array The stack of in-progress loops. */
-    protected $loopsStack = [];
+    protected array $loopsStack = [];
     /** @var array Dictionary of variables */
-    protected $variables = [];
+    protected array $variables = [];
     /** @var array Dictionary of global variables */
-    protected $variablesGlobal = [];
+    protected array $variablesGlobal = [];
     /** @var array All the available compiler functions. */
-    protected $compilers = [
+    protected array $compilers = [
         'Extensions',
         'Statements',
         'Comments',
         'Echos',
     ];
     /** @var string|null it allows to set the stack */
-    protected $viewStack;
+    protected ?string $viewStack;
     /** @var array used by $this->composer() */
-    protected $composerStack = [];
+    protected array $composerStack = [];
     /** @var array The stack of in-progress push sections. */
-    protected $pushStack = [];
+    protected array $pushStack = [];
     /** @var array All the finished, captured push sections. */
-    protected $pushes = [];
+    protected array $pushes = [];
     /** @var int The number of active rendering operations. */
-    protected $renderCount = 0;
+    protected int $renderCount = 0;
     /** @var string[] Get the template path for the compiled views. */
-    protected $templatePath;
-    /** @var string Get the compiled path for the compiled views. If null then it uses the default path */
-    protected $compiledPath;
+    protected array $templatePath;
+    /** @var string|null Get the compiled path for the compiled views. If null then it uses the default path */
+    protected ?string $compiledPath;
     /** @var string the extension of the compiled file. */
-    protected $compileExtension = '.bladec';
+    protected string $compileExtension = '.bladec';
     /**
      * @var string=['auto','sha1','md5'][$i] It determines how the compiled filename will be called.<br>
      *            **auto** (default mode) the mode is "sha1"<br>
      *            **sha1** the filename is converted into a sha1 hash<br>
      *            **md5** the filename is converted into a md5 hash<br>
      */
-    protected $compileTypeFileName = 'auto';
+    protected string $compileTypeFileName = 'auto';
     /** @var array Custom "directive" dictionary. Those directives run at compile time. */
-    protected $customDirectives = [];
+    protected array $customDirectives = [];
     /** @var bool[] Custom directive dictionary. Those directives run at runtime. */
-    protected $customDirectivesRT = [];
+    protected array $customDirectivesRT = [];
     /** @var callable Function used for resolving injected classes. */
     protected $injectResolver;
     /** @var array Used for conditional if. */
-    protected $conditions = [];
+    protected array $conditions = [];
     /** @var int Unique counter. It's used for extends */
-    protected $uidCounter = 0;
+    protected int $uidCounter = 0;
     /** @var string The main url of the system. Don't use raw $_SERVER values unless the value is sanitized */
-    protected $baseUrl = '.';
+    protected string $baseUrl = '.';
     /** @var string|null The base domain of the system */
-    protected $baseDomain;
+    protected ?string $baseDomain;
     /** @var string|null It stores the current canonical url. */
-    protected $canonicalUrl;
+    protected ?string $canonicalUrl;
     /** @var string|null It stores the current url including arguments */
-    protected $currentUrl;
+    protected ?string $currentUrl;
     /** @var string it is a relative path calculated between baseUrl and the current url. Example ../../ */
-    protected $relativePath = '';
+    protected string $relativePath = '';
     /** @var string[] Dictionary of assets */
-    protected $assetDict;
+    protected ?array $assetDict;
     /** @var bool if true then it removes tabs and unneeded spaces */
-    protected $optimize = true;
+    protected bool $optimize = true;
     /** @var bool if false, then the template is not compiled (but executed on memory). */
-    protected $isCompiled = true;
+    protected bool $isCompiled = true;
     /** @var bool */
-    protected $isRunFast = false; // stored for historical purpose.
+    protected bool $isRunFast = false; // stored for historical purpose.
     /** @var array Array of opening and closing tags for raw echos. */
-    protected $rawTags = ['{!!', '!!}'];
+    protected array $rawTags = ['{!!', '!!}'];
     /** @var array Array of opening and closing tags for regular echos. */
-    protected $contentTags = ['{{', '}}'];
+    protected array $contentTags = ['{{', '}}'];
     /** @var array Array of opening and closing tags for escaped echos. */
-    protected $escapedTags = ['{{{', '}}}'];
+    protected array $escapedTags = ['{{{', '}}}'];
     /** @var string The "regular" / legacy echo string format. */
-    protected $echoFormat = '\htmlentities(%s??\'\', ENT_QUOTES, \'UTF-8\', false)';
+    protected string $echoFormat = '\htmlentities(%s??\'\', ENT_QUOTES, \'UTF-8\', false)';
     /** @var string */
-    protected $echoFormatOld = 'static::e(%s)';
+    protected string $echoFormatOld = 'static::e(%s)';
     /** @var array Lines that will be added at the footer of the template */
-    protected $footer = [];
+    protected array $footer = [];
     /** @var string Placeholder to temporary mark the position of verbatim blocks. */
-    protected $verbatimPlaceholder = '$__verbatim__$';
+    protected string $verbatimPlaceholder = '$__verbatim__$';
     /** @var array Array to temporary store the verbatim blocks found in the template. */
-    protected $verbatimBlocks = [];
+    protected array $verbatimBlocks = [];
     /** @var int Counter to keep track of nested forelse statements. */
-    protected $forelseCounter = 0;
+    protected int $forelseCounter = 0;
     /** @var array The components being rendered. */
-    protected $componentStack = [];
+    protected array $componentStack = [];
     /** @var array The original data passed to the component. */
-    protected $componentData = [];
+    protected array $componentData = [];
     /** @var array The slot contents for the component. */
-    protected $slots = [];
+    protected array $slots = [];
     /** @var array The names of the slots being rendered. */
-    protected $slotStack = [];
+    protected array $slotStack = [];
     /** @var string tag unique */
-    protected $PARENTKEY = '@parentXYZABC';
+    protected string $PARENTKEY = '@parentXYZABC';
     /**
      * Indicates the compile mode.
      * if the constant BLADEONE_MODE is defined, then it is used instead of this field.
      *
      * @var int=[BladeOne::MODE_AUTO,BladeOne::MODE_DEBUG,BladeOne::MODE_SLOW,BladeOne::MODE_FAST][$i]
      */
-    protected $mode;
+    protected int $mode;
     /** @var int Indicates the number of open switches */
-    protected $switchCount = 0;
+    protected int $switchCount = 0;
     /** @var bool Indicates if the switch is recently open */
-    protected $firstCaseInSwitch = true;
+    protected bool $firstCaseInSwitch = true;
     //</editor-fold>
     //<editor-fold desc="constructor">
     /**
@@ -1042,7 +1042,7 @@ class BladeOne
             $eachN = $each;
         } elseif (strlen($each) > 1) {
             if ($each[0] === 'c') {
-                $eachN = $loopStack['count'] / substr($each, 1);
+                $eachN = round($loopStack['count'] / substr($each, 1));
             }
         } else {
             $eachN = PHP_INT_MAX;
@@ -1218,7 +1218,7 @@ class BladeOne
      * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */
-    protected function runInternal($view, $variables = [], $forced = false, $runFast = false): string
+    protected function runInternal(string $view, $variables = [], $forced = false, $runFast = false): string
     {
         $this->currentView = $view;
         if (@\count($this->composerStack)) {
@@ -1741,7 +1741,13 @@ class BladeOne
         $this->sections[$section] = $content;
     }
 
-    public function dump($object, $jsconsole = false): void
+    /**
+     * @param mixed $object
+     * @param bool $jsconsole
+     * @return void
+     * @throws \JsonException
+     */
+    public function dump($object,bool $jsconsole = false): void
     {
         if (!$jsconsole) {
             echo '<pre>';
@@ -1750,7 +1756,7 @@ class BladeOne
         } else {
             /** @noinspection BadExpressionStatementJS */
             /** @noinspection JSVoidFunctionReturnValueUsed */
-            echo '<script>console.log(' . \json_encode($object) . ')</script>';
+            echo '<script>console.log(' . \json_encode($object, JSON_THROW_ON_ERROR) . ')</script>';
         }
     }
 
@@ -2014,7 +2020,7 @@ class BladeOne
      */
     public function addLoop($data): void
     {
-        $length = \is_array($data) || $data instanceof Countable ? \count($data) : null;
+        $length = \is_countable($data) || $data instanceof Countable ? \count($data) : null;
         $parent = static::last($this->loopsStack);
         $this->loopsStack[] = [
             'index' => -1,
