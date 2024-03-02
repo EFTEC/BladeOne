@@ -61,7 +61,7 @@ class BladeOne
     public ?string $currentRole;
     /** @var string[]|null $currentPermission Current permission. Example ['edit','add'] */
     public ?array $currentPermission = [];
-    /** @var callable callback of validation. It is used for @can,@cannot */
+    /** @var callable|null callback of validation. It is used for @can,@cannot */
     public $authCallBack;
     /** @var callable|null callback of validation. It is used for @canany */
     public $authAnyCallBack;
