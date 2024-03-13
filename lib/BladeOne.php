@@ -4149,6 +4149,59 @@ class BladeOne
         return $this->phpTagEcho . "json_encode($parts[0], $options, $depth); ?>";
     }
     //</editor-fold>
+    //<editor-fold desc="attributes">
+    /**
+     * Compile the checked statements into valid PHP.
+     *
+     * @param string $expression
+     * @return string
+     */
+    protected function compileChecked($expression): string
+    {
+        return $this->phpTag . "if$expression echo 'checked'; ?>";
+    }
+    /**
+     * Compile the selected statements into valid PHP.
+     *
+     * @param string $expression
+     * @return string
+     */
+     protected function compileSelected($expression): string
+     {
+         return $this->phpTag . "if$expression echo 'selected'; ?>";
+     }
+
+     /**
+     * Compile the disabled statements into valid PHP.
+     *
+     * @param string $expression
+     * @return string
+     */
+    protected function compileDisabled($expression): string
+    {
+        return $this->phpTag . "if$expression echo 'disabled'; ?>";
+    }
+    /**
+     * Compile the readonly statements into valid PHP.
+     *
+     * @param string $expression
+     * @return string
+     */
+    protected function compileReadonly($expression): string
+    {
+        return $this->phpTag . "if$expression echo 'readonly'; ?>";
+    }
+    /**
+     * Compile the required statements into valid PHP.
+     *
+     * @param string $expression
+     * @return string
+     */
+    protected function compileRequired($expression): string
+    {
+        return $this->phpTag . "if$expression echo 'required'; ?>";
+    }
+    //</editor-fold>
     // <editor-fold desc='language'>
     protected function compileIsset($expression): string
     {
@@ -4220,7 +4273,6 @@ class BladeOne
     {
         return $this->phpTagEcho . "\$this->_n$expression; ?>";
     }
-
     // </editor-fold>
     //<editor-fold desc="cli">
     public static function isCli(): bool
