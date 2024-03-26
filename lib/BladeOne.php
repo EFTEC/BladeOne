@@ -34,13 +34,13 @@ use InvalidArgumentException;
  * @copyright Copyright (c) 2016-2023 Jorge Patricio Castro Castillo MIT License.
  *            Don't delete this comment, its part of the license.
  *            Part of this code is based in the work of Laravel PHP Components.
- * @version   4.12
+ * @version   4.13
  * @link      https://github.com/EFTEC/BladeOne
  */
 class BladeOne
 {
     //<editor-fold desc="fields">
-    public const VERSION = '4.12';
+    public const VERSION = '4.13';
     /** @var int BladeOne reads if the compiled file has changed. If it has changed,then the file is replaced. */
     public const MODE_AUTO = 0;
     /** @var int Then compiled file is always replaced. It's slow and it's useful for development. */
@@ -4160,6 +4160,30 @@ class BladeOne
     {
         return $this->phpTag . "if$expression echo 'checked'; ?>";
     }
+    protected function compileStyle($expression) {
+        return $this->phpTag . "echo 'class=\"'.\$this->runtimeStyle($expression).'\"' ?>";
+    }
+    protected function compileClass($expression) {
+        return $this->phpTag . "echo 'class=\"'.\$this->runtimeStyle($expression).'\"'; ?>";
+    }
+    protected function runtimeStyle($expression=null,$separator=' '): string
+    {
+        if($expression===null) {
+            return '';
+        }
+        if(!is_array($expression)) {
+            $expression=[$expression];
+        }
+        $result='';
+        foreach($expression as $k=>$v) {
+            if(is_numeric($k)) {
+                $result.=$v.$separator;
+            } elseif($v) {
+                $result.=$k.$separator;
+            }
+        }
+        return trim($result);
+    }
 
     /**
      * Compile the selected statements into valid PHP.
@@ -4195,7 +4219,7 @@ class BladeOne
     {
         return $this->phpTag . "if$expression echo 'readonly'; ?>";
     }
-    
+
     /**
      * Compile the required statements into valid PHP.
      *

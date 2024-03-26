@@ -127,4 +127,13 @@ class OtherTest extends AbstractBladeTestCase
         $compare=['a1'=>'1','a2'=>'function(1 2 3)'];
         $this->assertEquals($compare, $arr);
     }
+    public function testClassStyle()
+    {
+        $this->assertEquals('<span class="p-4 text-gray-500 bg-red"></span>
+<span class="p-4 text-gray-500 bg-red"></span>
+<span class="background-color: red font-weight: bold"></span>
+<span style="background-color: red; font-weight: bold;"></span>
+', $this->blade->run("v11.test", ["list" => []]));
+    }
+
 }
