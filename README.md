@@ -3,19 +3,25 @@
 # BladeOne Blade Template Engine
 BladeOne is a standalone version of Blade Template Engine that uses a single PHP file and can be ported and used in different projects. It allows you to use blade template outside Laravel.
 
+## The situation so far (2026)
+It makes little sense to continue using PHP when C# works in Linux too, and C# brings lots of features (including MVC) out of the box.
+Also, this library will not need many changes, and PHP is not adding new features that could change drastically this library. This library started with PHP 7.0, and now we have PHP 8.4.
+So, there is little to change to this library.  
+It is a matter of time until I will kill the support for PHP 7.x
 
 
 [![Packagist](https://img.shields.io/packagist/v/eftec/bladeone.svg)](https://packagist.org/packages/eftec/bladeone)
 [![Total Downloads](https://poser.pugx.org/eftec/bladeone/downloads)](https://packagist.org/packages/eftec/bladeone)
-[![Maintenance](https://img.shields.io/maintenance/yes/2025.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)]()
 [![composer](https://img.shields.io/badge/composer-%3E1.6-blue.svg)]()
-[![php](https://img.shields.io/badge/php->5.6-green.svg)]()
-[![php](https://img.shields.io/badge/php-7.x-green.svg)]()
+[![php](https://img.shields.io/badge/php->=8.1-blue.svg)]()
+[![php](https://img.shields.io/badge/php-8.x-green.svg)]()
 [![php](https://img.shields.io/badge/php-8.x-green.svg)]()
 [![CocoaPods](https://img.shields.io/badge/docs-70%25-yellow.svg)]()
 
 
 > Dynamic blade components are not supported (reason: performance purpose) and custom features aimed for blade, but everything else is supported.
+
 
 
 ## Comparison with Twig
@@ -536,7 +542,7 @@ You are welcome to use it, share it, ask for changes and whatever you want to. J
 
 ## License
 MIT License.
-BladeOne (c) 2016-2025 Jorge Patricio Castro Castillo
+BladeOne (c) 2016-2026 Jorge Patricio Castro Castillo
 Blade (c) 2012 Laravel Team (This code is based and inspired in the work of the team of Laravel, however BladeOne is 
 mostly an original work)
 

@@ -1,0 +1,13 @@
+{
+    "name": "jorge/dummy",
+    "type": "project",
+    "require": {
+        "eftec/bladeone": "^3.7"
+    },
+    "authors": [
+        {
+            "name": "Jorge Castro",
+            "email": "jorge.castro.c@gmail.com"
+        }
+    ]
+}
