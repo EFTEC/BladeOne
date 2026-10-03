@@ -3056,7 +3056,7 @@ class BladeOne
 
     protected function parseParams($params): string
     {
-        preg_match_all('/([a-zA-Z0-9:-]*?)\s*?=\s*?(.+?)(\s|$)/ms', $params, $matches);
+        preg_match_all('/([a-zA-Z0-9:-]*?)\s*?=\s*?("?.+?"?|\'?.+?\'?)(\s|$)/ms', $params, $matches);
         $paramsCompiled = [];
         foreach ($matches[1] as $i => $key) {
             $value = str_replace('"', '', $matches[2][$i]);
